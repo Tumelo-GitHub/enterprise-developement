@@ -1,0 +1,82 @@
+@use '../src/app/components/generic-company/form-theme';
+// Custom Theming for Angular Material
+// For more information: https://material.angular.io/guide/theming
+@use '@angular/material' as mat;
+// Plus imports for other components in your app.
+
+// Include the common styles for Angular Material. We include this here so that you only
+// have to load a single css file for Angular Material in your app.
+// Be sure that you only ever include this mixin once!
+@include mat.core();
+@import "node_modules/@costlydeveloper/ngx-awesome-popup/styles/theme";
+
+// Define the palettes for your theme using the Material Design palettes available in palette.scss
+// (imported above). For each palette, you can optionally specify a default, lighter, and darker
+// hue. Available color palettes: https://material.io/design/color/
+$devWizard-primary: mat.define-palette(mat.$light-blue-palette);
+$devWizard-accent: mat.define-palette(mat.$light-green-palette);
+$devWizard-warn: mat.define-palette(mat.$red-palette);
+
+$devWizard-primary-dark: mat.define-palette(mat.$orange-palette);
+$devWizard-accent-dark: mat.define-palette(mat.$yellow-palette);
+$devWizard-warn-dark: mat.define-palette(mat.$red-palette);
+
+// Create the theme object. A theme consists of configurations for individual
+// theming systems such as "color" or "typography".
+$devWizard-light-theme: mat.define-light-theme((
+  color: (
+    primary: $devWizard-primary,
+    accent: $devWizard-accent,
+    warn: $devWizard-warn,
+  )
+));
+
+$devWizard-theme-dark: mat.define-dark-theme((
+  color: (
+    primary: $devWizard-primary-dark,
+    accent: $devWizard-accent-dark,
+    warn: $devWizard-warn-dark,
+  )
+));
+
+
+// Include theme styles for core and each component used in your app.
+// Alternatively, you can import and @include the theme mixins for each component
+// that you are using.
+@include mat.all-component-themes($devWizard-light-theme);
+
+.dark-theme-mode {
+  @include mat.all-component-themes($devWizard-theme-dark);
+}
+
+@mixin theme($theme) {
+  @include form-theme.theme($theme);
+}
+
+/* You can add global styles to this file, and also import other style files */
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+.container {
+  padding: 0 2rem;
+}
+
+.full-width-table {
+  width: 100%;
+}
+
+.mat-column-action {
+  width: 100px;
+}
+
+.page-title {
+  padding: 1rem 0;
+}
+
+.settings-btn {
+  position: fixed;
+  right: 45px;
+  bottom: 50px;
+  z-index: 1;
+}

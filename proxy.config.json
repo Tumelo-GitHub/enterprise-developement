@@ -1,0 +1,8 @@
+{
+    "/api": {
+      "target": "https://api.wozaweb.co.za/backend/public/",
+      "secure": false,
+      "logLevel": "debug",
+      "changeOrigin": true
+    }
+}

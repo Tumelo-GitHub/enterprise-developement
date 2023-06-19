@@ -1,0 +1,74 @@
+<form [formGroup]="registerForm" novalidate (ngSubmit)="onSubmit()">
+    <mat-card-header class="card-header">
+        <mat-card-title class="login-title">Sign up</mat-card-title>
+    </mat-card-header>
+    <mat-stepper linear #stepper formArrayName="formArray">
+        <mat-step formGroupName="0" [stepControl]="formArray?.get([0])">
+            <ng-template matStepLabel>Fill out your name</ng-template>
+            <div class="row">
+                <div class="col">
+                    <mat-form-field class="full-width">
+                        <input matInput placeholder="First Name" formControlName="firstName">
+                    </mat-form-field>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <mat-form-field class="full-width">
+                        <input matInput placeholder="Last Name" formControlName="lastName">
+                    </mat-form-field>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <mat-form-field class="full-width">
+                        <input matInput placeholder="Phone Number" formControlName="phoneNumber">
+                    </mat-form-field>
+                </div>
+            </div>
+            <div>
+              <button mat-button matStepperNext type="button">Next</button>
+            </div>
+        </mat-step>
+        <mat-step formGroupName="1" [stepControl]="formArray?.get([1])">
+            <ng-template matStepLabel>Fill out your address</ng-template>
+            <div class="row">
+                <div class="col">
+                    <mat-form-field class="full-width">
+                        <input matInput placeholder="Email" formControlName="email">
+                    </mat-form-field>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <mat-form-field class="full-width">
+                        <input matInput placeholder="Password" formControlName="password">
+                    </mat-form-field>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <mat-form-field class="full-width">
+                        <input matInput placeholder="Confirm Password" formControlName="confirmPassword">
+                    </mat-form-field>
+                </div>
+            </div>
+            <div>
+              <button mat-button matStepperPrevious type="button">Back</button>
+              <button mat-button matStepperNext type="button">Next</button>
+            </div>
+        </mat-step>
+        <mat-step>
+          <ng-template matStepLabel>Done</ng-template>
+          <p>You are now done.</p>
+          <P>You will be logged in on completion of register, please press 'submit' to proceed.</P>
+          <div>
+            <button mat-button matStepperPrevious type="button">Back</button>
+            <button mat-raised-button type="submit" [disabled]="!registerForm.valid">Submit</button>
+          </div>
+        </mat-step>
+    </mat-stepper>
+    <div class="login-text">
+        <p>Have an account? <a routerLink="/auth/login"><span> Login </span></a></p>
+    </div>
+</form>

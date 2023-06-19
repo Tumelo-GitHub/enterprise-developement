@@ -1,0 +1,38 @@
+.container {
+    background: rgb(27,27,27);
+    background: radial-gradient(circle, rgba(27,27,27,0.196516106442577) 0%, rgba(51,118,131,1) 100%);
+    height: 100vh;
+
+    .login-card {
+        position: absolute;
+        width: 72%;
+        height: 50%;
+        top: 25vh;
+        // left: 11rem;
+        margin: 0 12%;
+
+        .content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            height: -webkit-fill-available;
+
+            .logo {
+                margin-top: 41px;
+            }
+        }
+    }
+}
+
+.mat-card {
+    padding: 0;
+}
+
+.loader-container {
+position: absolute;
+height: 100%;
+width: 100%;
+background-color: black;
+opacity: 0.8;
+z-index: 99;
+}
+
