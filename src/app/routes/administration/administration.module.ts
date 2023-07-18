@@ -9,8 +9,14 @@ import { SmmeComponent } from './beneficiaries/smme/smme.component';
 import { ComplianceComponent } from './beneficiaries/compliance/compliance.component';
 import { EmployeeComponent } from './beneficiaries/employee/employee.component';
 import { GenericCompanyComponent } from './generic-company/generic-company.component';
+import { GenericCompanyFormComponent } from './generic-company/generic-company-form/generic-company-form.component';
 import { BusinessDevelopmemtComponent } from './business-developmemt/business-developmemt.component';
 import { ServiceProviderComponent } from './service-provider/service-provider.component';
+import { SmmeFormComponent } from './beneficiaries/smme/smme-form/smme-form.component';
+import { BdspComponent } from './business-developmemt/bdsp/bdsp.component';
+import { BdspEmployeeComponent } from './business-developmemt/bdsp-employee/bdsp-employee.component';
+import { BdspFormComponent } from './business-developmemt/bdsp/bdsp-form/bdsp-form.component';
+import { EmployeeFormComponent } from './beneficiaries/employee/employee-form/employee-form.component';
 
 
 @NgModule({
@@ -22,8 +28,14 @@ import { ServiceProviderComponent } from './service-provider/service-provider.co
     ComplianceComponent,
     EmployeeComponent,
     GenericCompanyComponent,
+    GenericCompanyFormComponent,
     BusinessDevelopmemtComponent,
-    ServiceProviderComponent
+    ServiceProviderComponent,
+    SmmeFormComponent,
+    BdspComponent,
+    BdspEmployeeComponent,
+    BdspFormComponent,
+    EmployeeFormComponent
   ],
   imports: [
     SharedModule,

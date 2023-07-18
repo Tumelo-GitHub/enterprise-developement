@@ -80,3 +80,51 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   bottom: 50px;
   z-index: 1;
 }
+
+.form-dialog .mat-dialog-container {
+  width: 50vw;
+}
+
+.tab-content {
+  margin: 30px;
+}
+
+.row {
+  display: flex;
+  flex-direction: row;
+}
+
+.col {
+  flex: 1;
+  margin-right: 20px;
+}
+
+.col:last-child {
+  margin-right: 0;
+}
+
+form {
+  margin: 0px 20px;
+}
+
+.full-width {
+  width: 100%;
+}
+
+th.mat-header-cell, td.mat-cell, td.mat-footer-cell {
+  // padding: 0px 5px !important;
+  padding-right: 10px !important;
+}
+
+.mat-header-cell {
+  font-size: 14px !important;
+}
+
+.email-link {
+  text-decoration: none;
+  color: inherit;
+}
+
+.email-link:hover {
+  text-decoration: underline;
+}

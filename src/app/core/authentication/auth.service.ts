@@ -57,13 +57,12 @@ export interface Token {
 export class AuthService {
   public isAuthenticated = new Subject<boolean>();
   private user$ = new BehaviorSubject<User>({});
-  private url = "https://api.wozaweb.co.za/backend/public/";
 
   constructor(private http: HttpClient, private tokenService: TokenService, private router: Router) { 
   }
 
   login(data: any): Observable<any> { 
-    return this.http.post<Response>('/api/login', data).pipe(
+    return this.http.post<Response>('api/login', data).pipe(
       delay(1000),
       tap(val => { 
         this.tokenService.save(val.access_token);
@@ -74,7 +73,7 @@ export class AuthService {
   }
 
   register(data: any) {
-    return this.http.post<Response>('/api/register', data).pipe(
+    return this.http.post<Response>('api/register', data).pipe(
       delay(1000),
       tap(val => {
         this.tokenService.save(val.access_token);
@@ -87,7 +86,7 @@ export class AuthService {
   logout(): void {
     this.isAuthenticated.next(false);
     this.tokenService.remove();
-    this.router.navigateByUrl('/auth/login');
+    this.router.navigateByUrl('auth/login');
   }
 
   autoLogout() {
@@ -104,6 +103,6 @@ export class AuthService {
   }
 
   getClients() {
-    return this.http.get<Response>('/api/client');
+    return this.http.get<Response>('api/client');
   }
 }

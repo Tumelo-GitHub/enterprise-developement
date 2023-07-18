@@ -1,9 +1,11 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, Input, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
+import { SmmeEmpService } from '../../services/smme-emp.service';
+import { EmployeeFormComponent } from './employee-form/employee-form.component';
 
 @Component({
   selector: 'app-employee',
@@ -11,81 +13,38 @@ import { MatTableDataSource } from '@angular/material/table';
   styleUrls: ['./employee.component.scss']
 })
 export class EmployeeComponent implements OnInit {
-  displayedColumns: string[] = ['name', 'surname', 'position', 'role', 'cellNumber', 'email', 'company', 'action'];
+  @Input() company_id: number = 0;
+  displayedColumns: string[] = ['name', 'surname', 'position', 'role', 'cell_number', 'email', 'action'];
   columnsToDisplay: string[] = this.displayedColumns;
   dataSource!: MatTableDataSource<any>;
-
-  columns = new FormControl('');
-  columnList = [
-    [
-      'name',
-      'Name'
-    ],
-    [
-      'surname',
-      'Surname',
-    ],
-    [
-      'postion',
-      'Position',
-    ],
-    [
-      'role',
-      'Role',
-    ],
-    [
-      'cellNumber',
-      'Cell Number',
-    ],
-    [
-      'email',
-      'Email',
-    ],
-    [
-      'company',
-      'Company',
-    ],
-    [
-      'action',
-      'Action',
-    ]
-  ];
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  constructor(public dialog: MatDialog) { }
+  constructor(public dialog: MatDialog, private empService: SmmeEmpService) { }
 
   ngOnInit(): void {
-    this.getEmployeeList();
+    // this.getEmployeeList(this.company_id);
   }
 
-  getEmployeeList() {
-    const res = [
-      {
-        name: "Tumelo",
-        surname: 'Mokognyana',
-        postion: 'Junior',
-        role: 'Sotfware Developer',
-        cellNumber: '01234567889',
-        email: 'tunelo@naswenda.com',
-        company: 'Naswenda Business Consultants'
-      }
-    ];
-    this.dataSource = new MatTableDataSource(res);
-    this.dataSource.sort = this.sort;
-    this.dataSource.paginator = this.paginator;
-    // this._genericService.getCompanyList().subscribe({
-    //   next: (res) => {
-    //     console.log(res)
-    //     this.dataSource = new MatTableDataSource(res);
-    //     this.dataSource.sort = this.sort;
-    //     this.dataSource.paginator = this.paginator;
-    //   },
-    //   error: (err) => {
-    //     console.log(err)
-    //   }
-    // })
+  ngOnChanges(changes: SimpleChanges) {
+    // changes.prop contains the old and the new value...
+    this.getEmployeeList(changes['company_id'].currentValue);
+  }
+
+  getEmployeeList(id: number) {
+    if (id !== 0) {
+      this.empService.getEmpByCompany(id).subscribe({
+        next: (res) => {
+          this.dataSource = new MatTableDataSource(res.employees);
+          this.dataSource.sort = this.sort;
+          this.dataSource.paginator = this.paginator;
+        },
+        error: (err) => {
+          console.log(err)
+        }
+      })
+    }
   }
 
   removeColumn() {
@@ -99,7 +58,15 @@ export class EmployeeComponent implements OnInit {
   }
 
   openDialog() {
-    
+    const dialogRef = this.dialog.open(EmployeeFormComponent, {
+      data: {'company' : this.company_id},
+      panelClass: 'form-dialog'
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.getEmployeeList(this.company_id);
+      }
+    });
   }
 
   applyFilter(event: Event) {
@@ -116,7 +83,16 @@ export class EmployeeComponent implements OnInit {
   }
 
   openEditForm(data: any) {
-    
+    const dialogRef = this.dialog.open(EmployeeFormComponent, {
+      data: data,
+      panelClass: 'form-dialog'
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.getEmployeeList(this.company_id);
+      }
+    });
   }
 
 }
