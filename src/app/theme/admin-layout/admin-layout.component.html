@@ -45,9 +45,9 @@
     </mat-accordion>
   </mat-sidenav>
   <mat-sidenav-content>
-    <!-- <div *ngIf="loaderService.isLoading$ | async" class="loader-container">
+    <div *ngIf="loader" class="loader-container">
       <mat-progress-bar mode="indeterminate"></mat-progress-bar>
-    </div> -->
+    </div>
     <mat-toolbar color="primary">
       <button
         type="button"
@@ -81,6 +81,8 @@
       </mat-menu>
     </mat-toolbar>
     <!-- Add Content Here -->
-    <router-outlet></router-outlet>
+    <div class="page-content">
+      <router-outlet></router-outlet>
+    </div>
   </mat-sidenav-content>
 </mat-sidenav-container>

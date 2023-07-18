@@ -1,4 +1,4 @@
-export const businessType = [
+export const BUSINESS_TYPE = [
     'Close corporation',
     'Private company',
     'Co-operative',
@@ -9,7 +9,7 @@ export const businessType = [
     'NPO'
 ];
 
-export const turnoverRange = [
+export const TURNOVER_RANGE = [
     'Less than R500K',
     'Between R500K and R1m',
     'Between R5m and R10m',

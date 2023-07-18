@@ -1,0 +1,83 @@
+<form [formGroup]="bdspForm" novalidate (ngSubmit)="onSubmit()">
+    <h2 mat-dialog-title>BDSP Information</h2>
+    <mat-dialog-content class="mat-typography">
+  
+        <div class="row">
+            <div class="col">
+            <mat-form-field class="full-width">
+                <input matInput placeholder="Company Name" formControlName="bdsp_name">
+                <mat-error *ngIf="bdspForm.controls['bdsp_name'].hasError('required')">
+                Company name is <strong>required</strong>
+                </mat-error>
+            </mat-form-field>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <mat-form-field class="full-width">
+                <input matInput placeholder="Company Name" formControlName="physical_address">
+                <mat-error *ngIf="bdspForm.controls['physical_address'].hasError('required')">
+                    Company name is <strong>required</strong>
+                </mat-error>
+                </mat-form-field>
+            </div>
+            <div class="col">
+            <mat-form-field class="full-width">
+                <input matInput placeholder="Postal Address" formControlName="postal_address">
+            </mat-form-field>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+            <mat-form-field class="full-width">
+                <input matInput placeholder="Tel Number" formControlName="tell_number">
+            </mat-form-field>
+            </div>
+            <div class="col">
+            <mat-form-field class="full-width">
+                <input matInput placeholder="Cell Number" formControlName="cell_number">
+            </mat-form-field>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+            <mat-form-field class="full-width">
+                <input matInput placeholder="Email" formControlName="email">
+            </mat-form-field>
+            </div>
+            <div class="col">
+            <mat-form-field class="full-width">
+                <input matInput placeholder="Tax Number" formControlName="tax_number">
+            </mat-form-field>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+            <mat-form-field class="full-width">
+                <input matInput placeholder="Registration" formControlName="registration">
+            </mat-form-field>
+            </div>
+            <div class="col">
+            <mat-form-field class="full-width">
+                <input matInput placeholder="BBBEE" formControlName="bbbee_level">
+            </mat-form-field>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+            <mat-form-field class="full-width">
+                <textarea matInput placeholder="Business Description" formControlName="description"></textarea>
+            </mat-form-field>
+            </div>
+            <div class="col">
+            <mat-form-field class="full-width">
+                <textarea matInput placeholder="Products and Services" formControlName="products"></textarea>
+            </mat-form-field>
+            </div>
+        </div>
+    </mat-dialog-content>
+    <mat-dialog-actions align="end">
+        <button mat-button mat-dialog-close>Cancel</button>
+        <button type="submit" mat-button [mat-dialog-close]="true" cdkFocusInitial>Submit</button>
+    </mat-dialog-actions>
+</form>

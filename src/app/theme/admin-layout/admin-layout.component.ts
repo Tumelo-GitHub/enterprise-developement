@@ -1,10 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { AfterViewChecked, AfterViewInit, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { Observable } from 'rxjs';
 import { map, shareReplay } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
 import { AuthService, User } from 'src/app/core';
 import { LoaderService } from 'src/app/core';
+import { OverlayContainer } from '@angular/cdk/overlay';
 
 export interface MenuTag {
   color: string; // background color
@@ -42,12 +43,13 @@ export interface Menu {
   templateUrl: './admin-layout.component.html',
   styleUrls: ['./admin-layout.component.scss']
 })
-export class AdminLayoutComponent implements OnInit {
+export class AdminLayoutComponent implements OnInit, AfterViewChecked {
 
   dashMenu: Menu[] = [];
   isDarkTheme: boolean = false;
   isFullScreen: boolean = false;
   user!: User;
+  loader: boolean = false;
 
   isHandset$: Observable<boolean> = this.breakpointObserver.observe(Breakpoints.Handset)
     .pipe(
@@ -56,14 +58,28 @@ export class AdminLayoutComponent implements OnInit {
     );
 
   constructor(private breakpointObserver: BreakpointObserver, 
+    private overlay: OverlayContainer,
     protected http: HttpClient, 
     private auth: AuthService, 
-    public loaderService: LoaderService) {}
+    public loaderService: LoaderService,
+    private cdr: ChangeDetectorRef) {}
 
   ngOnInit(): void {
     this.menu();
     this.isDarkTheme = localStorage.getItem('theme') === "Dark" ? true : false;
     this.auth.user().subscribe(user => (this.user = user));
+    if (this.isDarkTheme) {
+      this.overlay.getContainerElement().classList.add('dark-theme-mode');
+    } else {
+      this.overlay.getContainerElement().classList.remove('dark-theme-mode');
+    }
+  }
+
+  ngAfterViewChecked() {
+    this.loaderService.isLoading$.subscribe(
+      resp => this.loader = resp
+    );
+    this.cdr.detectChanges();
   }
 
   menu() {
@@ -74,6 +90,11 @@ export class AdminLayoutComponent implements OnInit {
 
   storeThemeSelection() {
     localStorage.setItem('theme', this.isDarkTheme ? "Dark" : "Ligiht");
+    if (this.isDarkTheme) {
+      this.overlay.getContainerElement().classList.add('dark-theme-mode');
+    } else {
+      this.overlay.getContainerElement().classList.remove('dark-theme-mode');
+    }
   }
 
   getMenuByPermission(menu: Menu[]) {

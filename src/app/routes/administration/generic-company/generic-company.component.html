@@ -20,47 +20,47 @@
     <div class="mat-elevation-z8">
         <table mat-table [dataSource]="dataSource" matSort class="full-width-table">
       
-          <ng-container matColumnDef="companyName">
+          <ng-container matColumnDef="company_name">
             <th mat-header-cell *matHeaderCellDef mat-sort-header> Company </th>
-            <td mat-cell *matCellDef="let row"> {{row.companyName}} </td>
+            <td mat-cell *matCellDef="let row"> {{row.company_name}} </td>
           </ng-container>
       
           <!-- Progress Column -->
-          <ng-container matColumnDef="physicalAddress">
+          <ng-container matColumnDef="physical_address">
             <th mat-header-cell *matHeaderCellDef mat-sort-header> Physical Address</th>
-            <td mat-cell *matCellDef="let row"> {{row.physicalAddress}} </td>
+            <td mat-cell *matCellDef="let row"> {{row.physical_address}} </td>
           </ng-container>
       
           <!-- Name Column -->
-          <ng-container matColumnDef="postalAddress">
+          <ng-container matColumnDef="postal_address">
             <th mat-header-cell *matHeaderCellDef mat-sort-header> Postal Address </th>
-            <td mat-cell *matCellDef="let row"> {{row.postalAddress}} </td>
+            <td mat-cell *matCellDef="let row"> {{row.postal_address}} </td>
           </ng-container>
       
           <!-- Fruit Column -->
-          <ng-container matColumnDef="departmentName">
+          <ng-container matColumnDef="dept_name">
             <th mat-header-cell *matHeaderCellDef mat-sort-header> Department Name </th>
-            <td mat-cell *matCellDef="let row"> {{row.departmentName}} </td>
+            <td mat-cell *matCellDef="let row"> {{row.dept_name}} </td>
           </ng-container>
 
-          <ng-container matColumnDef="departmentAddress">
+          <ng-container matColumnDef="dept_address">
             <th mat-header-cell *matHeaderCellDef mat-sort-header> Department Address </th>
-            <td mat-cell *matCellDef="let row"> {{row.departmentAddress}} </td>
+            <td mat-cell *matCellDef="let row"> {{row.dept_address}} </td>
           </ng-container>
 
-          <ng-container matColumnDef="contactName">
+          <ng-container matColumnDef="contact_name">
             <th mat-header-cell *matHeaderCellDef mat-sort-header> Contact Name </th>
-            <td mat-cell *matCellDef="let row"> {{row.contactName + ' '+ row.contactSurname}} </td>
+            <td mat-cell *matCellDef="let row"> {{row.contact_name + ' '+ row.contact_surname}} </td>
           </ng-container>
 
-          <ng-container matColumnDef="contactCell">
+          <ng-container matColumnDef="contact_cell">
             <th mat-header-cell *matHeaderCellDef mat-sort-header> Contact Cell </th>
-            <td mat-cell *matCellDef="let row"> {{row.contactCell}} </td>
+            <td mat-cell *matCellDef="let row"> {{row.contact_cell}} </td>
           </ng-container>
 
-          <ng-container matColumnDef="contactEmail">
+          <ng-container matColumnDef="contact_email">
             <th mat-header-cell *matHeaderCellDef mat-sort-header> Contact Email </th>
-            <td mat-cell *matCellDef="let row"> <a href = "mailto: {{row.contactEmail}}">{{row.contactEmail}}</a> </td>
+            <td mat-cell *matCellDef="let row"> <a href = "mailto: {{row.contact_email}}">{{row.contact_email}}</a> </td>
           </ng-container>
     
           <!-- Fruit Column -->

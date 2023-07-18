@@ -6,6 +6,7 @@ import {MatTableDataSource} from '@angular/material/table';
 import { GenericCompanyService } from 'src/app/services/generic-company.service';
 import {FormControl} from '@angular/forms';
 import { GenericCompanyFormComponent } from './generic-company-form/generic-company-form.component';
+import { ToastService } from 'src/app/shared/services/toast.service';
 
 @Component({
   selector: 'app-generic-company',
@@ -15,22 +16,22 @@ import { GenericCompanyFormComponent } from './generic-company-form/generic-comp
 
 export class GenericCompanyComponent implements OnInit {
 
-  displayedColumns: string[] = ['companyName', 'physicalAddress', 'postalAddress', 'departmentName', 'departmentAddress', 'contactName', 'contactCell', 'contactEmail', 'action'];
-  columnsToDisplay: string[] = ['companyName', 'physicalAddress', 'departmentName', 'contactName', 'contactCell', 'action'];
+  displayedColumns: string[] = ['company_name', 'physical_address', 'postal_address', 'dept_name', 'dept_address', 'contact_name', 'contact_cell', 'contact_email', 'action'];
+  columnsToDisplay: string[] = ['company_name', 'physical_address', 'dept_name', 'contact_name', 'contact_cell', 'action'];
   dataSource!: MatTableDataSource<any>;
 
   toppings = new FormControl('');
   toppingList = [
     [
-      'companyName',
+      'company_name',
       'Company Name'
     ],
     [
-      'physicalAddress',
+      'physical_address',
       'Physical Address',
     ],
     [
-      'postalAddress',
+      'postal_address',
       'Postal Address',
     ],
     [
@@ -38,19 +39,19 @@ export class GenericCompanyComponent implements OnInit {
       'Department Name',
     ],
     [
-      'departmentAddress',
+      'dept_address',
       'DepartmenAddress',
     ],
     [
-      'contactName',
+      'contact_name',
       'Contact Name',
     ],
     [
-      'contactCell',
+      'contact_cell',
       'Contact Cell',
     ],
     [
-      'contactEmail',
+      'contact_email',
       'Contact Email',
     ],
     [
@@ -62,7 +63,7 @@ export class GenericCompanyComponent implements OnInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  constructor(private _genericService: GenericCompanyService, public dialog: MatDialog) { }
+  constructor(private _genericService: GenericCompanyService, public dialog: MatDialog, private toast: ToastService) { }
 
   ngOnInit(): void {
     this.getCompanyList();
@@ -82,7 +83,7 @@ export class GenericCompanyComponent implements OnInit {
     this._genericService.getCompanyList().subscribe({
       next: (res) => {
         console.log(res)
-        this.dataSource = new MatTableDataSource(res);
+        this.dataSource = new MatTableDataSource(res.companies);
         this.dataSource.sort = this.sort;
         this.dataSource.paginator = this.paginator;
       },
@@ -94,9 +95,7 @@ export class GenericCompanyComponent implements OnInit {
 
   openDialog() {
     const dialogRef = this.dialog.open(GenericCompanyFormComponent);
-    console.log('closed')
     dialogRef.afterClosed().subscribe(result => {
-      console.log(result)
       if (result) {
         this.getCompanyList();
       }
@@ -113,13 +112,19 @@ export class GenericCompanyComponent implements OnInit {
   }
 
   deleteCompany(id: number) {
-    this._genericService.deleteCompany(id).subscribe({
-      next: resp => {
-        alert("Company deleted");
-        this.getCompanyList();
-      },
-      error: console.log
-    })
+    this.toast.openConfirmBox('danger', 'Delete', 'Are you sure you want to delete this company?').subscribe(
+      resp => {
+        if (resp.success) {
+          this._genericService.deleteCompany(id).subscribe({
+            next: resp => {
+              this.toast.toastNotification('success', 'Company successfully deleted', '');
+              this.getCompanyList();
+            },
+            error: console.log
+          })
+        }
+      }
+    )
   }
 
   openEditForm(companyData: any) {
@@ -128,7 +133,6 @@ export class GenericCompanyComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      console.log(result)
       if (result) {
         this.getCompanyList();
       }
