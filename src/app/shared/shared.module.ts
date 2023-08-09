@@ -26,6 +26,9 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatStepperModule } from '@angular/material/stepper';
 import { MatRadioModule } from '@angular/material/radio';
 import {MatTabsModule} from '@angular/material/tabs';
+import {MatTooltipModule} from '@angular/material/tooltip';
+import {MatDatepickerModule} from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
 
 const MODULES: any[] = [
   CommonModule,
@@ -54,7 +57,10 @@ const MODULES: any[] = [
   MatProgressSpinnerModule,
   MatStepperModule,
   MatRadioModule,
-  MatTabsModule
+  MatTabsModule,
+  MatTooltipModule,
+  MatDatepickerModule,
+  MatNativeDateModule
 ];
 const COMPONENTS: any[] = [];
 const COMPONENTS_DYNAMIC: any[] = [];

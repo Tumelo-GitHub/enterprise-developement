@@ -37,7 +37,7 @@
         </mat-expansion-panel-header>
         <mat-nav-list>
           <div *ngFor="let subItem of menuItem.children; let i = index">
-            <a mat-list-item routerLinkActive="active" routerLink="{{ subItem.route }}">{{ subItem.name }}</a>
+            <a mat-list-item routerLinkActive="active" [routerLink]="subItem.route">{{ subItem.name }}</a>
             <mat-divider *ngIf="menuItem.children && menuItem.children.length - 1 != i"></mat-divider>
           </div>
         </mat-nav-list>
@@ -56,7 +56,7 @@
         (click)="drawer.toggle()">
         <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
       </button>
-      <span>DevWizard</span>
+      <span>{{client.name}}</span>
       <span class="flex-fill"></span>
       <mat-slide-toggle [(ngModel)]="isDarkTheme" labelPosition="before" (change)="storeThemeSelection()">
         <mat-icon>bedtime</mat-icon>

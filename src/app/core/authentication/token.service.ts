@@ -40,6 +40,10 @@ export class TokenService {
     return this.decode(this.getToken()).data.user;
   }
 
+  getClient() {
+    return this.decode(this.getToken()).data.client;
+  }
+
   check() {
     return !!localStorage.getItem('access_token');
   }

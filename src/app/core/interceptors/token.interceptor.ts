@@ -17,11 +17,11 @@ export class TokenInterceptor implements HttpInterceptor {
 
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
     const handler = () => {
-      if (request.url.includes('/auth/logout')) {
+      if (request.url.includes('api/user/logout')) {
         this.router.navigateByUrl('/auth/login');
       }
 
-      if (this.router.url.includes('/auth/login')) {
+      if (this.router.url.includes('api/user/login')) {
         this.router.navigateByUrl('/dashboard');
       }
     };

@@ -41,6 +41,17 @@ export interface User {
   created_at?: string;
 }
 
+export interface Client {
+  id?: number;
+  name?: string;
+  db_name?: string;
+  email?: string;
+  contact_number?: string;
+  alt_contact_number?: string;
+  start_date?: string;
+  expiry_date?: string;
+}
+
 export interface Token {
   iss: string;
   aud : string;
@@ -57,17 +68,30 @@ export interface Token {
 export class AuthService {
   public isAuthenticated = new Subject<boolean>();
   private user$ = new BehaviorSubject<User>({});
+  private client$ = new BehaviorSubject<Client>({});
 
   constructor(private http: HttpClient, private tokenService: TokenService, private router: Router) { 
   }
 
   login(data: any): Observable<any> { 
-    return this.http.post<Response>('api/login', data).pipe(
+    return this.http.post<Response>('api/user/login', data).pipe(
       delay(1000),
       tap(val => { 
         this.tokenService.save(val.access_token);
         this.user$.next(this.tokenService.decode(val.access_token).data.user as User);
+        this.client$.next(this.tokenService.decode(val.access_token).data.client as Client);
         this.isAuthenticated.next(true);
+      })
+    );
+  }
+
+  clientLogin(data: any): Observable<any> { 
+    return this.http.post<Response>('api/client/login', data).pipe(
+      delay(1000),
+      tap(val => { 
+        // this.tokenService.save(val.access_token);
+        // this.user$.next(this.tokenService.decode(val.access_token).data.user as User);
+        // this.isAuthenticated.next(true);
       })
     );
   }
@@ -83,10 +107,14 @@ export class AuthService {
     );
   }
 
-  logout(): void {
-    this.isAuthenticated.next(false);
-    this.tokenService.remove();
-    this.router.navigateByUrl('auth/login');
+  logout() {
+    return this.http.post<Response>('api/user/logout', '').pipe(
+      tap(val => { 
+        this.isAuthenticated.next(false);
+        this.tokenService.remove();
+        this.router.navigateByUrl('auth/login');
+      })
+    );
   }
 
   autoLogout() {
@@ -100,6 +128,11 @@ export class AuthService {
   user() {
     this.user$.next(this.tokenService.getUser() as User);
     return this.user$.pipe(share());
+  }
+
+  client() {
+    this.client$.next(this.tokenService.getClient() as Client);
+    return this.client$.pipe(share());
   }
 
   getClients() {

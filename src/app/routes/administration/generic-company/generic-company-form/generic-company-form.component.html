@@ -5,6 +5,14 @@
   <mat-card-content>
     <div class="row">
       <div class="col">
+          <input type="file" name="file" accept="application/pdf" placeholder="Compliance Document" (change)="onFileSelect($event)">
+      </div>
+      <div class="col">
+          
+      </div>
+  </div>
+    <!-- <div class="row">
+      <div class="col">
         <mat-form-field class="full-width">
           <input matInput placeholder="Company" formControlName="companyName">
           <mat-error *ngIf="companyForm.controls['companyName'].hasError('required')">
@@ -83,7 +91,7 @@
           </mat-error>
         </mat-form-field>
       </div>
-    </div>
+    </div> -->
   </mat-card-content>
   <mat-card-actions>
     <button mat-raised-button color="primary" type="submit">{{data ? 'Update' : 'Submit'}}</button>

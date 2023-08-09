@@ -30,12 +30,10 @@ export class EmployeeFormComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    console.log(this.data);
     this.employeeForm.patchValue(this.data);
   }
 
   onSubmit(): void {
-    console.log(this.employeeForm.value);
     // add company id
     if (this.employeeForm.valid) {
       if (this.data.id) {

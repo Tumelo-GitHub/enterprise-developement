@@ -3,9 +3,10 @@ import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { Observable } from 'rxjs';
 import { map, shareReplay } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
-import { AuthService, User } from 'src/app/core';
+import { AuthService, User, Client } from 'src/app/core';
 import { LoaderService } from 'src/app/core';
 import { OverlayContainer } from '@angular/cdk/overlay';
+import { ToastService } from 'src/app/shared/services/toast.service';
 
 export interface MenuTag {
   color: string; // background color
@@ -49,6 +50,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
   isDarkTheme: boolean = false;
   isFullScreen: boolean = false;
   user!: User;
+  client!: Client;
   loader: boolean = false;
 
   isHandset$: Observable<boolean> = this.breakpointObserver.observe(Breakpoints.Handset)
@@ -62,12 +64,14 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
     protected http: HttpClient, 
     private auth: AuthService, 
     public loaderService: LoaderService,
-    private cdr: ChangeDetectorRef) {}
+    private cdr: ChangeDetectorRef,
+    private toast: ToastService) {}
 
   ngOnInit(): void {
     this.menu();
     this.isDarkTheme = localStorage.getItem('theme') === "Dark" ? true : false;
     this.auth.user().subscribe(user => (this.user = user));
+    this.auth.client().subscribe(client => (this.client = client));
     if (this.isDarkTheme) {
       this.overlay.getContainerElement().classList.add('dark-theme-mode');
     } else {
@@ -110,7 +114,9 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
   }
 
   logout() {
-    this.auth.logout();
+    this.auth.logout().subscribe(
+      resp => this.toast.toastNotification('Sucess', '', resp.message)
+    )
   }
 
 }

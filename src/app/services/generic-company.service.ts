@@ -30,4 +30,9 @@ export class GenericCompanyService {
   getSmme() : Observable<any> {
     return this.http.get<any>('api/smme')
   }
+
+  upload(data: any) : Observable<any> {
+    console.log(data.values);
+    return this.http.post('api/document', data)
+  }
 }

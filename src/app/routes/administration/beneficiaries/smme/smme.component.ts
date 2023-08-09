@@ -7,6 +7,10 @@ import { MatTableDataSource } from '@angular/material/table';
 import { ToastService } from 'src/app/shared/services/toast.service';
 import { SmmeFormComponent } from './smme-form/smme-form.component';
 import { SmmeService } from '../../services/smme.service';
+import { TableUtil } from 'src/app/shared/utils/tableUtil';
+import { MatIconRegistry } from '@angular/material/icon';
+import { DomSanitizer } from '@angular/platform-browser';
+
 
 @Component({
   selector: 'app-smme',
@@ -23,50 +27,152 @@ export class SmmeComponent implements OnInit {
   columns = new FormControl('');
   columnsList = [
     [
-      'companyName',
-      'Company Name'
-    ],
+      'Smme Name',
+      'smme_name'
+    ], 
     [
-      'physicalAddress',
+      'Trading Name',
+      'trading_name'
+    ], 
+    [
+      'Business Type',
+      'business_type'
+    ], 
+    [
+      'Products',
+      'products'
+    ], 
+    [
+      'Description',
+      'description'
+    ], 
+    [
       'Physical Address',
-    ],
+      'street_address_1'
+    ], 
     [
-      'postalAddress',
       'Postal Address',
-    ],
+      'postal_address'
+    ], 
     [
-      'departmentName',
-      'Department Name',
-    ],
+      'Address Note',
+      'address_note'
+    ], 
     [
-      'departmentAddress',
-      'DepartmenAddress',
-    ],
+      'Contact Person',
+      'contact_person'
+    ], 
     [
-      'contactName',
-      'Contact Name',
-    ],
+      'Contact Person Position',
+      'contact_person_position'
+    ], 
     [
-      'contactCell',
-      'Contact Cell',
-    ],
+      'Tell Number',
+      'tel_number'
+    ], 
     [
-      'contactEmail',
-      'Contact Email',
-    ],
+      'Cell Number',
+      'cel_number'
+    ], 
     [
-      'action',
+      'Email',
+      'email'
+    ], 
+    [
+      'Registration',
+      'registration_number'
+    ], 
+    [
+      'Turnover Range',
+      'turnover_range'
+    ], 
+    [
+      'Website',
+      'web_address'
+    ], 
+    [
+      'Tax NUmber',
+      'tax_number'
+    ], 
+    [
+      'BBBEE',
+      'bbbee'
+    ], 
+    [
+      'Full Time Emp',
+      'full_time_emp'
+    ], 
+    [
+      'Part Time Emp',
+      'part_time_emp'
+    ], 
+    [
+      'Casual Emp',
+      'casual_emp'
+    ], 
+    [
+      'Black Owned',
+      'black_owned'
+    ], 
+    [
+      'Woman Owned',
+      'woman_owned'
+    ], 
+    [
+      'Youth Owned',
+      'youth_owned'
+    ], 
+    [
+      'Disabled Owned',
+      'disabled_owned'
+    ], 
+    [
+      'Industry',
+      'industry'
+    ], 
+    [
+      'Business Years',
+      'business_years'
+    ], 
+    [
+      'Programme',
+      'programme'
+    ], 
+    [
+      'Location Type',
+      'location_type'
+    ], 
+    [
+      'Contact Origin',
+      'contact_origin'
+    ], 
+    [
+      'Registered',
+      'registered'
+    ], 
+    [
       'Action',
+      'action'
     ]
   ];
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  constructor(public dialog: MatDialog, private toast: ToastService, private smmeService: SmmeService) { }
+  constructor(public dialog: MatDialog, private toast: ToastService, private smmeService: SmmeService, private matIconRegistry: MatIconRegistry,
+    private domSanitizer: DomSanitizer) { 
+      this.matIconRegistry.addSvgIcon(
+        `excel`,
+        this.domSanitizer.bypassSecurityTrustResourceUrl("../../../../../assets/images/microsoft-excel-icon.svg")
+      );
+    }
 
   ngOnInit(): void {
     this.getCompanyList();
+  }
+
+  exportTable() {
+    TableUtil.exportTableToExcel("ExampleMaterialTable", "Companies Beneficiaries");
   }
 
   removeColumn() {
@@ -75,14 +181,13 @@ export class SmmeComponent implements OnInit {
     }
   }
 
-  selectedToppings(toppings: any) {
-    this.columnsToDisplay = toppings.value;
+  selectedToppings(columns: any) {
+    this.columnsToDisplay = columns.value;
   }
 
   getCompanyList() {
     this.smmeService.getSmme().subscribe({
       next: (res) => {
-        console.log(res)
         this.dataSource = new MatTableDataSource(res.companies);
         this.dataSource.sort = this.sort;
         this.dataSource.paginator = this.paginator;

@@ -16,6 +16,8 @@ export class LoginComponent implements OnInit {
     password: ['123456', Validators.required]
   });
 
+  step: number = 1;
+
   constructor(private fb: FormBuilder, private auth: AuthService, private router: Router, private toast: ToastService, private bnIdle: BnNgIdleService) { }
 
   ngOnInit(): void {
@@ -29,15 +31,30 @@ export class LoginComponent implements OnInit {
 
   onSubmit(): void {
     if (this.login.valid) {
-      this.auth.login(this.login.value).subscribe(
-        (resp) => {
-          this.router.navigateByUrl('/');
-          this.toast.toastNotification('success', 'Welcome Back', resp.message);
-        },
-        err => {
-          console.log(err)
-        }
-      )
+      if (this.step === 1) {
+        this.auth.clientLogin(this.login.value).subscribe(
+          (resp) => {
+            this.toast.toastNotification('success', 'Welcome Back', resp.message);
+            this.login.reset();
+            this.step++;
+          },
+          err => {
+            console.log(err);
+            this.toast.toastNotification('danger', 'Error', err.password);
+          }
+        )
+      }
+      else if (this.step == 2) {
+        this.auth.login(this.login.value).subscribe(
+          (resp) => {
+            this.router.navigateByUrl('/');
+            this.toast.toastNotification('success', 'Welcome Back', resp.message);
+          },
+          err => {
+            console.log(err)
+          }
+        )
+      }
     }
   }
 
