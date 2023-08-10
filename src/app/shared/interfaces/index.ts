@@ -1,3 +1,29 @@
+export interface IResponseModelBase<T = {}> {
+    message: string,
+    data: T
+}
+
+export interface IUser {
+  id?: number;
+  firstName?: string; 
+  lastName?: string; 
+  phoneNumber?: string; 
+  email?: string;
+  updated_at?: string | null;
+  created_at?: string;
+}
+
+export interface IClient {
+  id?: number;
+  name?: string;
+  db_name?: string;
+  email?: string;
+  contact_number?: string;
+  alt_contact_number?: string;
+  start_date?: string;
+  expiry_date?: string;
+}
+
 export interface ICompliance {
     id: number,
     type_id: number,
@@ -12,10 +38,6 @@ export interface ICompliance {
     document_name: string
 }
 
-export interface IResponseModelBase<T = {}> {
-    message: string,
-    data: T
-}
 
 export interface IComplianceStatus {
     id: number,
@@ -28,3 +50,32 @@ export interface IComplianceType {
     type_name: string,
     date_created: string
 }
+
+export interface Menu {
+    route: string;
+    name: string;
+    type: 'link' | 'sub' | 'extLink' | 'extTabLink';
+    icon: string;
+    label?: MenuTag;
+    badge?: MenuTag;
+    children?: MenuChildrenItem[];
+    permissions: MenuPermissions;
+  }
+  
+  export interface MenuTag {
+    color: string; // background color
+    value: string;
+  }
+  
+  export interface MenuPermissions {
+    only: string | string[];
+    except: string | string[];
+  }
+  
+  export interface MenuChildrenItem {
+    route: string;
+    name: string;
+    type: 'link' | 'sub' | 'extLink' | 'extTabLink';
+    children?: MenuChildrenItem[];
+    permissions?: MenuPermissions;
+  }

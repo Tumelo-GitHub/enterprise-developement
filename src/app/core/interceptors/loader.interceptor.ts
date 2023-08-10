@@ -24,15 +24,6 @@ export class LoaderInterceptor implements HttpInterceptor {
           }
         )
       );
-    } else if (request.url.includes('/data/menu.json')) {
-      this.loaderService.isLoading$.next(true);
-      return next.handle(request).pipe(
-        finalize(
-          () => {
-            this.loaderService.isLoading$.next(false);
-          }
-        )
-      );
     } else {
       this.loaderService.isLoading$.next(true);
       return next.handle(request).pipe(

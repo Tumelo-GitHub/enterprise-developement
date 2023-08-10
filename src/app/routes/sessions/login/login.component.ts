@@ -21,12 +21,15 @@ export class LoginComponent implements OnInit {
   constructor(private fb: FormBuilder, private auth: AuthService, private router: Router, private toast: ToastService, private bnIdle: BnNgIdleService) { }
 
   ngOnInit(): void {
-    this.bnIdle.startWatching(1000).subscribe((isTimedOut: boolean) => {
-      if (isTimedOut) {
-        this.auth.logout();
-        this.bnIdle.stopTimer();
-      }
-    });
+    // console.log('testing')
+    // this.bnIdle.startWatching(60).subscribe((isTimedOut: boolean) => {
+    //   console.log('session started');
+    //   if (isTimedOut) {
+    //     console.log('seesion Expired')
+    //     this.auth.logout();
+    //     this.bnIdle.stopTimer();
+    //   }
+    // });
   }
 
   onSubmit(): void {

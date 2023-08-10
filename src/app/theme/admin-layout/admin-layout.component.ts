@@ -3,41 +3,13 @@ import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { Observable } from 'rxjs';
 import { map, shareReplay } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
-import { AuthService, User, Client } from 'src/app/core';
+import { AuthService } from 'src/app/core';
 import { LoaderService } from 'src/app/core';
 import { OverlayContainer } from '@angular/cdk/overlay';
 import { ToastService } from 'src/app/shared/services/toast.service';
-
-export interface MenuTag {
-  color: string; // background color
-  value: string;
-}
-
-export interface MenuPermissions {
-  only: string | string[];
-  except: string | string[];
-}
-
-export interface MenuChildrenItem {
-  route: string;
-  name: string;
-  type: 'link' | 'sub' | 'extLink' | 'extTabLink';
-  children?: MenuChildrenItem[];
-  permissions?: MenuPermissions;
-}
-
-export interface Menu {
-  route: string;
-  name: string;
-  type: 'link' | 'sub' | 'extLink' | 'extTabLink';
-  icon: string;
-  label?: MenuTag;
-  badge?: MenuTag;
-  children?: MenuChildrenItem[];
-  permissions: MenuPermissions;
-}
-
-
+import { Menu, IUser, IClient } from 'src/app/shared';
+import { MenuService } from 'src/app/shared/services/menu.service';
+import { BnNgIdleService } from 'bn-ng-idle';
 
 @Component({
   selector: 'app-admin-layout',
@@ -49,8 +21,8 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
   dashMenu: Menu[] = [];
   isDarkTheme: boolean = false;
   isFullScreen: boolean = false;
-  user!: User;
-  client!: Client;
+  user!: IUser;
+  client!: IClient;
   loader: boolean = false;
 
   isHandset$: Observable<boolean> = this.breakpointObserver.observe(Breakpoints.Handset)
@@ -59,16 +31,18 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
       shareReplay()
     );
 
-  constructor(private breakpointObserver: BreakpointObserver, 
+  constructor(
+    private breakpointObserver: BreakpointObserver, 
     private overlay: OverlayContainer,
     protected http: HttpClient, 
     private auth: AuthService, 
     public loaderService: LoaderService,
     private cdr: ChangeDetectorRef,
-    private toast: ToastService) {}
+    private toast: ToastService, 
+    private menuService: MenuService, 
+    private bnIdle: BnNgIdleService) {}
 
   ngOnInit(): void {
-    this.menu();
     this.isDarkTheme = localStorage.getItem('theme') === "Dark" ? true : false;
     this.auth.user().subscribe(user => (this.user = user));
     this.auth.client().subscribe(client => (this.client = client));
@@ -77,6 +51,14 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
     } else {
       this.overlay.getContainerElement().classList.remove('dark-theme-mode');
     }
+    this.menu();
+    // auto logout
+    this.bnIdle.startWatching(1800).subscribe((isTimedOut: boolean) => {
+      if (isTimedOut) {
+        this.logout();
+        this.bnIdle.stopTimer();
+      }
+    });
   }
 
   ngAfterViewChecked() {
@@ -87,9 +69,10 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
   }
 
   menu() {
-    return this.http
-      .get<{ menu: Menu[] }>('assets/data/menu.json').subscribe(
-        res => this.dashMenu = res.menu)
+    this.menuService.getMenu().subscribe({
+      next: resp => this.dashMenu = resp.data,
+      error: err => console.error(err)
+    });
   }
 
   storeThemeSelection() {
@@ -102,6 +85,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
   }
 
   getMenuByPermission(menu: Menu[]) {
+    // TODO: Menu permission at the backend
     // var permissions = NgxPermissionsService.
     // menu.forEach(singleMenu => {
     //   if (singleMenu.permissions?.only?.includes(''))
