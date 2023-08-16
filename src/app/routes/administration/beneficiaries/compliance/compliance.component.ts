@@ -134,14 +134,17 @@ export class ComplianceComponent implements OnInit {
     }
   }
 
-  deleteCompliance(id: number) {
+  deleteCompliance(compliance: ICompliance) {
+    const index = this.compliances.indexOf(compliance);
     this.toast.openConfirmBox('danger', 'Delete', 'Are you sure you want to delete this?').subscribe(
       resp => {
         if (resp.success) {
-          this.complianceService.delete(id).subscribe({
+          this.complianceService.delete(compliance.id).subscribe({
             next: resp => {
               this.toast.toastNotification('success', resp.message, '');
-              this.getComplianceList(this.company_id);
+              // this.getComplianceList(this.company_id);
+              this.compliances.splice(index, 1);
+              this.dataSource = new MatTableDataSource(this.compliances);
             },
             error: console.log
           })

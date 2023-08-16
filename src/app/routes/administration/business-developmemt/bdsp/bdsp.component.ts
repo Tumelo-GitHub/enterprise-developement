@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output, ViewChild } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
@@ -17,7 +17,9 @@ export class BdspComponent implements OnInit {
   displayedColumns: string[] = ['bdsp_name', 'physical_address', 'postal_address', 'tell_number', 'cell_number', 'email', 'description', 'registration', 'tax_number', 'bbbee_level', 'products', 'action'];
   columnsToDisplay: string[] = ['bdsp_name', 'physical_address', 'postal_address', 'cell_number', 'email', 'description', 'products', 'action'];
   dataSource!: MatTableDataSource<any>;
-  clickedRow: any;
+  companyList: any[] = [];
+  clickedRow: any = null;
+  @Output() onCompanySelect: EventEmitter<any> = new EventEmitter();
 
   columns = new FormControl('');
   columnsList = [
@@ -80,8 +82,9 @@ export class BdspComponent implements OnInit {
 
   getCompanyList() {
     this.bdspService.getBdsp().subscribe({
-      next: (res) => {
-        this.dataSource = new MatTableDataSource(res.companies);
+      next: (resp) => {
+        this.companyList = resp.data;
+        this.dataSource = new MatTableDataSource(this.companyList);
         this.dataSource.sort = this.sort;
         this.dataSource.paginator = this.paginator;
       },
@@ -141,7 +144,7 @@ export class BdspComponent implements OnInit {
   }
 
   getClickedRow(row: any) {
-    // this.clickedRow = row;
-    // this.onCompanySelect.emit(row);
+    this.clickedRow = row;
+    this.onCompanySelect.emit(row);
   }
 }

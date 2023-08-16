@@ -18,6 +18,9 @@ import { BdspEmployeeComponent } from './business-developmemt/bdsp-employee/bdsp
 import { BdspFormComponent } from './business-developmemt/bdsp/bdsp-form/bdsp-form.component';
 import { EmployeeFormComponent } from './beneficiaries/employee/employee-form/employee-form.component';
 import { ComplianceFormComponent } from './beneficiaries/compliance/compliance-form/compliance-form.component';
+import { BdspEmployeeFormComponent } from './business-developmemt/bdsp-employee/bdsp-employee-form/bdsp-employee-form.component';
+import { ProgrammeTableComponent } from './programme/programme-table/programme-table.component';
+import { ProgrammeFormComponent } from './programme/programme-table/programme-form/programme-form.component';
 
 
 @NgModule({
@@ -37,7 +40,10 @@ import { ComplianceFormComponent } from './beneficiaries/compliance/compliance-f
     BdspEmployeeComponent,
     BdspFormComponent,
     EmployeeFormComponent,
-    ComplianceFormComponent
+    ComplianceFormComponent,
+    BdspEmployeeFormComponent,
+    ProgrammeTableComponent,
+    ProgrammeFormComponent
   ],
   imports: [
     SharedModule,

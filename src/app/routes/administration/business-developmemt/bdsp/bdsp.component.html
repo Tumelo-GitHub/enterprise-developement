@@ -113,9 +113,9 @@
         </div>
         <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" [showFirstLastButtons]="true" aria-label="Select page of users"></mat-paginator>
       </div>    
-    <div class="settings-btn" color="primary">
-        <button mat-icon-button aria-label="Example icon button with a home icon" color="primary" class="add-btn" (click)="openDialog()">
+      <div class="add-btn-wrapper" color="primary">
+        <button mat-fab matTooltip="Add Company" aria-label="Add BDSP Button with icon" class="add-btn" (click)="openDialog()">
           <mat-icon>add</mat-icon>
         </button>
-    </div>
+      </div>
 </div>

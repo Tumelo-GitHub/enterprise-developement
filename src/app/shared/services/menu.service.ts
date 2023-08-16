@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { IResponseModelBase, Menu } from '../interfaces';
+import { IResponseModelBase, IMenu } from '../interfaces';
 import { Observable } from 'rxjs';
 
 @Injectable({
@@ -10,7 +10,7 @@ export class MenuService {
 
   constructor(private http: HttpClient) { }
 
-  getMenu() : Observable<IResponseModelBase<Menu[]>> {
-    return this.http.get<IResponseModelBase<Menu[]>>('api/menu');
+  getMenu() : Observable<IResponseModelBase<IMenu[]>> {
+    return this.http.get<IResponseModelBase<IMenu[]>>('api/menu');
   }
 }

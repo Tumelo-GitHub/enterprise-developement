@@ -21,6 +21,7 @@ export class SmmeComponent implements OnInit {
   displayedColumns: string[] = ['smme_name', 'trading_name', 'business_type', 'products', 'description', 'street_address_1', 'postal_address', 'address_note', 'contact_person', 'contact_person_position', 'tel_number', 'cel_number', 'email', 'registration_number', 'turnover_range', 'web_address', 'tax_number', 'bbbee', 'full_time_emp', 'part_time_emp', 'casual_emp', 'black_owned', 'woman_owned', 'youth_owned', 'disabled_owned', 'industry', 'business_years', 'programme', 'location_type', 'contact_origin', 'registered', 'action'];
   columnsToDisplay: string[] = ['smme_name', 'street_address_1', 'contact_person', 'cel_number', 'email', 'programme', 'location_type', 'action'];
   dataSource!: MatTableDataSource<any>;
+  companyList: any[] = [];
   clickedRow = null;
   @Output() onCompanySelect: EventEmitter<any> = new EventEmitter();
 
@@ -187,11 +188,11 @@ export class SmmeComponent implements OnInit {
 
   getCompanyList() {
     this.smmeService.getSmme().subscribe({
-      next: (res) => {
-        this.dataSource = new MatTableDataSource(res.companies);
+      next: (resp) => {
+        this.companyList = resp.data;
+        this.dataSource = new MatTableDataSource(this.companyList);
         this.dataSource.sort = this.sort;
         this.dataSource.paginator = this.paginator;
-        // this.toast.toastNotification('success', 'Success', res.message);
       },
       error: (err) => {
         console.log(err)

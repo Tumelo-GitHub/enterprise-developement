@@ -1,0 +1,57 @@
+<form [formGroup]="employeeForm" novalidate (ngSubmit)="onSubmit()">
+    <h2 mat-dialog-title>Employee Information</h2>
+    <mat-dialog-content class="mat-typography">
+        <div class="row">
+            <div class="col">
+                <mat-form-field class="full-width">
+                    <input matInput placeholder="Name" formControlName="name">
+                    <mat-error *ngIf="employeeForm.controls['name'].hasError('required')">
+                        Name is <strong>required</strong>
+                    </mat-error>
+                </mat-form-field>
+            </div>
+            <div class="col">
+                <mat-form-field class="full-width">
+                    <input matInput placeholder="Surname" formControlName="surname">
+                    <mat-error *ngIf="employeeForm.controls['surname'].hasError('required')">
+                        Name is <strong>required</strong>
+                    </mat-error>
+                </mat-form-field>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <mat-form-field class="full-width">
+                    <input matInput placeholder="Position" formControlName="position">
+                </mat-form-field>
+            </div>
+            <div class="col">
+                <mat-form-field class="full-width">
+                    <input matInput placeholder="Role" formControlName="role">
+                </mat-form-field>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <mat-form-field class="full-width">
+                    <input matInput placeholder="Contact Number" formControlName="cell_number">
+                    <mat-error *ngIf="employeeForm.controls['cell_number'].hasError('required')">
+                        Contact Number is <strong>required</strong>
+                    </mat-error>
+                </mat-form-field>
+            </div>
+            <div class="col">
+                <mat-form-field class="full-width">
+                    <input matInput placeholder="Email" formControlName="email">
+                    <mat-error *ngIf="employeeForm.controls['email'].hasError('required')">
+                        Email is <strong>required</strong>
+                    </mat-error>
+                </mat-form-field>
+            </div>
+        </div>
+    </mat-dialog-content>
+    <mat-dialog-actions align="end">
+        <button mat-button mat-dialog-close>Cancel</button>
+        <button type="submit" mat-button [mat-dialog-close]="true" cdkFocusInitial>Submit</button>
+    </mat-dialog-actions>
+</form>

@@ -32,7 +32,7 @@
     <mat-accordion>
       <mat-expansion-panel *ngFor="let menuItem of dashMenu" >
         <mat-expansion-panel-header>
-          <mat-icon>{{ menuItem.icon }}</mat-icon>
+          <mat-icon class="menu-item-icon">{{ menuItem.icon }}</mat-icon>
           <span class="menu-name">{{ menuItem.name }}</span>
         </mat-expansion-panel-header>
         <mat-nav-list>
@@ -58,19 +58,22 @@
       </button>
       <span>{{client.name}}</span>
       <span class="flex-fill"></span>
-      <mat-slide-toggle [(ngModel)]="isDarkTheme" labelPosition="before" (change)="storeThemeSelection()">
+      <!-- <mat-slide-toggle [(ngModel)]="isDarkTheme" labelPosition="before" (change)="storeThemeSelection()">
         <mat-icon>bedtime</mat-icon>
-      </mat-slide-toggle>
+      </mat-slide-toggle> -->
+      <button mat-icon-button aria-label="Example icon button with a home icon" (click)="storeThemeSelection()">
+        <mat-icon>{{ (isDarkTheme) ? 'light_mode' : 'dark_mode' }}</mat-icon>
+      </button>
       <button mat-icon-button aria-label="Example icon button with a home icon">
         <mat-icon>search</mat-icon>
       </button>
       <button mat-icon-button aria-label="Example icon button with a home icon">
         <mat-icon (click)="toggleFullScreen()">fullscreen</mat-icon>
       </button>
-      <button mat-icon-button aria-label="Example icon button with a home icon">
+      <button mat-icon-button aria-label="Example icon button with a home icon" (click)="printScreen()">
         <mat-icon>notifications</mat-icon>
       </button>
-      <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Example icon button with a vertical three dot icon">
+      <button mat-icon-button matBadge="15" matBadgeColor="warn" [matMenuTriggerFor]="menu" aria-label="Example icon button with a vertical three dot icon">
         <mat-icon>more_vert</mat-icon>
       </button>
       <mat-menu #menu="matMenu">

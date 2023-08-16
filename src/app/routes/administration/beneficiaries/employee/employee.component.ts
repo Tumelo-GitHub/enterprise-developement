@@ -7,6 +7,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { SmmeEmpService } from '../../services/smme-emp.service';
 import { EmployeeFormComponent } from './employee-form/employee-form.component';
 import { ToastService } from 'src/app/shared/services/toast.service';
+import { IEmployee } from 'src/app/shared';
 
 @Component({
   selector: 'app-employee',
@@ -18,6 +19,7 @@ export class EmployeeComponent implements OnInit {
   displayedColumns: string[] = ['name', 'surname', 'position', 'role', 'cell_number', 'email', 'action'];
   columnsToDisplay: string[] = this.displayedColumns;
   dataSource!: MatTableDataSource<any>;
+  employeeList: IEmployee[] = [];
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
@@ -39,8 +41,9 @@ export class EmployeeComponent implements OnInit {
   getEmployeeList(id: number) {
     if (id !== 0) {
       this.empService.getEmpByCompany(id).subscribe({
-        next: (res) => {
-          this.dataSource = new MatTableDataSource(res.employees);
+        next: (resp) => {
+          this.employeeList = resp.data;
+          this.dataSource = new MatTableDataSource(this.employeeList);
           this.dataSource.sort = this.sort;
           this.dataSource.paginator = this.paginator;
         },
@@ -52,14 +55,22 @@ export class EmployeeComponent implements OnInit {
   }
 
 
-  openDialog() {
+  openDialog(data: any = {}) {
+    const index = this.employeeList.indexOf(data);
+    data['company'] = this.company_id;
+
     const dialogRef = this.dialog.open(EmployeeFormComponent, {
-      data: {'company' : this.company_id},
+      data,
       panelClass: 'form-dialog'
     });
-    dialogRef.afterClosed().subscribe(result => {
+    dialogRef.afterClosed().subscribe((result: IEmployee) => {
       if (result) {
-        this.getEmployeeList(this.company_id);
+        if (index >= 0) {
+          this.employeeList[index] = result;
+        } else {
+          this.employeeList.push(result);
+        }
+        this.dataSource = new MatTableDataSource(this.employeeList); 
       }
     });
   }
@@ -73,14 +84,16 @@ export class EmployeeComponent implements OnInit {
     }
   }
 
-  deleteEmp(id: number) {
+  deleteEmp(employee: IEmployee) {
+    const index = this.employeeList.indexOf(employee);
     this.toast.openConfirmBox('danger', 'Delete', 'Are you sure you want to delete this employee?').subscribe(
       resp => {
         if (resp.success) {
-          this.empService.delete(id).subscribe({
+          this.empService.delete(employee.id).subscribe({
             next: resp => {
               this.toast.toastNotification('success', resp.message, '');
-              this.getEmployeeList(this.company_id);
+              this.employeeList.splice(index, 1);
+              this.dataSource = new MatTableDataSource(this.employeeList);
             },
             error: console.log
           })
@@ -88,18 +101,4 @@ export class EmployeeComponent implements OnInit {
       }
     )
   }
-
-  openEditForm(data: any) {
-    const dialogRef = this.dialog.open(EmployeeFormComponent, {
-      data: data,
-      panelClass: 'form-dialog'
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        this.getEmployeeList(this.company_id);
-      }
-    });
-  }
-
 }

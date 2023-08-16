@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { IResponseModelBase } from 'src/app/shared';
 
 @Injectable({
   providedIn: 'root'
@@ -13,19 +14,19 @@ export class SmmeService {
     return this.http.delete(`api/smme/${id}`);
   }
 
-  getSmme() : Observable<any> {
-    return this.http.get<any>('api/smme')
+  getSmme() : Observable<IResponseModelBase<any>> {
+    return this.http.get<IResponseModelBase<any>>("api/smme");
   }
 
-  create(data: any) {
-    return this.http.post<any>('api/smme', data)
+  create(data: any) : Observable<IResponseModelBase<any>> {
+    return this.http.post<IResponseModelBase<any>>('api/smme', data)
   }
 
-  getCompanyById(id: number) {
-    return this.http.get<any>(`api/smme/${id}`)
+  getCompanyById(id: number) : Observable<IResponseModelBase<any>> {
+    return this.http.get<IResponseModelBase<any>>(`api/smme/${id}`)
   }
 
-  update(id: number, data: any) : Observable<any> {
-    return this.http.post<any>(`api/smme/${id}`, data);
+  update(id: number, data: any) : Observable<IResponseModelBase<any>> {
+    return this.http.post<IResponseModelBase<any>>(`api/smme/${id}`, data);
   }
 }

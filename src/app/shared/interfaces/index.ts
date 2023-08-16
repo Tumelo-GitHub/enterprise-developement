@@ -51,7 +51,7 @@ export interface IComplianceType {
     date_created: string
 }
 
-export interface Menu {
+export interface IMenu {
     route: string;
     name: string;
     type: 'link' | 'sub' | 'extLink' | 'extTabLink';
@@ -78,4 +78,30 @@ export interface Menu {
     type: 'link' | 'sub' | 'extLink' | 'extTabLink';
     children?: MenuChildrenItem[];
     permissions?: MenuPermissions;
+  }
+
+  export interface IEmployee {
+    id: number,
+    company: number,
+    name: string,
+    surname: string,
+    position: string,
+    role: string,
+    cell_number: string,
+    email: string
+  }
+
+  export interface IProgramme {
+    id: number,
+    programme_name: string,
+    description: string,
+    programme_type: number,
+    generic_company_id: number,
+    start_date: string,
+    end_date: string,
+    sponsor_name: string,
+    sponsor_surname: string,
+    sponsor_cell: string,
+    sponsor_alt_cell: string,
+    sponsor_email: string
   }

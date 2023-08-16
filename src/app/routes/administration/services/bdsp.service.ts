@@ -18,7 +18,6 @@ export class BdspService {
   }
 
   update(id: number, data: any) : Observable<any> {
-    console.log(data);
     return this.http.post<any>(`api/bdsp/${id}`, data);
   }
 

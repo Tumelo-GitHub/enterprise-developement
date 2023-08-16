@@ -4,7 +4,7 @@
     </div>
     <mat-tab-group animationDuration="0ms">
         <mat-tab label="BDSP">
-            <app-bdsp></app-bdsp>
+            <app-bdsp (onCompanySelect)="selectedCompany($event)"></app-bdsp>
         </mat-tab>
         <mat-tab label="Employee">
             <app-bdsp-employee></app-bdsp-employee>

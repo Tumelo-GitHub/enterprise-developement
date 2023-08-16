@@ -39,9 +39,9 @@ export class EmployeeFormComponent implements OnInit {
       if (this.data.id) {
         // update existing record
         this.empService.update(this.data.id, this.employeeForm.value).subscribe({
-          next: (val : any) => {
+          next: (val) => {
             this.toast.toastNotification('success', 'Success', val.message);
-            this.dialogRef.close(true);
+            this.dialogRef.close(val.data);
           },
           error: (err: any) => {
             this.toast.toastNotification('danger', 'Failed', err.message);
@@ -51,9 +51,9 @@ export class EmployeeFormComponent implements OnInit {
       } else {
         // add new record
         this.empService.create(this.employeeForm.value).subscribe({
-          next: (val : any) => {
+          next: (val) => {
             this.toast.toastNotification('success', 'Success', val.message);
-            this.dialogRef.close(true);
+            this.dialogRef.close(val.data);
           },
           error: (err: any) => {
             this.toast.toastNotification('danger', 'Failed', err.message);

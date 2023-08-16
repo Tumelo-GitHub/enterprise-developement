@@ -5,7 +5,7 @@
         <div class="row">
             <div class="col">
             <mat-form-field class="full-width">
-                <input matInput placeholder="Company Name" formControlName="bdsp_name">
+                <input matInput cdkFocusInitial placeholder="Company Name" formControlName="bdsp_name">
                 <mat-error *ngIf="bdspForm.controls['bdsp_name'].hasError('required')">
                 Company name is <strong>required</strong>
                 </mat-error>
@@ -78,6 +78,6 @@
     </mat-dialog-content>
     <mat-dialog-actions align="end">
         <button mat-button mat-dialog-close>Cancel</button>
-        <button type="submit" mat-button [mat-dialog-close]="true" cdkFocusInitial>Submit</button>
+        <button type="submit" mat-button>Submit</button>
     </mat-dialog-actions>
 </form>

@@ -7,7 +7,7 @@ import { AuthService } from 'src/app/core';
 import { LoaderService } from 'src/app/core';
 import { OverlayContainer } from '@angular/cdk/overlay';
 import { ToastService } from 'src/app/shared/services/toast.service';
-import { Menu, IUser, IClient } from 'src/app/shared';
+import { IMenu, IUser, IClient } from 'src/app/shared';
 import { MenuService } from 'src/app/shared/services/menu.service';
 import { BnNgIdleService } from 'bn-ng-idle';
 
@@ -18,7 +18,7 @@ import { BnNgIdleService } from 'bn-ng-idle';
 })
 export class AdminLayoutComponent implements OnInit, AfterViewChecked {
 
-  dashMenu: Menu[] = [];
+  dashMenu: IMenu[] = [];
   isDarkTheme: boolean = false;
   isFullScreen: boolean = false;
   user!: IUser;
@@ -76,7 +76,11 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
   }
 
   storeThemeSelection() {
+    // toggle theme flag
+    this.isDarkTheme = !this.isDarkTheme;
+    // set local storage theme
     localStorage.setItem('theme', this.isDarkTheme ? "Dark" : "Ligiht");
+    // checnge UI theme class
     if (this.isDarkTheme) {
       this.overlay.getContainerElement().classList.add('dark-theme-mode');
     } else {
@@ -84,7 +88,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
     }
   }
 
-  getMenuByPermission(menu: Menu[]) {
+  getMenuByPermission(menu: IMenu[]) {
     // TODO: Menu permission at the backend
     // var permissions = NgxPermissionsService.
     // menu.forEach(singleMenu => {
@@ -103,4 +107,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
     )
   }
 
+  printScreen() {
+    window.print();
+  }
 }

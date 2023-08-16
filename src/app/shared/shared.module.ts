@@ -29,6 +29,7 @@ import {MatTabsModule} from '@angular/material/tabs';
 import {MatTooltipModule} from '@angular/material/tooltip';
 import {MatDatepickerModule} from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
+import {MatBadgeModule} from '@angular/material/badge';
 
 const MODULES: any[] = [
   CommonModule,
@@ -60,7 +61,8 @@ const MODULES: any[] = [
   MatTabsModule,
   MatTooltipModule,
   MatDatepickerModule,
-  MatNativeDateModule
+  MatNativeDateModule,
+  MatBadgeModule
 ];
 const COMPONENTS: any[] = [];
 const COMPONENTS_DYNAMIC: any[] = [];

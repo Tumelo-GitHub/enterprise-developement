@@ -43,7 +43,7 @@ export class LoginComponent implements OnInit {
           },
           err => {
             console.log(err);
-            this.toast.toastNotification('danger', 'Error', err.password);
+            this.toast.toastNotification('danger', 'Error', err.error.password);
           }
         )
       }
@@ -55,6 +55,7 @@ export class LoginComponent implements OnInit {
           },
           err => {
             console.log(err)
+            this.toast.toastNotification('danger', 'Error', err.error.password);
           }
         )
       }
