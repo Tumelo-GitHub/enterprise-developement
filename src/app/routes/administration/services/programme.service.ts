@@ -17,4 +17,28 @@ export class ProgrammeService {
   delete(id: number) : Observable<any> {
     return this.http.delete(`api/programme/${id}`);
   }
+
+  create(data: any): Observable<IResponseModelBase<any>> {
+    return this.http.post<IResponseModelBase<any>>(`api/programme`, data);
+  }
+
+  update(id: number, data: any) : Observable<IResponseModelBase<any>> {
+    return this.http.post<IResponseModelBase<any>>(`api/programme/${id}`, data)
+  }
+
+  getProgrammeTypes() : Observable<IResponseModelBase<any>> {
+    return this.http.get<IResponseModelBase<any>>('api/programme-types');
+  }
+
+  getAppointedBeneficiaries(id: number) : Observable<any> {
+    return this.http.get(`api/appoint/smme/${id}`);
+  }
+
+  appointBeneficiaries(data : any) : Observable<any> {
+    return this.http.post(`api/appoint/smme`, data);
+  }
+
+  deleteAppointment(id: number) : Observable<any> {
+    return this.http.delete(`api/appoint/smme/${id}`);
+  }
 }

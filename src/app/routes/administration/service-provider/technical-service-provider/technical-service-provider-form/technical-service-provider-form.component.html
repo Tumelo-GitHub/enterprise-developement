@@ -1,0 +1,85 @@
+<form [formGroup]="techServiceProForm" novalidate (ngSubmit)="onSubmit()">
+    <h2 mat-dialog-title>Service Provider Information</h2>
+    <mat-dialog-content class="mat-typography">
+        <div class="row">
+            <div class="col">
+                <mat-form-field class="full-width">
+                    <input matInput placeholder="Full Name" formControlName="full_name">
+                    <mat-error *ngIf="techServiceProForm.controls['full_name'].hasError('required')">
+                        Name is <strong>required</strong>
+                    </mat-error>
+                </mat-form-field>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <mat-form-field class="full-width">
+                    <input matInput placeholder="Physical Address" formControlName="physical_address">
+                    <mat-error *ngIf="techServiceProForm.controls['physical_address'].hasError('required')">
+                        Physical Address is <strong>required</strong>
+                    </mat-error>
+                </mat-form-field>
+            </div>
+            <div class="col">
+                <mat-form-field class="full-width">
+                    <input matInput placeholder="Poastal Address" formControlName="postal_address">
+                </mat-form-field>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <mat-form-field class="full-width">
+                    <input type="email" matInput placeholder="Email" formControlName="email">
+                    <mat-error *ngIf="techServiceProForm.controls['email'].hasError('required')">
+                        Email is <strong>required</strong>
+                    </mat-error>
+                </mat-form-field>
+            </div>
+            <div class="col">
+                <mat-form-field class="full-width">
+                    <input matInput placeholder="Tax Number" formControlName="tax_number">
+                </mat-form-field>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <mat-form-field class="full-width">
+                    <input matInput placeholder="Cell Number" formControlName="cell_number">
+                </mat-form-field>
+            </div>
+            <div class="col">
+                <mat-form-field class="full-width">
+                    <input matInput placeholder="Tell Number" formControlName="tel_number">
+                </mat-form-field>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <mat-form-field class="full-width">
+                    <input matInput placeholder="Registration Number" formControlName="registration_num">
+                </mat-form-field>
+            </div>
+            <div class="col">
+                <mat-form-field class="full-width">
+                    <input type="number" matInput placeholder="BBBEE Level" formControlName="bbbee_level">
+                </mat-form-field>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <mat-form-field class="full-width">
+                    <textarea matInput placeholder="Products & Services" formControlName="products"></textarea>
+                </mat-form-field>
+            </div>
+            <div class="col">
+                <mat-form-field class="full-width">
+                    <textarea matInput placeholder="Description" formControlName="description"></textarea>
+                </mat-form-field>
+            </div>
+        </div>
+    </mat-dialog-content>
+    <mat-dialog-actions align="end">
+        <button mat-button mat-dialog-close>Cancel</button>
+        <button type="submit" mat-button [disabled]="!techServiceProForm.valid">Submit</button>
+    </mat-dialog-actions>
+</form>

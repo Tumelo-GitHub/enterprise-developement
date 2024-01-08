@@ -2,7 +2,7 @@
     <div class="table-controls">
       <mat-form-field>
           <mat-label for="">Table columns</mat-label>
-          <mat-select [formControl]="columns" [(ngModel)]="columnsToDisplay" (selectionChange)="selectedColumns($event)" multiple>
+          <mat-select [(ngModel)]="columnsToDisplay"  multiple>
             <mat-option *ngFor="let column of columnsList" [value]="column[1]">{{column[0]}}</mat-option>
           </mat-select>
       </mat-form-field>
@@ -33,12 +33,12 @@
   
             <ng-container matColumnDef="programme_type">
               <th mat-header-cell *matHeaderCellDef mat-sort-header> Programme Type </th>
-              <td mat-cell *matCellDef="let row"> {{row.programme_type}} </td>
+              <td mat-cell *matCellDef="let row"> {{row.type_name}} </td>
             </ng-container>
   
             <ng-container matColumnDef="generic_company_id">
               <th mat-header-cell *matHeaderCellDef mat-sort-header> Generic Company </th>
-              <td mat-cell *matCellDef="let row"> {{row.generic_company_id}} </td>
+              <td mat-cell *matCellDef="let row"> {{row.company_name}} </td>
             </ng-container>
   
             <ng-container matColumnDef="start_date">

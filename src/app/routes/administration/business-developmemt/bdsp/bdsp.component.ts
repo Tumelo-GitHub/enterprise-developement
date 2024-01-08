@@ -7,6 +7,8 @@ import { MatTableDataSource } from '@angular/material/table';
 import { ToastService } from 'src/app/shared/services/toast.service';
 import { BdspService } from '../../services/bdsp.service';
 import { BdspFormComponent } from './bdsp-form/bdsp-form.component';
+import { TableUtil } from 'src/app/shared/utils/tableUtil';
+import { IBDSP } from 'src/app/shared';
 
 @Component({
   selector: 'app-bdsp',
@@ -17,43 +19,55 @@ export class BdspComponent implements OnInit {
   displayedColumns: string[] = ['bdsp_name', 'physical_address', 'postal_address', 'tell_number', 'cell_number', 'email', 'description', 'registration', 'tax_number', 'bbbee_level', 'products', 'action'];
   columnsToDisplay: string[] = ['bdsp_name', 'physical_address', 'postal_address', 'cell_number', 'email', 'description', 'products', 'action'];
   dataSource!: MatTableDataSource<any>;
-  companyList: any[] = [];
-  clickedRow: any = null;
+  companyList: IBDSP[] = [];
+  clickedRow!: IBDSP;
   @Output() onCompanySelect: EventEmitter<any> = new EventEmitter();
 
   columns = new FormControl('');
   columnsList = [
     [
-      'companyName',
+      'bdsp_name',
       'Company Name'
     ],
     [
-      'physicalAddress',
+      'physical_address',
       'Physical Address',
     ],
     [
-      'postalAddress',
+      'postal_address',
       'Postal Address',
     ],
     [
-      'departmentName',
-      'Department Name',
+      'tell_number',
+      'Tel Number',
     ],
     [
-      'departmentAddress',
-      'DepartmenAddress',
+      'cell_number',
+      'Cell Number',
     ],
     [
-      'contactName',
-      'Contact Name',
+      'email',
+      'Email',
     ],
     [
-      'contactCell',
-      'Contact Cell',
+      'description',
+      'Description',
     ],
     [
-      'contactEmail',
-      'Contact Email',
+      'registration',
+      'Registration',
+    ],
+    [
+      'tax_number',
+      'Tax Number',
+    ],
+    [
+      'bbbee_level',
+      'BBBEE Level',
+    ],
+    [
+      'products',
+      'Products',
     ],
     [
       'action',
@@ -68,6 +82,14 @@ export class BdspComponent implements OnInit {
 
   ngOnInit(): void {
     this.getCompanyList();
+  }
+
+  exportTable() {
+    TableUtil.exportTableToExcel("bdsp", "bdsp");
+  }
+
+  exportTableToPDF() {
+    TableUtil.exportTableToPDF("bdsp", "bdsp", "Business Development Companies Information", "l");
   }
 
   removeColumn() {
@@ -143,7 +165,7 @@ export class BdspComponent implements OnInit {
     });
   }
 
-  getClickedRow(row: any) {
+  getClickedRow(row: IBDSP) {
     this.clickedRow = row;
     this.onCompanySelect.emit(row);
   }

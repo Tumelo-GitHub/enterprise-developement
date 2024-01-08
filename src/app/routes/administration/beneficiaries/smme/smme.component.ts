@@ -10,6 +10,7 @@ import { SmmeService } from '../../services/smme.service';
 import { TableUtil } from 'src/app/shared/utils/tableUtil';
 import { MatIconRegistry } from '@angular/material/icon';
 import { DomSanitizer } from '@angular/platform-browser';
+import { setBeneficiaries } from 'src/app/shared/common/devwizarrd.constants';
 
 
 @Component({
@@ -176,6 +177,10 @@ export class SmmeComponent implements OnInit {
     TableUtil.exportTableToExcel("ExampleMaterialTable", "Companies Beneficiaries");
   }
 
+  exportTableToPDF() {
+    TableUtil.exportTableToPDF("ExampleMaterialTable", "Companies Beneficiaries", "Company Beneficiaries", "l");
+  }
+
   removeColumn() {
     if (this.columnsToDisplay.length) {
       this.columnsToDisplay.pop();
@@ -190,6 +195,7 @@ export class SmmeComponent implements OnInit {
     this.smmeService.getSmme().subscribe({
       next: (resp) => {
         this.companyList = resp.data;
+        setBeneficiaries(this.companyList);
         this.dataSource = new MatTableDataSource(this.companyList);
         this.dataSource.sort = this.sort;
         this.dataSource.paginator = this.paginator;

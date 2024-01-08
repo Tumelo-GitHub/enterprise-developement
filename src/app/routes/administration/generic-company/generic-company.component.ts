@@ -3,10 +3,10 @@ import {MatDialog} from '@angular/material/dialog';
 import {MatPaginator} from '@angular/material/paginator';
 import {MatSort} from '@angular/material/sort';
 import {MatTableDataSource} from '@angular/material/table';
-import { GenericCompanyService } from 'src/app/services/generic-company.service';
 import {FormControl} from '@angular/forms';
 import { GenericCompanyFormComponent } from './generic-company-form/generic-company-form.component';
 import { ToastService } from 'src/app/shared/services/toast.service';
+import { GenericCompanyService } from '../services/generic-company.service';
 
 @Component({
   selector: 'app-generic-company',
@@ -63,7 +63,11 @@ export class GenericCompanyComponent implements OnInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  constructor(private _genericService: GenericCompanyService, public dialog: MatDialog, private toast: ToastService) { }
+  constructor(
+    private _genericService: GenericCompanyService, 
+    public dialog: MatDialog, 
+    private toast: ToastService
+    ) { }
 
   ngOnInit(): void {
     this.getCompanyList();
@@ -83,7 +87,7 @@ export class GenericCompanyComponent implements OnInit {
     this._genericService.getCompanyList().subscribe({
       next: (res) => {
         console.log(res)
-        this.dataSource = new MatTableDataSource(res.companies);
+        this.dataSource = new MatTableDataSource(res.data);
         this.dataSource.sort = this.sort;
         this.dataSource.paginator = this.paginator;
       },
@@ -115,7 +119,7 @@ export class GenericCompanyComponent implements OnInit {
     this.toast.openConfirmBox('danger', 'Delete', 'Are you sure you want to delete this company?').subscribe(
       resp => {
         if (resp.success) {
-          this._genericService.deleteCompany(id).subscribe({
+          this._genericService.delete(id).subscribe({
             next: resp => {
               this.toast.toastNotification('success', 'Company successfully deleted', '');
               this.getCompanyList();

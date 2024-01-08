@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { IBDSP } from 'src/app/shared';
 
 @Component({
   selector: 'app-business-developmemt',
@@ -6,16 +7,16 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./business-developmemt.component.scss']
 })
 export class BusinessDevelopmemtComponent implements OnInit {
-  company = '';
-  company_id = 0;
+  company!: IBDSP;
+  id = 0;
 
   constructor() { }
 
   ngOnInit(): void {
   }
 
-  selectedCompany(company: any) {
-    this.company = company.smme_name;
-    this.company_id = company.id;
+  selectedCompany(company: IBDSP) {
+    this.id = company.id;
+    this.company = company;
   }
 }

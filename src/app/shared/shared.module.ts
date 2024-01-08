@@ -27,9 +27,11 @@ import { MatStepperModule } from '@angular/material/stepper';
 import { MatRadioModule } from '@angular/material/radio';
 import {MatTabsModule} from '@angular/material/tabs';
 import {MatTooltipModule} from '@angular/material/tooltip';
+import { MatRippleModule, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
 import {MatDatepickerModule} from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import {MatBadgeModule} from '@angular/material/badge';
+import {MatChipsModule} from '@angular/material/chips';
 
 const MODULES: any[] = [
   CommonModule,
@@ -62,7 +64,9 @@ const MODULES: any[] = [
   MatTooltipModule,
   MatDatepickerModule,
   MatNativeDateModule,
-  MatBadgeModule
+  MatBadgeModule,
+  MatRippleModule,
+  MatChipsModule
 ];
 const COMPONENTS: any[] = [];
 const COMPONENTS_DYNAMIC: any[] = [];
@@ -73,5 +77,21 @@ const PIPES: any[] = [];
   imports: [...MODULES],
   exports: [...MODULES, ...COMPONENTS, ...DIRECTIVES, ...PIPES],
   declarations: [...COMPONENTS, ...COMPONENTS_DYNAMIC, ...DIRECTIVES, ...PIPES],
+  providers: [
+    {
+      provide: MAT_DATE_FORMATS,
+      useValue: {
+        parse: {
+          dateInput: 'DD-MM-YYYY',
+        },
+        display: {
+          dateInput: 'DD-MM-YYYY',
+          monthYearLabel: 'YYYY MMM',
+          dateA11yLabel: 'LL',
+          monthYearA11yLabel: 'YYYY MMM',
+        },
+      },
+    }
+  ]
 })
 export class SharedModule { }

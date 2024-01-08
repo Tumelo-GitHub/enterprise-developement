@@ -19,11 +19,11 @@ export class ToastService {
 
   /**
    * Function to render toast messages
+   * @param toastType - SUCCESS | INFO | NONE | DANGER | WARNING
    * @param title - title of the toast
    * @param message - message of the toast
-   * @param toastType - SUCCESS | INFO | NONE | DANGER | WARNING
    */
-  toastNotification(type: string, title: string, message: string) {
+  toastNotification(type: 'success' | 'info' | 'none' | 'danger' | 'warning', title: string, message: string) {
     const newToastNotification = new ToastNotificationInitializer();
     let layoutType = DialogLayoutDisplay.SUCCESS;
 

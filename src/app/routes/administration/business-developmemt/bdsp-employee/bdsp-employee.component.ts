@@ -13,7 +13,7 @@ import { BdspEmployeeFormComponent } from './bdsp-employee-form/bdsp-employee-fo
   styleUrls: ['./bdsp-employee.component.scss']
 })
 export class BdspEmployeeComponent implements OnInit {
-  @Input() company_id: number = 0;
+  @Input() bdsp_id!: number;
   displayedColumns: string[] = ['name', 'surname', 'position', 'role', 'cell_number', 'email', 'action'];
   columnsToDisplay: string[] = this.displayedColumns;
   dataSource!: MatTableDataSource<any>;
@@ -33,11 +33,11 @@ export class BdspEmployeeComponent implements OnInit {
 
   ngOnChanges(changes: SimpleChanges) {
     // changes.prop contains the old and the new value...
-    this.getEmployeeList(changes['company_id'].currentValue);
+    this.getEmployeeList(changes['bdsp_id'].currentValue);
   }
 
   getEmployeeList(id: number) {
-    if (id !== 0) {
+    if (id) {
       this.empService.getEmpByCompany(id).subscribe({
         next: (res) => {
           this.employeeList = res.data;
@@ -55,7 +55,7 @@ export class BdspEmployeeComponent implements OnInit {
 
   openDialog(data: any = {}) {
     var index = this.employeeList.indexOf(data);
-    data['company'] = this.company_id;
+    data['company'] = this.bdsp_id;
 
     const dialogRef = this.dialog.open(BdspEmployeeFormComponent, {
       data: data,
@@ -89,7 +89,7 @@ export class BdspEmployeeComponent implements OnInit {
           this.empService.delete(id).subscribe({
             next: resp => {
               this.toast.toastNotification('success', resp.message, '');
-              this.getEmployeeList(this.company_id);
+              this.getEmployeeList(this.bdsp_id);
             },
             error: console.log
           })

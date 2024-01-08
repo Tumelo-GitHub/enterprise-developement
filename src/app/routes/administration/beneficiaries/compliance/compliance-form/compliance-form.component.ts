@@ -38,7 +38,6 @@ export class ComplianceFormComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    console.log(this.data);
     this.statuses = this.data.statuses;
     this.types = this.data.types;
     this.complianceForm.patchValue(this.data.compliance);

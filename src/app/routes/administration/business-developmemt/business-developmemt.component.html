@@ -1,13 +1,13 @@
 <div class="container">
     <div class="page-title">
-        <h2>Business Developement</h2>
+        <h2>Business Developement {{(company) ? ' : ' + company.bdsp_name : ''}}</h2>
     </div>
     <mat-tab-group animationDuration="0ms">
         <mat-tab label="BDSP">
             <app-bdsp (onCompanySelect)="selectedCompany($event)"></app-bdsp>
         </mat-tab>
         <mat-tab label="Employee">
-            <app-bdsp-employee></app-bdsp-employee>
+            <app-bdsp-employee [bdsp_id]="id"></app-bdsp-employee>
         </mat-tab>
         <mat-tab label="Programme">
             

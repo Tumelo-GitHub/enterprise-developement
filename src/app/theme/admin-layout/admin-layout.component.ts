@@ -7,7 +7,7 @@ import { AuthService } from 'src/app/core';
 import { LoaderService } from 'src/app/core';
 import { OverlayContainer } from '@angular/cdk/overlay';
 import { ToastService } from 'src/app/shared/services/toast.service';
-import { IMenu, IUser, IClient } from 'src/app/shared';
+import { IMenu, IUser } from 'src/app/shared';
 import { MenuService } from 'src/app/shared/services/menu.service';
 import { BnNgIdleService } from 'bn-ng-idle';
 
@@ -22,7 +22,6 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
   isDarkTheme: boolean = false;
   isFullScreen: boolean = false;
   user!: IUser;
-  client!: IClient;
   loader: boolean = false;
 
   isHandset$: Observable<boolean> = this.breakpointObserver.observe(Breakpoints.Handset)
@@ -45,7 +44,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
   ngOnInit(): void {
     this.isDarkTheme = localStorage.getItem('theme') === "Dark" ? true : false;
     this.auth.user().subscribe(user => (this.user = user));
-    this.auth.client().subscribe(client => (this.client = client));
+    
     if (this.isDarkTheme) {
       this.overlay.getContainerElement().classList.add('dark-theme-mode');
     } else {
@@ -103,7 +102,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked {
 
   logout() {
     this.auth.logout().subscribe(
-      resp => this.toast.toastNotification('Sucess', '', resp.message)
+      resp => this.toast.toastNotification('success', '', resp.message)
     )
   }
 

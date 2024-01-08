@@ -1,3 +1,5 @@
+"use strict";
+
 export interface IResponseModelBase<T = {}> {
     message: string,
     data: T
@@ -104,4 +106,31 @@ export interface IMenu {
     sponsor_cell: string,
     sponsor_alt_cell: string,
     sponsor_email: string
+  }
+
+  export interface IBDSP {
+    bbbee_level: number,
+    bdsp_name: string,
+    cell_number: string, 
+    description: string,
+    email: string,
+    id: number,
+    physical_address: string,
+    postal_address: string,
+    products: string,
+    registration: string,
+    tax_number: string,
+    tell_number: string,
+  }
+
+  export interface IServiceProvider {
+    id: number,
+    name: string,
+    surname: string,
+    email: string,
+    tel_number: string,
+    cell_number: string,
+    qualification: string,
+    specialization: string,
+    service_type: number[]
   }

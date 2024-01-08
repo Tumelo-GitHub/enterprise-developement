@@ -89,13 +89,14 @@ export class ComplianceComponent implements OnInit {
     return '';
   }
 
-  getTypeNameById(id: number) : string {
-    for (let i = 0; i < this.types.length; i++) {
-      if (this.types[i].id == id)
-        return this.types[i].type_name;
-    }
+  getTypeNameById(id: number) : string | undefined {
+    // for (let i = 0; i < this.types.length; i++) {
+    //   if (this.types[i].id == id)
+    //     return this.types[i].type_name;
+    // }
 
-    return '';
+    return this.types.find(x => x.id === id)?.type_name;
+
   }
 
   openDialog(data: any = {}) {

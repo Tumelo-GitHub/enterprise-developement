@@ -1,0 +1,33 @@
+import { NgModule } from '@angular/core';
+import { SharedModule } from '../../shared';
+
+import { BusinessSupportRoutingModule } from './business-support-routing.module';
+import { TrainingComponent } from './training/training.component';
+import { CoachingComponent } from './coaching/coaching.component';
+import { MentorshipComponent } from './mentorship/mentorship.component';
+import { TrainingEventComponent } from './training/training-event/training-event.component';
+import { TrainingEventFormComponent } from './training/training-event/training-event-form/training-event-form.component';
+import { TrainingRegisterComponent } from './training/training-register/training-register.component';
+import { TrainingShortcomingsComponent } from './training/training-shortcomings/training-shortcomings.component';
+import { TrainingRegisterFormComponent } from './training/training-register/training-register-form/training-register-form.component';
+import { TrainingInvitedSmmeComponent } from './training/training-event/training-invited-smme/training-invited-smme.component';
+
+
+@NgModule({
+  declarations: [
+    TrainingComponent,
+    CoachingComponent,
+    MentorshipComponent,
+    TrainingEventComponent,
+    TrainingEventFormComponent,
+    TrainingRegisterComponent,
+    TrainingShortcomingsComponent,
+    TrainingRegisterFormComponent,
+    TrainingInvitedSmmeComponent
+  ],
+  imports: [
+    SharedModule,
+    BusinessSupportRoutingModule
+  ]
+})
+export class BusinessSupportModule { }

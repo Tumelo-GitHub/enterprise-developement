@@ -1,91 +1,89 @@
 <mat-sidenav-container class="sidenav-container mat-app-background" [ngClass]="{'dark-theme-mode': isDarkTheme}">
-  <mat-sidenav #drawer class="sidenav" fixedInViewport
-      [attr.role]="(isHandset$ | async) ? 'dialog' : 'navigation'"
-      [mode]="(isHandset$ | async) ? 'over' : 'side'"
-      [opened]="(isHandset$ | async) === false">
-    <mat-toolbar>Menu</mat-toolbar>
-    <!-- TODO: Create separate component -->
-    <div class="user-panel">
-      <img src="../../assets/images/profile.jpg" alt="profile">
-      <h4 class="user-panel-name">{{ user.firstName + ' ' +  user.lastName}}</h4>
-      <h5 class="user-panel-email">{{ user.email}}</h5>
-      <div class="user-panel-icons">
-        <button mat-icon-button aria-label="Example icon button with a vertical three dot icon">
-          <mat-icon>account_circle</mat-icon>
-        </button>
-        <button mat-icon-button aria-label="Example icon button with a vertical three dot icon">
-          <mat-icon>edit</mat-icon>
-        </button>
-        <button mat-icon-button aria-label="Example icon button with a vertical three dot icon">
-          <mat-icon>exit_to_app</mat-icon>
-        </button>
-      </div>
-    </div>
-    <mat-nav-list class="linkMenu">
-      <mat-list-item role="listitem">
-        <a class="listMenuItem" routerLink="">
-          <mat-icon>dashboard</mat-icon>
-          <span class="menu-name">Dashboard</span>
-        </a>
-      </mat-list-item>
-    </mat-nav-list>
-    <mat-accordion>
-      <mat-expansion-panel *ngFor="let menuItem of dashMenu" >
-        <mat-expansion-panel-header>
-          <mat-icon class="menu-item-icon">{{ menuItem.icon }}</mat-icon>
-          <span class="menu-name">{{ menuItem.name }}</span>
-        </mat-expansion-panel-header>
-        <mat-nav-list>
-          <div *ngFor="let subItem of menuItem.children; let i = index">
-            <a mat-list-item routerLinkActive="active" [routerLink]="subItem.route">{{ subItem.name }}</a>
-            <mat-divider *ngIf="menuItem.children && menuItem.children.length - 1 != i"></mat-divider>
-          </div>
+    <mat-sidenav #drawer class="sidenav" fixedInViewport [attr.role]="(isHandset$ | async) ? 'dialog' : 'navigation'"
+        [mode]="(isHandset$ | async) ? 'over' : 'side'" [opened]="(isHandset$ | async) === false">
+        <mat-toolbar>Menu</mat-toolbar>
+        <!-- TODO: Create separate component -->
+        <div class="user-panel">
+            <img src="../../assets/images/profile.jpg" alt="profile">
+            <h4 class="user-panel-name">{{ user.firstName + ' ' + user.lastName}}</h4>
+            <h5 class="user-panel-email">{{ user.email}}</h5>
+            <div class="user-panel-icons">
+                <button mat-icon-button aria-label="Example icon button with a vertical three dot icon"
+                    matTooltip="Profile">
+                    <mat-icon>account_circle</mat-icon>
+                </button>
+                <button mat-icon-button aria-label="Example icon button with a vertical three dot icon"
+                    matTooltip="Edit Profile">
+                    <mat-icon>edit</mat-icon>
+                </button>
+                <button mat-icon-button aria-label="User logout icon button" matTooltip="Logout" (click)="logout()">
+                    <mat-icon>exit_to_app</mat-icon>
+                </button>
+            </div>
+        </div>
+        <mat-nav-list class="linkMenu">
+            <mat-list-item role="listitem">
+                <a class="listMenuItem" routerLink="">
+                    <mat-icon>dashboard</mat-icon>
+                    <span class="menu-name">Dashboard</span>
+                </a>
+            </mat-list-item>
         </mat-nav-list>
-      </mat-expansion-panel>
-    </mat-accordion>
-  </mat-sidenav>
-  <mat-sidenav-content>
-    <div *ngIf="loader" class="loader-container">
-      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
-    </div>
-    <mat-toolbar color="primary">
-      <button
-        type="button"
-        aria-label="Toggle sidenav"
-        mat-icon-button
-        (click)="drawer.toggle()">
-        <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
-      </button>
-      <span>{{client.name}}</span>
-      <span class="flex-fill"></span>
-      <!-- <mat-slide-toggle [(ngModel)]="isDarkTheme" labelPosition="before" (change)="storeThemeSelection()">
+        <mat-accordion>
+            <mat-expansion-panel *ngFor="let menuItem of dashMenu">
+                <mat-expansion-panel-header>
+                    <mat-icon class="menu-item-icon">{{ menuItem.icon }}</mat-icon>
+                    <span class="menu-name">{{ menuItem.name }}</span>
+                </mat-expansion-panel-header>
+                <mat-nav-list>
+                    <div *ngFor="let subItem of menuItem.children; let i = index">
+                        <a mat-list-item routerLinkActive="active" [routerLink]="menuItem.route + '/' + subItem.route">{{ subItem.name }}</a>
+                        <mat-divider *ngIf="menuItem.children && menuItem.children.length - 1 != i"></mat-divider>
+                    </div>
+                </mat-nav-list>
+            </mat-expansion-panel>
+        </mat-accordion>
+    </mat-sidenav>
+    <mat-sidenav-content>
+        <div *ngIf="loader" class="loader-container">
+            <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+        </div>
+        <mat-toolbar color="primary">
+            <button type="button" aria-label="Toggle sidenav" mat-icon-button (click)="drawer.toggle()">
+                <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
+            </button>
+            <span>BUSINESS NAME</span>
+            <span class="flex-fill"></span>
+            <!-- <mat-slide-toggle [(ngModel)]="isDarkTheme" labelPosition="before" (change)="storeThemeSelection()">
         <mat-icon>bedtime</mat-icon>
       </mat-slide-toggle> -->
-      <button mat-icon-button aria-label="Example icon button with a home icon" (click)="storeThemeSelection()">
-        <mat-icon>{{ (isDarkTheme) ? 'light_mode' : 'dark_mode' }}</mat-icon>
-      </button>
-      <button mat-icon-button aria-label="Example icon button with a home icon">
-        <mat-icon>search</mat-icon>
-      </button>
-      <button mat-icon-button aria-label="Example icon button with a home icon">
-        <mat-icon (click)="toggleFullScreen()">fullscreen</mat-icon>
-      </button>
-      <button mat-icon-button aria-label="Example icon button with a home icon" (click)="printScreen()">
-        <mat-icon>notifications</mat-icon>
-      </button>
-      <button mat-icon-button matBadge="15" matBadgeColor="warn" [matMenuTriggerFor]="menu" aria-label="Example icon button with a vertical three dot icon">
-        <mat-icon>more_vert</mat-icon>
-      </button>
-      <mat-menu #menu="matMenu">
-        <button mat-menu-item>Profile</button>
-        <button mat-menu-item>Edit Profile</button>
-        <button mat-menu-item>Retsore Defaults</button>
-        <button mat-menu-item (click)="logout()">Logout</button>
-      </mat-menu>
-    </mat-toolbar>
-    <!-- Add Content Here -->
-    <div class="page-content">
-      <router-outlet></router-outlet>
-    </div>
-  </mat-sidenav-content>
+            <button mat-icon-button aria-label="Example icon button with a home icon" (click)="storeThemeSelection()">
+                <mat-icon>{{ (isDarkTheme) ? 'light_mode' : 'dark_mode' }}</mat-icon>
+            </button>
+            <button mat-icon-button aria-label="Example icon button with a home icon">
+                <mat-icon>search</mat-icon>
+            </button>
+            <button mat-icon-button aria-label="Example icon button with a home icon">
+                <mat-icon (click)="toggleFullScreen()">fullscreen</mat-icon>
+            </button>
+            <button mat-icon-button matBadge="15" matBadgeColor="warn" aria-label="Example icon button with a home icon"
+                (click)="printScreen()">
+                <mat-icon>notifications</mat-icon>
+            </button>
+            <button mat-icon-button [matMenuTriggerFor]="menu"
+                aria-label="Example icon button with a vertical three dot icon">
+                <mat-icon>more_vert</mat-icon>
+            </button>
+            <mat-menu #menu="matMenu">
+                <button mat-menu-item>Profile</button>
+                <button mat-menu-item>Edit Profile</button>
+                <button mat-menu-item>Restore Defaults</button>
+                <button mat-menu-item (click)="logout()">Logout</button>
+            </mat-menu>
+        </mat-toolbar>
+        <!-- Add Content Here -->
+        <div class="page-content">
+            <router-outlet></router-outlet>
+        </div>
+    </mat-sidenav-content>
 </mat-sidenav-container>

@@ -1,1 +1,102 @@
-<p>programme-form works!</p>
+<form [formGroup]="programmeForm" novalidate (ngSubmit)="onSubmit()">
+    <h2 mat-dialog-title>Programme Information</h2>
+    <mat-dialog-content class="mat-typography">
+  
+        <div class="row">
+            <div class="col">
+            <mat-form-field class="full-width">
+                <input matInput cdkFocusInitial placeholder="Programme Name" formControlName="programme_name">
+                <mat-error *ngIf="programmeForm.controls['programme_name'].hasError('required')">
+                Programme name is <strong>required</strong>
+                </mat-error>
+            </mat-form-field>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <mat-form-field class="full-width">
+                    <textarea matInput placeholder="Programme description" formControlName="description"></textarea>
+                </mat-form-field>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <mat-form-field class="full-width">
+                    <mat-select cdkFocusInitial placeholder="Generic Company" formControlName="generic_company_id">
+                        <mat-option *ngFor="let company of companyList" [value]="company.id">{{ company.company_name }}</mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="programmeForm.controls['generic_company_id'].hasError('required')">
+                        Company name is <strong>required</strong>
+                    </mat-error>
+                </mat-form-field>
+            </div>
+            <div class="col">
+                <mat-form-field class="full-width">
+                    <mat-select cdkFocusInitial placeholder="Programme Type" formControlName="programme_type">
+                        <mat-option *ngFor="let type of types" [value]="type.id">{{ type.type_name }}</mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="programmeForm.controls['programme_type'].hasError('required')">
+                    Programme type is <strong>required</strong>
+                    </mat-error>
+                </mat-form-field>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <mat-form-field class="full-width">
+                    <!-- <input matInput placeholder="Start Date" formControlName="start_date"> -->
+                    <input matInput [matDatepicker]="picker" placeholder="Start Date" formControlName="start_date">
+                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                    <mat-datepicker #picker></mat-datepicker>
+                </mat-form-field>
+            </div>
+            <div class="col">
+                <mat-form-field class="full-width">
+                    <input matInput [matDatepicker]="picker1" placeholder="End Date" formControlName="end_date">
+                    <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+                    <mat-datepicker #picker1></mat-datepicker>
+                </mat-form-field>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <mat-form-field class="full-width">
+                    <input matInput placeholder="Sponsor Name" formControlName="sponsor_name">
+                </mat-form-field>
+            </div>
+            <div class="col">
+                <mat-form-field class="full-width">
+                    <input matInput placeholder="Sponsor Surname" formControlName="sponsor_surname">
+                </mat-form-field>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <mat-form-field class="full-width">
+                    <input matInput placeholder="Cell" formControlName="sponsor_cell">
+                </mat-form-field>
+            </div>
+            <div class="col">
+                <mat-form-field class="full-width">
+                    <input matInput placeholder="Alt Cell" formControlName="sponsor_alt_cell">
+                </mat-form-field>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <mat-form-field class="full-width">
+                    <input matInput placeholder="Email" formControlName="sponsor_email">
+                </mat-form-field>
+            </div>
+            <div class="col">
+                <!-- <mat-form-field class="full-width">
+                    <input matInput placeholder="Tax Number" formControlName="tax_number">
+                </mat-form-field> -->
+            </div>
+        </div>
+    </mat-dialog-content>
+    <mat-dialog-actions align="end">
+        <button mat-button mat-dialog-close>Cancel</button>
+        <button type="submit" mat-button [disabled]="!programmeForm.valid">Submit</button>
+    </mat-dialog-actions>
+</form>

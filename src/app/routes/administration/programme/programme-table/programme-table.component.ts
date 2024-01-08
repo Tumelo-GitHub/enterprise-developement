@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output, ViewChild } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIconRegistry } from '@angular/material/icon';
@@ -23,6 +23,7 @@ export class ProgrammeTableComponent implements OnInit {
   dataSource!: MatTableDataSource<any>;
   programmeList: IProgramme[] = [];
   selectedRow?: IProgramme;
+  @Output() onProgrammeSelection : EventEmitter<IProgramme | undefined> = new EventEmitter();
 
   columns = new FormControl('');
   columnsList = [
@@ -103,7 +104,8 @@ export class ProgrammeTableComponent implements OnInit {
   getProgrammeList() {
     this.programmeService.getProgrammes().subscribe({
       next: (resp) => {
-        this.programmeList = resp.data
+        this.programmeList = resp.data;
+        console.log(this.programmeList)
         this.dataSource = new MatTableDataSource(this.programmeList);
         this.dataSource.sort = this.sort;
         this.dataSource.paginator = this.paginator;
@@ -123,6 +125,7 @@ export class ProgrammeTableComponent implements OnInit {
     });
     dialogRef.afterClosed().subscribe((result: IProgramme) => {
       if (result) {
+        console.log(result)
         if (index >= 0) {
           this.programmeList[index] = result;
         } else {
@@ -151,6 +154,7 @@ export class ProgrammeTableComponent implements OnInit {
             next: resp => {
               this.toast.toastNotification('success', resp.message, '');
               this.programmeList.splice(index, 1);
+              this.dataSource = new MatTableDataSource(this.programmeList);
             },
             error: console.log
           })
@@ -159,8 +163,8 @@ export class ProgrammeTableComponent implements OnInit {
     )
   }
 
-  getSelectedRow(row: any) {
+  getSelectedRow(row: IProgramme) {
     this.selectedRow = row;
-    // this.onCompanySelect.emit(row);
+    this.onProgrammeSelection.emit(row);
   }
 }

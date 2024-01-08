@@ -1,0 +1,11 @@
+@use '@angular/material' as mat;
+@use '../src/app/theme/sidemenu-theme';
+
+@include mat.core();
+
+@include mat.typography-hierarchy(mat.define-typography-config());
+
+// Styles for the app that are based on the current theme.
+@mixin theme($theme) {
+    @include sidemenu-theme.theme($theme);
+}

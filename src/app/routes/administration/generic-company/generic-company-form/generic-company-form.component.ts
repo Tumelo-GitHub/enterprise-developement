@@ -1,7 +1,7 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, Validators } from '@angular/forms';
 import {MatDialog, MAT_DIALOG_DATA, MatDialogRef} from '@angular/material/dialog';
-import { GenericCompanyService } from 'src/app/services/generic-company.service';
+import { GenericCompanyService } from '../../services/generic-company.service';
 
 @Component({
   selector: 'app-generic-company-form',
@@ -52,9 +52,9 @@ export class GenericCompanyFormComponent implements OnInit {
     formData.append('category', 'company_compliance');
     formData.append('category_id', '25')
 
-    this._companyService.upload(formData).subscribe(
-      resp => console.log(resp)
-    );
+    // this._companyService.upload(formData).subscribe(
+    //   resp => console.log(resp)
+    // );
   }
 
   // onSubmit(): void {

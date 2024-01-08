@@ -1,6 +1,7 @@
 // Custom Theming for Angular Material
 // For more information: https://material.angular.io/guide/theming
 @use '@angular/material' as mat;
+@use 'app-theme';
 // Plus imports for other components in your app.
 
 // Include the common styles for Angular Material. We include this here so that you only
@@ -43,9 +44,12 @@ $devWizard-theme-dark: mat.define-dark-theme((
 // Alternatively, you can import and @include the theme mixins for each component
 // that you are using.
 @include mat.all-component-themes($devWizard-light-theme);
+@include app-theme.theme($devWizard-light-theme);
 
 .dark-theme-mode {
+  color-scheme: dark;
   @include mat.all-component-themes($devWizard-theme-dark);
+  @include app-theme.theme($devWizard-theme-dark);
 }
 
 @mixin theme($theme) {
@@ -126,4 +130,24 @@ th.mat-header-cell, td.mat-cell, td.mat-footer-cell {
 
 .email-link:hover {
   text-decoration: underline;
+}
+
+.selectable-row-table{
+  tr.mat-row {
+    cursor: pointer;
+  }
+
+  tr.mat-row:hover,
+  .selected-row {
+    background: whitesmoke;
+  }
+}
+
+a.active {
+  background-color: whitesmoke;
+
+  &:hover,
+  &:focus {
+    background: whitesmoke;
+  }
 }

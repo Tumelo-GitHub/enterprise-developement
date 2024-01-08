@@ -21,6 +21,17 @@ import { ComplianceFormComponent } from './beneficiaries/compliance/compliance-f
 import { BdspEmployeeFormComponent } from './business-developmemt/bdsp-employee/bdsp-employee-form/bdsp-employee-form.component';
 import { ProgrammeTableComponent } from './programme/programme-table/programme-table.component';
 import { ProgrammeFormComponent } from './programme/programme-table/programme-form/programme-form.component';
+import { ServiceProviderDetailsComponent } from './service-provider/service-provider-details/service-provider-details.component';
+import { TechnicalServiceProviderComponent } from './service-provider/technical-service-provider/technical-service-provider.component';
+import { GeneralServiceProviderComponent } from './service-provider/general-service-provider/general-service-provider.component';
+import { ServiceProviderDetailsFormComponent } from './service-provider/service-provider-details/service-provider-details-form/service-provider-details-form.component';
+import { TechnicalServiceProviderFormComponent } from './service-provider/technical-service-provider/technical-service-provider-form/technical-service-provider-form.component';
+import { AppointedBeneficiaryComponent } from './programme/appointed-beneficiary/appointed-beneficiary.component';
+import { AppointedBeneficiaryFormComponent } from './programme/appointed-beneficiary/appointed-beneficiary-form/appointed-beneficiary-form.component';
+import { AppointedBdspComponent } from './programme/appointed-bdsp/appointed-bdsp.component';
+import { AppointedBdspFormComponent } from './programme/appointed-bdsp/appointed-bdsp-form/appointed-bdsp-form.component';
+import { ProgrammeCourseComponent } from './programme/programme-course/programme-course.component';
+import { ProgrammeCourseFormComponent } from './programme/programme-course/programme-course-form/programme-course-form.component';
 
 
 @NgModule({
@@ -43,7 +54,18 @@ import { ProgrammeFormComponent } from './programme/programme-table/programme-fo
     ComplianceFormComponent,
     BdspEmployeeFormComponent,
     ProgrammeTableComponent,
-    ProgrammeFormComponent
+    ProgrammeFormComponent,
+    ServiceProviderDetailsComponent,
+    TechnicalServiceProviderComponent,
+    GeneralServiceProviderComponent,
+    ServiceProviderDetailsFormComponent,
+    TechnicalServiceProviderFormComponent,
+    AppointedBeneficiaryComponent,
+    AppointedBeneficiaryFormComponent,
+    AppointedBdspComponent,
+    AppointedBdspFormComponent,
+    ProgrammeCourseComponent,
+    ProgrammeCourseFormComponent
   ],
   imports: [
     SharedModule,

@@ -1,0 +1,39 @@
+<form [formGroup]="form" novalidate (ngSubmit)="onSubmit()">
+    <h2 mat-dialog-title>Course</h2>
+    <mat-dialog-content class="mat-typography">
+        <div class="row">
+            <div class="col">
+                <mat-form-field class="full-width">
+                    <mat-select cdkFocusInitial placeholder="Course" formControlName="course_id">
+                        <mat-option *ngFor="let course of courseList" [value]="course.id">{{ course.course_name }}</mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <mat-form-field class="full-width">
+                    <mat-select placeholder="Status" formControlName="status">
+                        <mat-option *ngFor="let status of statusOptions" [value]="status.id">{{ status.status_name }}</mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col">
+                <mat-form-field class="full-width">
+                    <input matInput placeholder="Budget" formControlName="budget">
+                    <mat-error *ngIf="form.controls['budget'].hasError('required')">
+                        Budget is <strong>required</strong>
+                    </mat-error>
+                </mat-form-field>
+            </div>
+        </div>
+        
+    </mat-dialog-content>
+    <mat-dialog-actions align="end">
+        <button mat-button mat-dialog-close>Cancel</button>
+        <button type="submit" mat-button [disabled]="!form.valid">Submit</button>
+    </mat-dialog-actions>
+</form>

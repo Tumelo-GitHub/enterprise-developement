@@ -12,14 +12,17 @@
           <input matInput (keyup)="applyFilter($event)" placeholder="Ex. Mia" #input>
       </mat-form-field>
       <button mat-icon-button matTooltip="Export Table To Excel" (click)="exportTable()">
-        <mat-icon svgIcon="excel"></mat-icon>
+        <i class="fa-regular fa-file-excel fa-xl"></i>
+      </button>
+      <button mat-icon-button matTooltip="Export Table To PDF" (click)="exportTableToPDF()">
+        <i class="fa-regular fa-file-pdf fa-xl"></i>
       </button>
     </div>
 
       
     <div class="mat-elevation-z8">
         <div class="table-container">
-          <table id="ExampleMaterialTable" mat-table [dataSource]="dataSource" matSort class="full-width-table">
+          <table id="ExampleMaterialTable" mat-table [dataSource]="dataSource" matSort class="full-width-table selectable-row-table">
       
             <ng-container matColumnDef="smme_name">
               <th mat-header-cell *matHeaderCellDef mat-sort-header> Company </th>

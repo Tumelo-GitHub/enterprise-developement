@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { IProgramme } from 'src/app/shared';
 
 @Component({
   selector: 'app-programme',
@@ -6,10 +7,13 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./programme.component.scss']
 })
 export class ProgrammeComponent implements OnInit {
+  programme: IProgramme | undefined;
 
   constructor() { }
 
-  ngOnInit(): void {
-  }
+  /**
+   * TODO:
+   */
+  ngOnInit(): void {}
 
 }

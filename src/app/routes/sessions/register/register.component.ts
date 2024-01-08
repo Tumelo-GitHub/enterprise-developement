@@ -23,15 +23,15 @@ export class RegisterComponent implements OnInit {
       // first group
       formArray: this._formBuilder.array([
         this._formBuilder.group({
-          firstName: ['Tumelo', Validators.required],
-          lastName: ['Mokgonyana', Validators.required],
-          phoneNumber: ['0763157170', Validators.required],
+          firstName: [null, Validators.required],
+          lastName: [null, Validators.required],
+          phoneNumber: [null, Validators.required],
         }),
         // second group
         this._formBuilder.group({
-          email: ['tumelo@naswenda.co.za', Validators.email],
-          password: ['123456', Validators.required],
-          confirmPassword: ['123456', Validators.required],
+          email: [null, Validators.email],
+          password: [null, Validators.required],
+          confirmPassword: [null, Validators.required],
         })
       ])
     })
