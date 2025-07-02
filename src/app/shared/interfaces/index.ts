@@ -5,14 +5,29 @@ export interface IResponseModelBase<T = {}> {
     data: T
 }
 
+export interface ILoginRequest {
+  username: string;
+  password: string;
+}
+
+export interface IRegisterRequest {
+  first_name: string;
+  last_name: string;
+  phone_number: string;
+  password: string;
+  email: string;
+}
+
 export interface IUser {
   id?: number;
-  firstName?: string; 
-  lastName?: string; 
-  phoneNumber?: string; 
+  first_name?: string; 
+  last_name?: string; 
+  phone_number?: string; 
   email?: string;
   updated_at?: string | null;
   created_at?: string;
+  active?: number;
+  role?: string
 }
 
 export interface IClient {
@@ -134,3 +149,108 @@ export interface IMenu {
     specialization: string,
     service_type: number[]
   }
+
+  export interface ISmme {
+    id: number
+    smme_name: string
+    trading_name: null,
+    business_type: number
+    products: string
+    description: string
+    postal_address: string
+    registration_number: string
+    web_address: string
+    tax_number: string
+    vat_number: string
+    vendor_number: string
+    bbbee: number
+    black_owned: string
+    woman_owned: string
+    youth_owned: string
+    disabled_owned: string
+    industry: number
+    business_years: number
+    programme: string
+    contact_origin: string
+    registered: string
+    is_primary_bank: string
+    primary_bank_name: string
+    updated_at: null,
+    created_at: string
+    address: {
+        smme_id: string
+        street_address_1: string
+        street_address_2: string
+        city: string
+        province: string
+        code: string
+        country: string
+        address_note: string
+        location_type: string
+    },
+    contacts: IContact[],
+    annual_turnovers: ITurnover[],
+    emp_stats: []
+}
+
+export interface IContact {
+  id: string
+  smme_id: string
+  full_names: string
+  tell_number: string
+  cell_number: string
+  position: string
+  email: string
+}
+
+export interface ITurnover {
+  id: string
+  smme_id: string
+  turnover: string
+  year: string
+}
+
+export interface ITimesheet {
+  id: number,
+  date: string,
+  project_id: number,
+  project_name: string,
+  company_id: number,
+  company_name: string,
+  general_activity: string,
+  duration: string,
+  comment: string,
+  user_id: number,
+  first_name: string,
+  last_name: string,
+  work_type: string
+}
+
+export interface ICourse {
+  id: number,
+  training_institute_id: string,
+  course_name: string,
+  course_code: string,
+  duration: string,
+  credits: string,
+  nqf_level: string,
+  description: string,
+  exam: string,
+  target_audiance: string,
+  training_institute_name: string
+}
+
+export interface IPerson {
+  id: number,
+  name: string,
+  surname: string,
+  id_number: string,
+  gender: string,
+  race: string,
+  age: number,
+  occupation: string,
+  cell_number: string,
+  email: string,
+  address: string,
+  tell_number: string
+}

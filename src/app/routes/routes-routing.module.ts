@@ -6,6 +6,7 @@ import { AuthLayoutComponent } from '../theme/auth-layout/auth-layout.component'
 import { LoginComponent } from './sessions/login/login.component';
 import { RegisterComponent } from './sessions/register/register.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
+import { ForgotPasswordComponent } from './sessions/forgot-password/forgot-password.component';
 
 const routes: Routes = [
   {
@@ -31,7 +32,8 @@ const routes: Routes = [
     component: AuthLayoutComponent,
     children: [
       {path: 'login', component: LoginComponent},
-      {path: 'register', component: RegisterComponent}
+      {path: 'register', component: RegisterComponent},
+      {path: 'forgot-password', component: ForgotPasswordComponent}
     ]
   },
   { path: '**', redirectTo: 'dashboard' },

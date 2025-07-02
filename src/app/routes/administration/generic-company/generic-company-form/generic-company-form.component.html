@@ -1,21 +1,11 @@
 <form [formGroup]="companyForm" novalidate (ngSubmit)="onSubmit()">
-  <mat-card-header>
-    <mat-card-title>Company Information</mat-card-title>
-  </mat-card-header>
-  <mat-card-content>
+  <h2 mat-dialog-title>Company Information</h2>
+  <mat-dialog-content>
     <div class="row">
       <div class="col">
-          <input type="file" name="file" accept="application/pdf" placeholder="Compliance Document" (change)="onFileSelect($event)">
-      </div>
-      <div class="col">
-          
-      </div>
-  </div>
-    <!-- <div class="row">
-      <div class="col">
         <mat-form-field class="full-width">
-          <input matInput placeholder="Company" formControlName="companyName">
-          <mat-error *ngIf="companyForm.controls['companyName'].hasError('required')">
+          <input matInput placeholder="Company" formControlName="company_name">
+          <mat-error *ngIf="companyForm.controls['company_name'].hasError('required')">
             Company name is <strong>required</strong>
           </mat-error>
         </mat-form-field>
@@ -24,8 +14,8 @@
     <div class="row">
       <div class="col">
         <mat-form-field class="full-width">
-          <textarea matInput placeholder="Physical Address" formControlName="physicalAddress"></textarea>
-          <mat-error *ngIf="companyForm.controls['physicalAddress'].hasError('required')">
+          <textarea matInput placeholder="Physical Address" formControlName="physical_address"></textarea>
+          <mat-error *ngIf="companyForm.controls['physical_address'].hasError('required')">
             Physical Address is <strong>required</strong>
           </mat-error>
         </mat-form-field>
@@ -34,23 +24,23 @@
     <div class="row">
       <div class="col">
         <mat-form-field class="full-width">
-          <textarea matInput placeholder="Postal Address" formControlName="postalAddress"></textarea>
+          <textarea matInput placeholder="Postal Address" formControlName="postal_address"></textarea>
         </mat-form-field>
       </div>
     </div>
     <div class="row">
       <div class="col">
         <mat-form-field class="full-width">
-          <input matInput placeholder="Department name" formControlName="departmentName">
-          <mat-error *ngIf="companyForm.controls['departmentName'].hasError('required')">
+          <input matInput placeholder="Department name" formControlName="dept_name">
+          <mat-error *ngIf="companyForm.controls['dept_name'].hasError('required')">
             Department name is <strong>required</strong>
           </mat-error>
         </mat-form-field>
       </div>
       <div class="col">
         <mat-form-field class="full-width">
-          <input matInput placeholder="Department Address" formControlName="departmentAddress">
-          <mat-error *ngIf="companyForm.controls['departmentAddress'].hasError('required')">
+          <input matInput placeholder="Department Address" formControlName="dept_address">
+          <mat-error *ngIf="companyForm.controls['dept_address'].hasError('required')">
             Department Address is <strong>required</strong>
           </mat-error>
         </mat-form-field>
@@ -59,16 +49,16 @@
     <div class="row">
       <div class="col">
         <mat-form-field class="full-width">
-          <input matInput placeholder="Contact first name" formControlName="contactName">
-          <mat-error *ngIf="companyForm.controls['contactName'].hasError('required')">
+          <input matInput placeholder="Contact first name" formControlName="contact_name">
+          <mat-error *ngIf="companyForm.controls['contact_name'].hasError('required')">
             First name is <strong>required</strong>
           </mat-error>
         </mat-form-field>
       </div>
       <div class="col">
         <mat-form-field class="full-width">
-          <input matInput placeholder="Last name" formControlName="contactSurname">
-          <mat-error *ngIf="companyForm.controls['contactSurname'].hasError('required')">
+          <input matInput placeholder="Last name" formControlName="contact_surname">
+          <mat-error *ngIf="companyForm.controls['contact_surname'].hasError('required')">
             Last name is <strong>required</strong>
           </mat-error>
         </mat-form-field>
@@ -77,23 +67,24 @@
     <div class="row">
       <div class="col">
         <mat-form-field class="full-width">
-          <input matInput type="email" placeholder="Email" formControlName="contactEmail">
-          <mat-error *ngIf="companyForm.controls['contactEmail'].hasError('required')">
+          <input matInput type="email" placeholder="Email" formControlName="contact_email">
+          <mat-error *ngIf="companyForm.controls['contact_email'].hasError('required')">
             Email is <strong>required</strong>
           </mat-error>
         </mat-form-field>
       </div>
       <div class="col">
         <mat-form-field class="full-width">
-          <input matInput type="number" placeholder="Contact number" formControlName="contactCell">
-          <mat-error *ngIf="companyForm.controls['contactCell'].hasError('required')">
+          <input matInput type="tel" placeholder="Contact number" formControlName="contact_cell">
+          <mat-error *ngIf="companyForm.controls['contact_cell'].hasError('required')">
             Contact number is <strong>required</strong>
           </mat-error>
         </mat-form-field>
       </div>
-    </div> -->
-  </mat-card-content>
-  <mat-card-actions>
-    <button mat-raised-button color="primary" type="submit">{{data ? 'Update' : 'Submit'}}</button>
-  </mat-card-actions>
+    </div>
+  </mat-dialog-content>
+  <mat-dialog-actions align="end">
+    <button mat-button mat-dialog-close>Cancel</button>
+    <button mat-button type="submit" [disabled]="!companyForm.valid">{{data ? 'Update' : 'Submit'}}</button>
+  </mat-dialog-actions>
 </form>

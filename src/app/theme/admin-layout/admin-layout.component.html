@@ -4,8 +4,8 @@
         <mat-toolbar>Menu</mat-toolbar>
         <!-- TODO: Create separate component -->
         <div class="user-panel">
-            <img src="../../assets/images/profile.jpg" alt="profile">
-            <h4 class="user-panel-name">{{ user.firstName + ' ' + user.lastName}}</h4>
+            <img src="../../../assets/images/logo-no-bg-3.png" alt="profile">
+            <h4 class="user-panel-name">{{ user.first_name + ' ' + user.last_name}}</h4>
             <h5 class="user-panel-email">{{ user.email}}</h5>
             <div class="user-panel-icons">
                 <button mat-icon-button aria-label="Example icon button with a vertical three dot icon"
@@ -52,11 +52,8 @@
             <button type="button" aria-label="Toggle sidenav" mat-icon-button (click)="drawer.toggle()">
                 <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
             </button>
-            <span>BUSINESS NAME</span>
+            <span>Naswenda Business Consultants</span>
             <span class="flex-fill"></span>
-            <!-- <mat-slide-toggle [(ngModel)]="isDarkTheme" labelPosition="before" (change)="storeThemeSelection()">
-        <mat-icon>bedtime</mat-icon>
-      </mat-slide-toggle> -->
             <button mat-icon-button aria-label="Example icon button with a home icon" (click)="storeThemeSelection()">
                 <mat-icon>{{ (isDarkTheme) ? 'light_mode' : 'dark_mode' }}</mat-icon>
             </button>

@@ -1,0 +1,73 @@
+<form [formGroup]="form" novalidate (ngSubmit)="onSubmit()">
+    <h2 mat-dialog-title>Course Information</h2>
+    <mat-dialog-content class="mat-typography">
+  
+        <div class="row">
+            <div class="col">
+                <mat-form-field class="full-width">
+                    <mat-select cdkFocusInitial placeholder="Training Institude" formControlName="training_institute_id">
+                        <mat-option *ngFor="let type of institudes" [value]="type.id">{{ type.name }}</mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="form.controls['training_institute_id'].hasError('required')">
+                        Institude is <strong>required</strong>
+                    </mat-error>
+                </mat-form-field>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <mat-form-field class="full-width">
+                    <input matInput placeholder="Course Name" formControlName="course_name">
+                </mat-form-field>
+            </div>
+            <div class="col">
+                <mat-form-field class="full-width">
+                    <input matInput placeholder="Course Code" formControlName="course_code">
+                </mat-form-field>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <mat-form-field class="full-width">
+                    <input matInput placeholder="Duration" formControlName="duration">
+                </mat-form-field>
+            </div>
+            <div class="col">
+                <mat-form-field class="full-width">
+                    <input matInput placeholder="Credits" formControlName="credits">
+                </mat-form-field>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <mat-form-field class="full-width">
+                    <input type="number" matInput placeholder="NQF Level" formControlName="nqf_level">
+                </mat-form-field>
+            </div>
+            <div class="col">
+                <mat-form-field class="full-width">
+                    <mat-select cdkFocusInitial placeholder="Exam" formControlName="exam">
+                        <mat-option value="Yes">Yes</mat-option>
+                        <mat-option value="No">No</mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <mat-form-field class="full-width">
+                    <textarea matInput placeholder="Target Audience" formControlName="target_audiance"></textarea>
+                </mat-form-field>
+            </div>
+            <div class="col">
+                <mat-form-field class="full-width">
+                    <textarea matInput placeholder="Description" formControlName="description"></textarea>
+                </mat-form-field>
+            </div>
+        </div>
+    </mat-dialog-content>
+    <mat-dialog-actions align="end">
+        <button mat-button mat-dialog-close>Cancel</button>
+        <button type="submit" mat-button [disabled]="!form.valid">Submit</button>
+    </mat-dialog-actions>
+</form>

@@ -86,7 +86,7 @@
         <div class="row">
             <div class="col">
                 <mat-form-field class="full-width">
-                    <mat-select placeholder="Beneficiaries" formControlName="smme_id" multiple [disabled]="data.id">
+                    <mat-select placeholder="Beneficiaries" formControlName="smme_id" multiple>
                         <mat-option *ngFor="let company of companyList" [value]="company.smme_id" [disabled]="company.status_name === 'Dismissed'">{{ company.smme_name }}</mat-option>
                     </mat-select>
                 </mat-form-field>

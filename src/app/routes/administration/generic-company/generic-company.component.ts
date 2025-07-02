@@ -19,6 +19,7 @@ export class GenericCompanyComponent implements OnInit {
   displayedColumns: string[] = ['company_name', 'physical_address', 'postal_address', 'dept_name', 'dept_address', 'contact_name', 'contact_cell', 'contact_email', 'action'];
   columnsToDisplay: string[] = ['company_name', 'physical_address', 'dept_name', 'contact_name', 'contact_cell', 'action'];
   dataSource!: MatTableDataSource<any>;
+  companies: any[] = [];
 
   toppings = new FormControl('');
   toppingList = [
@@ -86,10 +87,8 @@ export class GenericCompanyComponent implements OnInit {
   getCompanyList() {
     this._genericService.getCompanyList().subscribe({
       next: (res) => {
-        console.log(res)
-        this.dataSource = new MatTableDataSource(res.data);
-        this.dataSource.sort = this.sort;
-        this.dataSource.paginator = this.paginator;
+        this.companies = res.data;
+        this.updateDataTable();
       },
       error: (err) => {
         console.log(err)
@@ -97,11 +96,21 @@ export class GenericCompanyComponent implements OnInit {
     })
   }
 
-  openDialog() {
-    const dialogRef = this.dialog.open(GenericCompanyFormComponent);
+  openDialog(data: any = {}) {
+    const index = this.companies.indexOf(data);
+
+    const dialogRef = this.dialog.open(GenericCompanyFormComponent, {
+      data,
+      panelClass: 'form-dialog'
+    });
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.getCompanyList();
+        if (index >= 0) {
+          this.companies[index] = result;
+        } else {
+          this.companies.push(result);
+        }
+        this.updateDataTable();
       }
     });
   }
@@ -115,14 +124,17 @@ export class GenericCompanyComponent implements OnInit {
     }
   }
 
-  deleteCompany(id: number) {
+  deleteCompany(row: any) {
+    const index = this.companies.indexOf(row);
+
     this.toast.openConfirmBox('danger', 'Delete', 'Are you sure you want to delete this company?').subscribe(
       resp => {
         if (resp.success) {
-          this._genericService.delete(id).subscribe({
+          this._genericService.delete(row.id).subscribe({
             next: resp => {
               this.toast.toastNotification('success', 'Company successfully deleted', '');
-              this.getCompanyList();
+              this.companies.splice(index, 1);
+              this.updateDataTable();
             },
             error: console.log
           })
@@ -131,16 +143,10 @@ export class GenericCompanyComponent implements OnInit {
     )
   }
 
-  openEditForm(companyData: any) {
-    const dialogRef = this.dialog.open(GenericCompanyFormComponent, {
-      data: companyData
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        this.getCompanyList();
-      }
-    });
+  private updateDataTable() {
+    this.dataSource = new MatTableDataSource(this.companies);
+    this.dataSource.sort = this.sort;
+    this.dataSource.paginator = this.paginator;
   }
 
 }

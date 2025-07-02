@@ -1,0 +1,177 @@
+<form [formGroup]="form" novalidate (ngSubmit)="onSubmit()">
+    <h2 mat-dialog-title>Person Beneficiary</h2>
+    <mat-dialog-content class="mat-typography">
+        <h3>Personal Information</h3>
+        <div class="row">
+            <div class="col">
+                <mat-form-field class="full-width">
+                    <input matInput placeholder="Name" formControlName="name">
+                </mat-form-field>
+            </div>
+            <div class="col">
+                <mat-form-field class="full-width">
+                    <input matInput placeholder="Surname" formControlName="surname">
+                </mat-form-field>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <mat-form-field class="full-width">
+                    <input matInput placeholder="ID Number" formControlName="id_number">
+                </mat-form-field>
+            </div>
+            <div class="col">
+                <mat-form-field class="full-width">
+                    <input type="number" matInput placeholder="Age" formControlName="age">
+                </mat-form-field>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <mat-form-field class="full-width">
+                    <mat-select placeholder="Gender" formControlName="gender">
+                        <mat-option value="M">Male</mat-option>
+                        <mat-option value="F">Female</mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+            <div class="col">
+                <mat-form-field class="full-width">
+                    <mat-select placeholder="Race" formControlName="race">
+                        <mat-option *ngFor="let option of race" [value]="option">{{ option }}</mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <mat-form-field class="full-width">
+                    <input matInput placeholder="Cell Number" formControlName="cell_number">
+                </mat-form-field>
+            </div>
+            <div class="col">
+                <mat-form-field class="full-width">
+                    <input matInput placeholder="Tell Number" formControlName="tell_number">
+                </mat-form-field>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <mat-form-field class="full-width">
+                    <input matInput placeholder="Email" formControlName="email">
+                </mat-form-field>
+            </div>
+            <div class="col">
+                <mat-form-field class="full-width">
+                    <input matInput placeholder="Occupation" formControlName="occupation">
+                </mat-form-field>
+            </div>
+        </div>
+
+        <h3>Physical Address</h3>
+        <div [formGroup]="address" class="address">
+            <div class="row">
+                <div class="col">
+                    <mat-form-field class="full-width">
+                        <input matInput placeholder="Address Line 1" formControlName="street_address_1">
+                        <mat-error *ngIf="address.controls['street_address_1'].hasError('required')">
+                            Address is <strong>required</strong>
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+                <div class="col">
+                    <mat-form-field class="full-width">
+                        <input matInput placeholder="Address Line 2" formControlName="street_address_2">
+                    </mat-form-field>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <mat-form-field class="full-width">
+                        <input matInput placeholder="City" formControlName="city">
+                        <mat-error *ngIf="address.controls['city'].hasError('required')">
+                            Company name is <strong>required</strong>
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+                <div class="col">
+                    <mat-form-field class="full-width">
+                        <mat-select placeholder="Location Type" formControlName="location_type">
+                            <mat-option *ngFor="let option of locationTypes" [value]="option">{{ option }}</mat-option>
+                        </mat-select>
+                        <mat-error *ngIf="address.controls['location_type'].hasError('required')">
+                            location type is <strong>required</strong>
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <mat-form-field class="full-width">
+                        <mat-select placeholder="Province" formControlName="province">
+                            <mat-option *ngFor="let option of provinces" [value]="option">{{ option }}</mat-option>
+                        </mat-select>
+                        <!-- <mat-error *ngIf="form.controls['companyName'].hasError('required')">
+                Company name is <strong>required</strong>
+              </mat-error> -->
+                    </mat-form-field>
+                </div>
+                <div class="col">
+                    <mat-form-field class="full-width">
+                        <input matInput placeholder="Code" formControlName="code">
+                    </mat-form-field>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <mat-form-field class="full-width">
+                        <mat-select placeholder="Country" formControlName="country">
+                            <mat-option value="South Africa">South Africa</mat-option>
+                        </mat-select>
+                        <!-- <mat-error *ngIf="form.controls['companyName'].hasError('required')">
+                Company name is <strong>required</strong>
+              </mat-error> -->
+                    </mat-form-field>
+                </div>
+            </div>
+        </div>
+
+        <h3>Additional Information</h3>
+        <div class="row">
+            <div class="col">
+                <mat-form-field class="full-width">
+                    <mat-select placeholder="Source of Income" formControlName="income">
+                        <mat-option *ngFor="let option of incomeTypes" [value]="option">{{ option }}</mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+            <div class="col">
+                <mat-form-field class="full-width">
+                    <mat-select placeholder="Home Ownership" formControlName="home_ownership">
+                        <mat-option *ngFor="let option of homeOwnership" [value]="option">{{ option }}</mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <mat-form-field class="full-width">
+                    <mat-select placeholder="Mode of Transport" formControlName="transport_mode">
+                        <mat-option *ngFor="let option of incomeTypes" [value]="option">{{ option }}</mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+            <div class="col">
+                <mat-form-field class="full-width">
+                    <mat-select placeholder="Person responsible for your home budget" formControlName="budget">
+                        <mat-option *ngFor="let option of budget" [value]="option">{{ option }}</mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+        </div>
+    </mat-dialog-content>
+    <mat-dialog-actions align="end">
+        <button mat-button mat-dialog-close>Cancel</button>
+        <button type="submit" mat-button [disabled]="!form.valid">Submit</button>
+    </mat-dialog-actions>
+</form>

@@ -47,11 +47,12 @@ export class TrainingEventFormComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    console.log(this.data);
     this.eventForm.patchValue(this.data);
     this.getProgrammeList();
     this.getTrainingServiceProviders();
     this.getTrainingVenues();
-
+    // TODO: check why after submitting the form, the programme_id is not being set
     if (this.eventForm.get('programme_id')?.value) {
       this.getProgrammeCourse(this.data.programme_id);
       this.getAppointedBeneficiaries(this.data.programme_id);

@@ -99,3 +99,89 @@ export const GENDER: any[] = [
 export function setBeneficiaries(items: any[]) : void {
     beneficiaries = items;
 }
+
+export const INSTITUDES = [
+    {
+        id: 1,
+        name: "Tshwane University of Technology"
+    },
+    {
+        id: 8,
+        name: 'Naswenda Training'
+    },
+    {
+        id: 4,
+        name: 'Richfield Technical College'
+    }
+];
+
+export const INCOME_TYPE = [
+    'Salary / Wages',
+    'Business Income',
+    'Support from family',
+    'Government Grant',
+    'Hustling',
+    'Pension',
+    'Investment',
+    'Other',
+    'None'
+];
+
+export const HOME_OWNERSHIP = [
+    'Owned',
+    'Rented',
+    'Family Home',
+    'Other',
+    'None'
+];
+
+export const TRANSPORT_MODE = [
+    'Own Car',
+    'Bus',
+    'Taxi',
+    'Train',
+    'Other',
+    'None'
+];
+
+export const BUDGET = [
+    'Myself',
+    'Spouse',
+    'Parent',
+    'Child',
+    'Sibling',
+    'Other',
+    'None'
+];
+
+export const LOCATION_TYPE = [
+    'City',
+    'Urban',
+    'Suburb',
+    'Township',
+    'Other'
+];
+
+export const PROVINCES = [
+    'Eastern Cape',
+    'Free State',
+    'Gauteng',
+    'KwaZulu-Natal',
+    'Limpopo',
+    'Mpumalanga',
+    'North West',
+    'Northern Cape',
+    'Western Cape'
+];
+
+export const RACE = [
+    'Black',
+    'Coloured',
+    'Indian',
+    'White',
+    'Other'
+];
+
+export const GENDER_OPTIONS = [
+    
+];

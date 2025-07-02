@@ -60,8 +60,8 @@
         </mat-step>
         <mat-step>
           <ng-template matStepLabel>Done</ng-template>
-          <p>You are now done.</p>
-          <P>You will be logged in on completion of register, please press 'submit' to proceed.</P>
+          <h1>Registration Completed</h1>
+          <P>You will recieve an email on completion of account processing</P>
           <div>
             <button mat-button matStepperPrevious type="button">Back</button>
             <button mat-raised-button type="submit" [disabled]="!registerForm.valid">Submit</button>
@@ -72,3 +72,19 @@
         <p>Have an account? <a routerLink="/auth/login"><span> Login </span></a></p>
     </div>
 </form>
+
+<!-- <form [formGroup]="myForm" (ngSubmit)="onSubmit()">
+    <input type="text" formControlName="firstName" placeholder="First Name" />
+    <div formArrayName="items">
+        <div *ngFor="let item of items.controls; let i = index" [formGroupName]="i">
+            <label>Name:</label>
+            <input type="text" formControlName="name" />
+            <label>Quantity:</label>
+            <input type="number" formControlName="quantity" />
+            <button type="button" (click)="removeItem(i)">Remove</button>
+        </div>
+    </div>
+    <button type="button" (click)="addItem()">Add More</button>
+    <button type="submit">Submit</button>
+  </form> -->
+  

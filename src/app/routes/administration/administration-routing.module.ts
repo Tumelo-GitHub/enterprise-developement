@@ -6,6 +6,8 @@ import { ProgrammeComponent } from './programme/programme.component';
 import { GenericCompanyComponent } from './generic-company/generic-company.component';
 import { BusinessDevelopmemtComponent } from './business-developmemt/business-developmemt.component';
 import { ServiceProviderComponent } from './service-provider/service-provider.component';
+import { TimesheetComponent } from './timesheet/timesheet.component';
+import { TimesheetManagerComponent } from './timesheet-manager/timesheet-manager.component';
 
 const routes: Routes = [
   { path: 'course', component: CourseComponent },
@@ -13,7 +15,9 @@ const routes: Routes = [
   { path: 'programme', component: ProgrammeComponent},
   { path: 'generic-company', component: GenericCompanyComponent},
   { path: 'business-development', component: BusinessDevelopmemtComponent},
-  { path: 'service-provider', component: ServiceProviderComponent}
+  { path: 'service-provider', component: ServiceProviderComponent},
+  { path: 'timesheet', component: TimesheetComponent},
+  { path: 'timesheet-manager', component: TimesheetManagerComponent}
 ];
 
 @NgModule({

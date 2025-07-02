@@ -6,18 +6,16 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./training.component.scss']
 })
 export class TrainingComponent implements OnInit {
-  event_id = 0;
-  event: any;
+  event_ids: number[] = [];
 
   constructor() { }
 
   ngOnInit(): void {
   }
 
-  selectedEvent(event: any) {
-    console.log(event);
-    this.event = event;
-    this.event_id = event.id;
+  selectedEvent(event: number[]) {
+    this.event_ids = event;
+    console.log(this.event_ids);
   }
 
 }

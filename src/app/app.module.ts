@@ -12,6 +12,7 @@ import { RoutesModule } from './routes/routes.module';
 import { BnNgIdleService } from 'bn-ng-idle'; 
 
 import { httpInterceptorProviders } from './core';
+import {DEFAULT_CURRENCY_CODE} from '@angular/core';
 
 // TOAST AND CONFIRMATION
 import {
@@ -39,7 +40,8 @@ import {
   ],
   providers: [
     BnNgIdleService,
-    httpInterceptorProviders
+    httpInterceptorProviders,
+    {provide: DEFAULT_CURRENCY_CODE, useValue: 'R'}
   ],
   bootstrap: [AppComponent]
 })

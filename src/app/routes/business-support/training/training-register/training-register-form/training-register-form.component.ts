@@ -37,13 +37,11 @@ export class TrainingRegisterFormComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    console.log(this.data)
     this.form.patchValue(this.data);
     this.getInvitedSmme(this.data.event_id);
   }
 
   onSubmit() : void {
-    console.log(this.form.value);
     if (this.data.id) {
       this.trainingRegisterService.update(this.data.id, this.form.value).subscribe({
         next: response => {

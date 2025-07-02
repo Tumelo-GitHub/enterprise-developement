@@ -2,3 +2,24 @@
     display: block;
     margin: 5px 0;
 }
+
+.contact-header, .contact-inner-header {
+    display: flex;
+    justify-content: space-between;
+}
+
+.contact {
+    border: 2px solid #ccc;
+    border-radius: 20px;
+    padding: 8px 10px;
+    margin-bottom: 5px;
+}
+
+.turnover-range {
+    display: flex;
+
+    .row {
+        width: 95%;
+    }
+}
+

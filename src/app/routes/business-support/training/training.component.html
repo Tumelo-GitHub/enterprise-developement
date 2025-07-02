@@ -1,22 +1,22 @@
 <div class="container">
     <div class="page-title">
         <h2>Trainings</h2>
-        <div id="event-info" class="event-details" *ngIf="event">
+        <!-- <div id="event-info" class="event-details" *ngIf="event">
             <h3>{{ event.programme_name }}</h3>
             <h3>{{ event.course_name }}</h3>
             <h3>{{ event.service_provider_name }}</h3>
             <h3>{{ event.event_date }}</h3>
-        </div>
+        </div> -->
     </div>
     <mat-tab-group animationDuration="0ms">
         <mat-tab label="Events">
             <app-training-event (onEventSelect)="selectedEvent($event)"></app-training-event>
         </mat-tab>
         <mat-tab label="Register">
-            <app-training-register [event_id]="event_id"></app-training-register>
+            <app-training-register [event_ids]="event_ids"></app-training-register>
         </mat-tab>
         <mat-tab label="Actions & Shortcomings">
-            <app-training-shortcomings [event_id]="event_id"></app-training-shortcomings>
+            <!-- <app-training-shortcomings [event_id]="event_id"></app-training-shortcomings> -->
         </mat-tab>
     </mat-tab-group>
 </div>

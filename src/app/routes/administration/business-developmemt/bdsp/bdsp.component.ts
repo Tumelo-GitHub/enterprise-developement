@@ -89,7 +89,7 @@ export class BdspComponent implements OnInit {
   }
 
   exportTableToPDF() {
-    TableUtil.exportTableToPDF("bdsp", "bdsp", "Business Development Companies Information", "l");
+    // TableUtil.exportTableToPDF("bdsp", "bdsp", "Business Development Companies Information", "l");
   }
 
   removeColumn() {

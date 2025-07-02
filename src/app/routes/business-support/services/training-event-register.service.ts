@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { IResponseModelBase } from 'src/app/shared';
@@ -10,8 +10,9 @@ export class TrainingEventRegisterService {
 
   constructor(private http: HttpClient) { }
 
-  getTrainingRegister (event_id: number) : Observable<IResponseModelBase<any>> {
-    return this.http.get<IResponseModelBase<any>>(`api/training/register/${event_id}`);
+  getTrainingRegister (event_ids: number[]) : Observable<IResponseModelBase<any>> {
+    const params = new HttpParams().set('event_ids', event_ids.join(','));
+    return this.http.get<IResponseModelBase<any>>(`api/training/register`, { params });
   }
 
   create(data: any) : Observable<IResponseModelBase<any>> {

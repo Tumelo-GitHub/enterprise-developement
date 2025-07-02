@@ -1,0 +1,23 @@
+.content-wrapper {
+    display: grid;
+    grid-template-columns: 20% 80%;
+    grid-gap: 1rem;
+}
+
+::ng-deep mat-expansion-panel .mat-expansion-panel-body {
+    padding: 0 0px 16px !important;
+}
+
+.example-headers-align .mat-expansion-panel-header-title,
+.example-headers-align .mat-expansion-panel-header-description {
+  flex-basis: 0;
+}
+
+.example-headers-align .mat-expansion-panel-header-description {
+  justify-content: space-between;
+  align-items: center;
+}
+
+.table-container {
+    padding: 20px;
+}

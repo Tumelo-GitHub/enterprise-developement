@@ -79,9 +79,7 @@ export class ProgrammeTableComponent implements OnInit {
   constructor(
     public dialog: MatDialog, 
     private toast: ToastService, 
-    private programmeService: ProgrammeService, 
-    private matIconRegistry: MatIconRegistry,
-    private domSanitizer: DomSanitizer) { }
+    private programmeService: ProgrammeService) { }
 
   ngOnInit(): void {
     this.getProgrammeList()

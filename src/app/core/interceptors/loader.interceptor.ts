@@ -14,7 +14,7 @@ export class LoaderInterceptor implements HttpInterceptor {
   constructor(public loaderService: LoaderService) {}
 
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
-    // const apiRequest = request.clone({url: `https://api.wozaweb.co.za/backend/public/${request.url}`});
+    // request = request.clone({url: window.location.origin + `/backend/public/${request.url}`});
     if (!request.url.includes('/assets')) {
       if (request.url.includes('/login') || request.url.includes('/register')) {
         this.loaderService.isLoginLoading$.next(true);

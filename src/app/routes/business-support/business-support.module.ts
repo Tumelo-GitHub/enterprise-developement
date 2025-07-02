@@ -10,7 +10,6 @@ import { TrainingEventFormComponent } from './training/training-event/training-e
 import { TrainingRegisterComponent } from './training/training-register/training-register.component';
 import { TrainingShortcomingsComponent } from './training/training-shortcomings/training-shortcomings.component';
 import { TrainingRegisterFormComponent } from './training/training-register/training-register-form/training-register-form.component';
-import { TrainingInvitedSmmeComponent } from './training/training-event/training-invited-smme/training-invited-smme.component';
 
 
 @NgModule({
@@ -22,8 +21,7 @@ import { TrainingInvitedSmmeComponent } from './training/training-event/training
     TrainingEventFormComponent,
     TrainingRegisterComponent,
     TrainingShortcomingsComponent,
-    TrainingRegisterFormComponent,
-    TrainingInvitedSmmeComponent
+    TrainingRegisterFormComponent
   ],
   imports: [
     SharedModule,

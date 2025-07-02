@@ -25,13 +25,14 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatStepperModule } from '@angular/material/stepper';
 import { MatRadioModule } from '@angular/material/radio';
-import {MatTabsModule} from '@angular/material/tabs';
-import {MatTooltipModule} from '@angular/material/tooltip';
+import { MatTabsModule } from '@angular/material/tabs';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatRippleModule, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
-import {MatDatepickerModule} from '@angular/material/datepicker';
+import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
-import {MatBadgeModule} from '@angular/material/badge';
-import {MatChipsModule} from '@angular/material/chips';
+import { MatBadgeModule } from '@angular/material/badge';
+import { MatChipsModule } from '@angular/material/chips';
+import {MatCheckboxModule} from '@angular/material/checkbox';
 
 const MODULES: any[] = [
   CommonModule,
@@ -66,7 +67,8 @@ const MODULES: any[] = [
   MatNativeDateModule,
   MatBadgeModule,
   MatRippleModule,
-  MatChipsModule
+  MatChipsModule,
+  MatCheckboxModule
 ];
 const COMPONENTS: any[] = [];
 const COMPONENTS_DYNAMIC: any[] = [];

@@ -1,14 +1,15 @@
 import { Injectable } from '@angular/core';
 import jwt_decode from "jwt-decode";
+import { IUser } from 'src/app/shared';
 
 interface Token {
   iss: string;
-  aud : string;
+  aud: string;
   sub: string;
   nbf: number;
   iat: number;
   exp: number;
-  data: any
+  data: any;
 }
 
 @Injectable({
@@ -18,29 +19,79 @@ export class TokenService {
 
   constructor() { }
 
-  decode(token: string) {
-    // console.log(jwt_decode(token));
-    // console.log(new Date(1685529701))
-    return jwt_decode(token) as Token;
+  decode(token: string): Token | null {
+    try {
+      return jwt_decode(token) as Token;
+    } catch (error) {
+      console.error('Token decoding failed:', error);
+      return null;
+    }
   }
 
-  save(token: string) {
-    localStorage.setItem('access_token', token)
+  save(token: string): void {
+    try {
+      localStorage.setItem('access_token', token);
+    } catch (error) {
+      console.error('Failed to save token:', error);
+    }
   }
 
-  remove() {
-    localStorage.removeItem('access_token')
+  remove(): void {
+    try {
+      localStorage.removeItem('access_token');
+    } catch (error) {
+      console.error('Failed to remove token:', error);
+    }
   }
 
-  getToken() {
-    return localStorage.getItem('access_token') as string;
+  getToken(): string | null {
+    try {
+      return localStorage.getItem('access_token');
+    } catch (error) {
+      console.error('Failed to get token:', error);
+      return null;
+    }
   }
 
-  getUser() {
-    return this.decode(this.getToken()).data.user;
+  getUser(): IUser | null {
+    const token = this.getToken();
+    if (token) {
+      const decodedToken = this.decode(token);
+      if (decodedToken) {
+        return decodedToken.data.user;
+      }
+    }
+    return null;
   }
 
-  check() {
-    return !!localStorage.getItem('access_token');
+  check(): boolean {
+    const token = this.getToken();
+    if (token) {
+      const decodedToken = this.decode(token);
+      if (decodedToken) {
+        if (this.isTokenExpired(decodedToken)) {
+          this.remove(); // Remove the token if it is expired
+          return false;
+        }
+        return true;
+      }
+    }
+    return false;
+  }
+
+  private isTokenExpired(token: Token): boolean {
+    const currentTime = Math.floor(Date.now() / 1000);
+    return token.exp < currentTime;
+  }
+
+  isAdmin(): boolean {
+    const token = this.getToken();
+    if (token) {
+      const decodedToken = this.decode(token);
+      if (decodedToken) {
+        return decodedToken.data.user.role === 'admin';
+      }
+    }
+    return false;
   }
 }

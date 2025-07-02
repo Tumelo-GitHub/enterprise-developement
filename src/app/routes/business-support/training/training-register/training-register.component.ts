@@ -8,6 +8,7 @@ import { TrainingRegisterFormComponent } from './training-register-form/training
 import { TrainingEventRegisterService } from '../../services/training-event-register.service';
 import { CONFIRM_DELETE_MESSAGE, DELETE_TITLE } from 'src/app/shared/common/devwizarrd.constants';
 import { TableUtil } from 'src/app/shared/utils/tableUtil';
+import { FormControl } from '@angular/forms';
 
 @Component({
   selector: 'app-training-register',
@@ -15,13 +16,83 @@ import { TableUtil } from 'src/app/shared/utils/tableUtil';
   styleUrls: ['./training-register.component.scss']
 })
 export class TrainingRegisterComponent implements OnInit {
-  @Input() event_id: number = 0;
-  displayedColumns: string[] = ['smme_name', 'attendee', 'email', 'tel_number', 'action'];
+  @Input() event_ids: number[] = [];
+  displayedColumns: string[] = ['smme_name', 'registered', 'attendee', 'email', 'tel_number', 'gender', 'age', 'qualification', 'black_owned', 'woman_owned', 'youth_owned', 'disabled_owned', 'location_type', 'programme', 'course', 'action'];
+  columnsToDisplay: string[] = ['smme_name', 'attendee', 'email', 'tel_number', 'action'];
   dataSource!: MatTableDataSource<any>;
   register: any[] = [];
+  btnState: boolean = true;
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
+
+  columns = new FormControl('');
+  columnsList = [
+    [
+      'Smme Name',
+      'smme_name'
+    ],
+    [
+      'Registered',
+      'registered'
+    ],
+    [
+      'Attendee',
+      'attendee'
+    ],
+    [
+      'Email',
+      'email'
+    ],
+    [
+      'Tell Number',
+      'tel_number'
+    ],
+    [
+      'Gender',
+      'gender'
+    ],
+    [
+      'Age',
+      'age'
+    ],
+    [
+      'Qualification',
+      'qualification'
+    ],
+    [
+      'Black Owned',
+      'black_owned'
+    ],
+    [
+      'Woman Owned',
+      'woman_owned'
+    ],
+    [
+      'Youth Owned',
+      'youth_owned'
+    ],
+    [
+      'Disabled Owned',
+      'disabled_owned'
+    ],
+    [
+      'Location Type',
+      'location_type'
+    ],
+    [
+      'Programme',
+      'programme'
+    ],
+    [
+      'Course',
+      'course'
+    ],
+    [
+      'Action',
+      'action'
+    ]
+  ]
 
   constructor(
     public dialog: MatDialog,
@@ -34,11 +105,13 @@ export class TrainingRegisterComponent implements OnInit {
 
   ngOnChanges(changes: SimpleChanges) {
     // changes.prop contains the old and the new value...
-    this.getEventRegister(changes['event_id'].currentValue);
+    this.getEventRegister(changes['event_ids'].currentValue);
+    console.log(changes['event_ids'].currentValue);
+    this.btnState = (changes['event_ids'].currentValue.length > 1 || changes['event_ids'].currentValue.length == 0) ? true : false;
   }
 
-  getEventRegister(id: number) {
-    if (id > 0) {
+  getEventRegister(id: number[]) {
+    if (id.length > 0) {
       this.trainingRegisterService.getTrainingRegister(id).subscribe({
         next: response => {
           this.register = response.data;
@@ -51,9 +124,19 @@ export class TrainingRegisterComponent implements OnInit {
     }
   }
 
+  selectedToppings(columns: any) {
+    this.columnsToDisplay = columns.value;
+  }
+
+  exportTable() {
+    TableUtil.exportTableToExcel("TrainingEventRegisterTable", "Training Register");
+  }
+
   openDialog(data: any = {}) {
     const index = this.register.indexOf(data);
-    data.event_id = this.event_id;
+    if (Object.keys(data).length === 0) {
+      data.event_id= this.event_ids[0];
+    }
 
     const dialogRef = this.dialog.open(TrainingRegisterFormComponent, {
       data,
@@ -81,7 +164,7 @@ export class TrainingRegisterComponent implements OnInit {
   }
 
   exportTableToPDF() {
-    TableUtil.exportTableToPDF("TrainingEventRegisterTable", "Training Event Register", "Training Event Register", "l");
+    // TableUtil.exportTableToPDF("TrainingEventRegisterTable", "Training Event Register", "Training Event Register", "l");
   }
 
   deleteRecord (row: any) {

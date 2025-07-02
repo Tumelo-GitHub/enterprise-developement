@@ -7,6 +7,8 @@ import { ToastService } from 'src/app/shared/services/toast.service';
 import { TrainingEventFormComponent } from './training-event-form/training-event-form.component';
 import { TrainingEventService } from '../../services/training-event.service';
 import { CONFIRM_DELETE_MESSAGE, DELETE_TITLE } from 'src/app/shared/common/devwizarrd.constants';
+import { TableUtil } from 'src/app/shared/utils/tableUtil';
+import { SelectionModel } from '@angular/cdk/collections';
 
 @Component({
   selector: 'app-training-event',
@@ -14,10 +16,11 @@ import { CONFIRM_DELETE_MESSAGE, DELETE_TITLE } from 'src/app/shared/common/devw
   styleUrls: ['./training-event.component.scss']
 })
 export class TrainingEventComponent implements OnInit {
-  @Output() onEventSelect: EventEmitter<any> = new EventEmitter();
-  displayedColumns: string[] = ['programme_name', 'service_provider_name', 'course_name', 'address', 'event_date', 'time', 'status_name', 'action'];
-  dataSource!: MatTableDataSource<any>;
+  @Output() onEventSelect: EventEmitter<number[]> = new EventEmitter();
+  displayedColumns: string[] = ['select', 'programme_name', 'service_provider_name', 'course_name', 'address', 'event_date', 'time', 'status_name', 'action'];
+  dataSource = new MatTableDataSource<any>([]);;
   events: any[] = [];
+  selection = new SelectionModel<any>(true, []);
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
@@ -37,17 +40,13 @@ export class TrainingEventComponent implements OnInit {
     this.trainingEventService.getTrainingEvents().subscribe({
       next: (resp) => {
         this.events = resp.data;
-        console.log(resp);
-        this.dataSource = new MatTableDataSource(this.events);
-        this.dataSource.sort = this.sort;
-        this.dataSource.paginator = this.paginator;
+        this.updateTable();
       },
       error: (err) => {
         console.log(err)
       }
     });
   }
-
 
   openDialog(data: any = {}) {
     const index = this.events.indexOf(data);
@@ -63,9 +62,18 @@ export class TrainingEventComponent implements OnInit {
         } else {
           this.events.push(result);
         }
-        this.dataSource = new MatTableDataSource(this.events); 
+        this.updateTable();
       }
     });
+  }
+
+  // TODO: Implement the exportTable and exportTableToPDF as separate component
+  exportTable() {
+    TableUtil.exportTableToExcel("TrainingEventTable", "Training Events");
+  }
+
+  exportTableToPDF() {
+    // TableUtil.exportTableToPDF("TrainingEventTable", "Training Events", "Training Events", "l");
   }
 
   applyFilter(event: Event) {
@@ -77,9 +85,14 @@ export class TrainingEventComponent implements OnInit {
     }
   }
 
-  getClickedRow (row: any) {
-    this.clickedRow = row;
-    this.onEventSelect.emit(row);
+  loadRegister () : void {
+    var arrayOfIds = this.selection.selected.map(x => x.id);
+    // check if the array is empty
+    if (arrayOfIds.length === 0) {
+      this.toast.toastNotification('info', 'Info', 'No record selected');
+      return
+    }
+    this.onEventSelect.emit(arrayOfIds);
   }
 
   deleteEmp(event: any) {
@@ -91,7 +104,7 @@ export class TrainingEventComponent implements OnInit {
             next: resp => {
               this.toast.toastNotification('success', resp.message, '');
               this.events.splice(index, 1);
-              this.dataSource = new MatTableDataSource(this.events);
+              this.updateTable();
             },
             error: console.log
           })
@@ -100,4 +113,34 @@ export class TrainingEventComponent implements OnInit {
     )
   }
 
+  private updateTable() {
+    this.dataSource = new MatTableDataSource(this.events);
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
+  }
+
+  /** Whether the number of selected elements matches the total number of rows. */
+  isAllSelected() {
+    const numSelected = this.selection.selected.length;
+    const numRows = this.dataSource.data.length;
+    return numSelected === numRows;
+  }
+
+  /** Selects all rows if they are not all selected; otherwise clear selection. */
+  masterToggle() {
+    if (this.isAllSelected()) {
+      this.selection.clear();
+      return;
+    }
+
+    this.selection.select(...this.dataSource.data);
+  }
+
+  /** The label for the checkbox on the passed row */
+  checkboxLabel(row?: any): string {
+    if (!row) {
+      return `${this.isAllSelected() ? 'deselect' : 'select'} all`;
+    }
+    return `${this.selection.isSelected(row) ? 'deselect' : 'select'} row ${row.position + 1}`;
+  }
 }

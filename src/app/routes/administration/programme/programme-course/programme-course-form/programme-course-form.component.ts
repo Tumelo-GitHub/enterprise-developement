@@ -6,6 +6,7 @@ import { ComplianceFormComponent } from '../../../beneficiaries/compliance/compl
 import { programmeCourseStatus } from 'src/app/shared/common/devwizarrd.constants';
 import { CourseService } from '../../../services/course.service';
 import { ProgrammeCourseService } from '../../../services/programme-course.service';
+import { ICourse } from 'src/app/shared';
 
 @Component({
   selector: 'app-programme-course-form',
@@ -13,7 +14,7 @@ import { ProgrammeCourseService } from '../../../services/programme-course.servi
   styleUrls: ['./programme-course-form.component.scss']
 })
 export class ProgrammeCourseFormComponent implements OnInit {
-  courseList: any[] = [];
+  courseList: ICourse[] = [];
   form = this.fb.group({
     programme_id: [this.data.programme_id, Validators.required],
     course_id: ['', Validators.required],

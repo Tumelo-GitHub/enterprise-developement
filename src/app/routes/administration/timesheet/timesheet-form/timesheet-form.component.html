@@ -1,0 +1,99 @@
+<form [formGroup]="form" novalidate (ngSubmit)="onSubmit()">
+    <h2 mat-dialog-title>My Timesheet</h2>
+    <mat-dialog-content class="mat-typography">
+        <div class="row">
+            <div class="col">
+                <mat-form-field class="full-width">
+                    <mat-label>Date</mat-label>
+                    <input matInput [matDatepicker]="picker" formControlName="date">
+                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                    <mat-datepicker #picker></mat-datepicker>
+                </mat-form-field>
+            </div>
+        </div>
+        <mat-divider></mat-divider>
+        <div formArrayName="timesheets">
+            <div *ngFor="let timesheet of timesheets.controls; let i = index" [formGroupName]="i">
+                <div class="row">
+                    <div class="col">
+                        <mat-form-field class="full-width">
+                            <mat-select placeholder="Project" formControlName="project_id" (selectionChange)="projectChange($event)">
+                                <mat-option *ngFor="let option of projects" [value]="option.id">{{option.project_name}}</mat-option>
+                            </mat-select>
+                            <mat-error *ngIf="timesheet?.get('project_id')?.hasError('required')">
+                                Project is <strong>required</strong>
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <mat-form-field class="full-width">
+                            <mat-select placeholder="Company" formControlName="company_id" (selectionChange)="companyChange($event)">
+                                <mat-option *ngFor="let option of companies" [disabled]="option.status != 'Active'" [value]="option.id">{{option.company_name}}</mat-option>
+                            </mat-select>
+                            <mat-error *ngIf="timesheet?.get('company_id')?.hasError('required')">
+                                Company is <strong>required</strong>
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <mat-form-field class="full-width">
+                            <mat-select placeholder="General Activity Type" formControlName="general_activity">
+                                <mat-option *ngFor="let option of activities" [value]="option">{{option}}</mat-option>
+                            </mat-select>
+                            <mat-error *ngIf="timesheet?.get('general_activity')?.hasError('required')">
+                                Activity is <strong>required</strong>
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <mat-form-field class="full-width">
+                            <mat-select placeholder="Work Type" formControlName="work_type">
+                                <mat-option *ngFor="let option of workTypes" [value]="option">{{option}}</mat-option>
+                            </mat-select>
+                            <mat-error *ngIf="timesheet?.get('work_type')?.hasError('required')">
+                                Work Type is <strong>required</strong>
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <mat-form-field class="full-width">
+                            <textarea matInput placeholder="Comment" formControlName="comment"></textarea>
+                        </mat-form-field>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <mat-form-field class="full-width">
+                            <input type="time" matInput placeholder="Duration" formControlName="duration">
+                        </mat-form-field>
+                    </div>
+                </div>
+                <div class="row" *ngIf="!isEditMode">
+                    <div class="col">
+                        <button mat-button color="warn" (click)="removeTimesheet(i)">
+                            <mat-icon>delete</mat-icon>
+                        </button>
+                    </div>
+                </div>
+                <mat-divider></mat-divider>
+            </div>
+        </div>
+        <div class="row" *ngIf="!isEditMode">
+            <div class="col">
+                <button mat-button color="primary" (click)="addTimesheet()">Add Timesheet</button>
+            </div>
+        </div>
+    </mat-dialog-content>
+    <mat-dialog-actions align="end">
+        <button mat-button mat-dialog-close>Cancel</button>
+        <button type="submit" mat-button [disabled]="!form.valid">Submit</button>
+    </mat-dialog-actions>
+</form>

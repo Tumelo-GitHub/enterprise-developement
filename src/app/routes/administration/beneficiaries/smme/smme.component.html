@@ -53,12 +53,12 @@
             <ng-container matColumnDef="street_address_1">
               <th mat-header-cell *matHeaderCellDef mat-sort-header> Physical Address</th>
               <td mat-cell *matCellDef="let row"> 
-                {{row.street_address_1}} 
-                {{row.street_address_2}} 
-                {{row.city}} 
-                {{row.province}} 
-                {{row.code}} 
-                {{row.country}} 
+                {{row.address.street_address_1}} 
+                {{row.address.street_address_2}} 
+                {{row.address.city}} 
+                {{row.address.province}} 
+                {{row.address.code}} 
+                {{row.address.country}} 
               </td>
             </ng-container>
         
@@ -69,32 +69,32 @@
         
             <ng-container matColumnDef="address_note">
               <th mat-header-cell *matHeaderCellDef mat-sort-header> Address Note </th>
-              <td mat-cell *matCellDef="let row"> {{row.address_note}} </td>
+              <td mat-cell *matCellDef="let row"> {{row.address.address_note}} </td>
             </ng-container>
   
             <ng-container matColumnDef="contact_person">
               <th mat-header-cell *matHeaderCellDef mat-sort-header> Contact Person </th>
-              <td mat-cell *matCellDef="let row"> {{row.contact_person}} </td>
+              <td mat-cell *matCellDef="let row"> {{row.contacts[0].full_names}} </td>
             </ng-container>
   
             <ng-container matColumnDef="contact_person_position">
               <th mat-header-cell *matHeaderCellDef mat-sort-header> Contact Person Position </th>
-              <td mat-cell *matCellDef="let row"> {{row.contact_person_position }} </td>
+              <td mat-cell *matCellDef="let row"> {{row.contacts[0].position }} </td>
             </ng-container>
   
             <ng-container matColumnDef="tel_number">
               <th mat-header-cell *matHeaderCellDef mat-sort-header> Tell Number </th>
-              <td mat-cell *matCellDef="let row"> {{row.tel_number}} </td>
+              <td mat-cell *matCellDef="let row"> {{row.contacts[0].tell_number}} </td>
             </ng-container>
   
             <ng-container matColumnDef="cel_number">
               <th mat-header-cell *matHeaderCellDef mat-sort-header> Cell Number </th>
-              <td mat-cell *matCellDef="let row"> {{row.cel_number}} </td>
+              <td mat-cell *matCellDef="let row"> {{row.contacts[0].cell_number}} </td>
             </ng-container>
   
             <ng-container matColumnDef="email">
               <th mat-header-cell *matHeaderCellDef mat-sort-header> Email </th>
-              <td mat-cell *matCellDef="let row"> <a href = "mailto: {{row.email}}" class="email-link" (click)="$event.stopPropagation();">{{row.email}}</a> </td>
+              <td mat-cell *matCellDef="let row"> <a href = "mailto: {{row.contacts[0].email}}" class="email-link" (click)="$event.stopPropagation();">{{row.contacts[0].email}}</a> </td>
             </ng-container>
   
             <ng-container matColumnDef="registration_number">
@@ -174,7 +174,7 @@
   
             <ng-container matColumnDef="location_type">
               <th mat-header-cell *matHeaderCellDef mat-sort-header> Location Type </th>
-              <td mat-cell *matCellDef="let row"> {{row.location_type}} </td>
+              <td mat-cell *matCellDef="let row"> {{row.address.location_type}} </td>
             </ng-container>
   
             <ng-container matColumnDef="contact_origin">

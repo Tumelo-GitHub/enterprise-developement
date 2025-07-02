@@ -19,10 +19,10 @@ export class GenericCompanyService {
   }
 
   update(id: number, data: any) : Observable<IResponseModelBase<any>> {
-    return this.http.put<IResponseModelBase<any>>(`api/generic/${id}`, data)
+    return this.http.post<IResponseModelBase<any>>(`api/generic-company/${id}`, data)
   }
 
   delete(id: number) : Observable<any> {
-    return this.http.delete(`api/generic/${id}`);
+    return this.http.delete(`api/generic-company/${id}`);
   }
 }

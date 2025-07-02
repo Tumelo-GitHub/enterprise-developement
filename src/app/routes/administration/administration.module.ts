@@ -32,6 +32,15 @@ import { AppointedBdspComponent } from './programme/appointed-bdsp/appointed-bds
 import { AppointedBdspFormComponent } from './programme/appointed-bdsp/appointed-bdsp-form/appointed-bdsp-form.component';
 import { ProgrammeCourseComponent } from './programme/programme-course/programme-course.component';
 import { ProgrammeCourseFormComponent } from './programme/programme-course/programme-course-form/programme-course-form.component';
+import { TimesheetComponent } from './timesheet/timesheet.component';
+import { TimesheetFormComponent } from './timesheet/timesheet-form/timesheet-form.component';
+import { CourseFormComponent } from './course/course-form/course-form.component';
+import { PersonComponent } from './beneficiaries/person/person.component';
+import { PersonFormComponent } from './beneficiaries/person/person-form/person-form.component';
+import { TimesheetInvoiceComponent } from './timesheet/timesheet-invoice/timesheet-invoice.component';
+import { ClaimDisbursementComponent } from './claim-disbursement/claim-disbursement.component';
+import { ClaimDisbursementFormComponent } from './claim-disbursement/claim-disbursement-form/claim-disbursement-form.component';
+import { TimesheetManagerComponent } from './timesheet-manager/timesheet-manager.component';
 
 
 @NgModule({
@@ -65,7 +74,16 @@ import { ProgrammeCourseFormComponent } from './programme/programme-course/progr
     AppointedBdspComponent,
     AppointedBdspFormComponent,
     ProgrammeCourseComponent,
-    ProgrammeCourseFormComponent
+    ProgrammeCourseFormComponent,
+    TimesheetComponent,
+    TimesheetFormComponent,
+    CourseFormComponent,
+    PersonComponent,
+    PersonFormComponent,
+    TimesheetInvoiceComponent,
+    ClaimDisbursementComponent,
+    ClaimDisbursementFormComponent,
+    TimesheetManagerComponent
   ],
   imports: [
     SharedModule,
