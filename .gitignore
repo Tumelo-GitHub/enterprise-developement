@@ -40,3 +40,10 @@ testem.log
 # System files
 .DS_Store
 Thumbs.db
+
+# Backend API (separate repo: devwizard_api)
+/backend/
+
+# Local build logs
+/build.log
+/build-output.txt
