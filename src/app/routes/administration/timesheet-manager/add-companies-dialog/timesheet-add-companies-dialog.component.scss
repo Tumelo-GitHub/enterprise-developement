@@ -1,0 +1,46 @@
+.add-companies {
+  min-width: min(520px, 80vw);
+}
+
+.list-meta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  color: #6b7280;
+  margin: -8px 0 8px;
+
+  .selected-count {
+    color: #667eea;
+    font-weight: 600;
+  }
+}
+
+.company-list {
+  max-height: 300px;
+  overflow-y: auto;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  margin-bottom: 16px;
+
+  .empty {
+    padding: 24px 16px;
+    margin: 0;
+    color: #6b7280;
+    text-align: center;
+  }
+}
+
+.create-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+
+  .create-field {
+    flex: 1;
+  }
+
+  button {
+    margin-top: 10px;
+    height: 44px;
+  }
+}

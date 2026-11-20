@@ -19,6 +19,11 @@ export class TrainingEventRegisterService {
     return this.http.post<IResponseModelBase<any>>('api/training/register', data);
   }
 
+  // Auto-fill register from confirmed invitations for a training event
+  autoFillFromInvitations(eventId: number): Observable<IResponseModelBase<any>> {
+    return this.http.post<IResponseModelBase<any>>(`api/training/register/autofill/${eventId}`, {});
+  }
+
   update(id: number, data: any) : Observable<IResponseModelBase<any>> {
     return this.http.post<IResponseModelBase<any>>(`api/training/register/${id}`, data)
   }

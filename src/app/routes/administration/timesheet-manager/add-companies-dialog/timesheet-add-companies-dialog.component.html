@@ -1,0 +1,60 @@
+<h2 mat-dialog-title>Add companies to {{ data.project.project_name }}</h2>
+
+<mat-dialog-content class="add-companies">
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>Search companies</mat-label>
+    <input matInput [(ngModel)]="search" autocomplete="off" cdkFocusInitial>
+    <mat-icon matSuffix>search</mat-icon>
+  </mat-form-field>
+
+  <div class="list-meta">
+    <span>{{ filtered.length }} of {{ available.length }} available</span>
+    <span *ngIf="selectedIds.size" class="selected-count">{{ selectedIds.size }} selected</span>
+  </div>
+
+  <div class="company-list">
+    <mat-selection-list *ngIf="filtered.length; else noMatches">
+      <mat-list-option
+        *ngFor="let company of filtered; trackBy: trackById"
+        checkboxPosition="before"
+        [selected]="selectedIds.has(company.id)"
+        (selectedChange)="toggle(company.id, $event)">
+        {{ company.company_name }}
+      </mat-list-option>
+    </mat-selection-list>
+    <ng-template #noMatches>
+      <p class="empty">
+        {{ available.length ? 'No companies match "' + search + '".' : 'Every company is already in this project.' }}
+      </p>
+    </ng-template>
+  </div>
+
+  <div class="create-row">
+    <mat-form-field appearance="outline" class="create-field">
+      <mat-label>Not listed? New company name</mat-label>
+      <input matInput [(ngModel)]="newCompanyName" (keydown.enter)="$event.preventDefault(); createCompany()" autocomplete="off">
+    </mat-form-field>
+    <button mat-stroked-button type="button" color="primary" (click)="createCompany()"
+            [disabled]="!newCompanyName.trim() || creating">
+      <mat-icon>add_business</mat-icon>
+      {{ creating ? 'Creating…' : 'Create' }}
+    </button>
+  </div>
+
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>Status for added companies</mat-label>
+    <mat-select [(ngModel)]="status">
+      <mat-option *ngFor="let s of data.statuses" [value]="s.id">{{ s.status }}</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <p *ngIf="error" class="mat-error" role="alert">{{ error }}</p>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button type="button" mat-dialog-close [disabled]="saving">Cancel</button>
+  <button mat-raised-button color="primary" type="button" (click)="submit()"
+          [disabled]="!selectedIds.size || saving">
+    {{ saving ? 'Adding…' : 'Add ' + (selectedIds.size || '') + (selectedIds.size === 1 ? ' company' : ' companies') }}
+  </button>
+</mat-dialog-actions>

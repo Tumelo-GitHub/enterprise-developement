@@ -1,0 +1,335 @@
+.dialog-container {
+  display: flex;
+  flex-direction: column;
+  max-height: 80vh;
+}
+
+.dialog-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 24px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.header-content {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex: 1;
+}
+
+.header-icon {
+  font-size: 32px;
+  width: 32px;
+  height: 32px;
+}
+
+.header-text {
+  flex: 1;
+}
+
+.dialog-title {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.dialog-subtitle {
+  margin: 4px 0 0 0;
+  font-size: 14px;
+  opacity: 0.9;
+}
+
+.close-btn {
+  color: white;
+}
+
+.dialog-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 24px;
+}
+
+// Event Details Section
+.event-details-section {
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 24px;
+  border-left: 4px solid #667eea;
+}
+
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 16px 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #495057;
+
+  mat-icon {
+    color: #667eea;
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+  }
+}
+
+.details-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 16px;
+}
+
+.detail-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.detail-label {
+  font-size: 12px;
+  color: #6c757d;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.detail-value {
+  font-size: 14px;
+  color: #212529;
+  font-weight: 500;
+}
+
+// Beneficiaries Header
+.beneficiaries-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.beneficiaries-count {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  color: #495057;
+  font-weight: 500;
+}
+
+.beneficiaries-count mat-icon {
+  color: #667eea;
+}
+
+// Export Actions
+.export-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.export-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  padding: 0 16px;
+  
+  mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+  }
+
+  &:hover:not(:disabled) {
+    background-color: #667eea;
+    color: white;
+  }
+}
+
+.table-wrapper {
+  overflow-x: auto;
+}
+
+.beneficiaries-table {
+  width: 100%;
+  background: white;
+}
+
+.header-cell {
+  background: #f8f9fa;
+  color: #495057;
+  font-weight: 600;
+  font-size: 13px;
+  padding: 16px;
+  border-bottom: 2px solid #dee2e6;
+}
+
+.header-cell mat-icon {
+  vertical-align: middle;
+  margin-right: 6px;
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+  color: #667eea;
+}
+
+.data-cell {
+  padding: 16px;
+  color: #212529;
+  font-size: 14px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.beneficiary-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.beneficiary-icon {
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+  color: #667eea;
+}
+
+.beneficiary-name {
+  font-weight: 500;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.status-active {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.status-completed {
+  background-color: #d1ecf1;
+  color: #0c5460;
+}
+
+.status-dismissed {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+.status-default {
+  background-color: #f8f9fa;
+  color: #6c757d;
+}
+
+// Actions Column
+.action-header {
+  text-align: center;
+}
+
+.action-cell {
+  text-align: center;
+}
+
+.action-btn {
+  width: 36px;
+  height: 36px;
+  
+  mat-icon {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+  }
+
+  &.view-btn {
+    color: #667eea;
+    
+    &:hover {
+      background-color: rgba(102, 126, 234, 0.1);
+    }
+  }
+}
+
+.table-row:hover {
+  background-color: #f8f9fa;
+  transition: background-color 0.2s ease;
+}
+
+.no-data {
+  text-align: center;
+  padding: 60px 24px;
+  color: #6c757d;
+}
+
+.no-data mat-icon {
+  font-size: 64px;
+  width: 64px;
+  height: 64px;
+  color: #dee2e6;
+  margin-bottom: 16px;
+}
+
+.no-data p {
+  margin: 0;
+  font-size: 14px;
+}
+
+.dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  padding: 16px 24px;
+  border-top: 1px solid #e9ecef;
+  background: #f8f9fa;
+}
+
+@media (max-width: 768px) {
+  .dialog-header {
+    padding: 16px;
+  }
+
+  .header-icon {
+    font-size: 28px;
+    width: 28px;
+    height: 28px;
+  }
+
+  .dialog-title {
+    font-size: 18px;
+  }
+
+  .dialog-subtitle {
+    font-size: 13px;
+  }
+
+  .dialog-content {
+    padding: 16px;
+  }
+
+  .details-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .beneficiaries-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .export-actions {
+    width: 100%;
+    
+    .export-btn {
+      flex: 1;
+    }
+  }
+}

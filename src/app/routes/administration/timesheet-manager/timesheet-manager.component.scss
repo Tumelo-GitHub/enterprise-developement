@@ -1,0 +1,261 @@
+@import '../../../shared/styles/shared-components';
+
+$accent: #667eea;
+$border: #e5e7eb;
+$muted: #6b7280;
+
+.error-icon {
+  font-size: 48px;
+  width: 48px;
+  height: 48px;
+  color: #dc2626;
+}
+
+.loading-section button {
+  margin-top: 8px;
+}
+
+.manager-layout {
+  display: grid;
+  grid-template-columns: minmax(260px, 340px) 1fr;
+  gap: 24px;
+  padding-top: 24px;
+  align-items: start;
+
+  @media (max-width: 960px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.tab-body {
+  padding-top: 24px;
+}
+
+.lookup-layout {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+  padding-top: 24px;
+  align-items: start;
+
+  @media (max-width: 960px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.panel {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+}
+
+.panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px 16px 8px 20px;
+
+  h2 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: #1f2937;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .count {
+    font-size: 12px;
+    font-weight: 600;
+    color: $accent;
+    background: rgba(102, 126, 234, 0.12);
+    border-radius: 10px;
+    padding: 2px 8px;
+  }
+}
+
+.detail-header {
+  padding: 20px 20px 8px;
+  flex-wrap: wrap;
+
+  .detail-sub {
+    margin: 4px 0 0;
+    font-size: 13px;
+    color: $muted;
+  }
+}
+
+// Mirrors .action-bar .add-button from shared styles
+.add-button {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #fff;
+  font-weight: 600;
+  border-radius: 8px;
+
+  mat-icon {
+    margin-right: 4px;
+  }
+}
+
+.panel-search {
+  width: calc(100% - 32px);
+  margin: 0 16px;
+}
+
+// ----- Project list -----
+.project-list {
+  max-height: calc(100vh - 340px);
+  min-height: 120px;
+  overflow-y: auto;
+  padding-top: 0;
+  border-top: 1px solid $border;
+
+  @media (max-width: 960px) {
+    max-height: 320px;
+  }
+
+  .mat-list-item {
+    height: auto !important;
+    border-left: 3px solid transparent;
+    transition: background-color 0.15s ease;
+
+    ::ng-deep .mat-list-item-content {
+      padding: 10px 8px 10px 16px !important;
+    }
+
+    &.selected {
+      background: rgba(102, 126, 234, 0.08);
+      border-left-color: $accent;
+
+      .project-name {
+        color: $accent;
+      }
+    }
+  }
+
+  .project-name {
+    font-weight: 500;
+    color: #1f2937;
+    white-space: normal !important;
+  }
+
+  .project-meta {
+    font-size: 12px !important;
+    color: $muted;
+  }
+}
+
+.panel-empty {
+  padding: 24px 20px;
+  margin: 0;
+  color: $muted;
+  text-align: center;
+
+  &.large {
+    padding: 64px 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+
+    mat-icon {
+      font-size: 56px;
+      width: 56px;
+      height: 56px;
+      color: #d1d5db;
+    }
+
+    p {
+      margin: 0;
+      font-size: 15px;
+    }
+  }
+}
+
+// ----- Tables -----
+.table-wrapper {
+  overflow-x: auto;
+}
+
+.data-table {
+  width: 100%;
+
+  .header-cell {
+    background-color: #f8f9fa;
+    font-weight: 700;
+    color: #333;
+    border-bottom: 2px solid $accent;
+  }
+
+  .header-cell,
+  .data-cell {
+    padding: 8px 16px;
+  }
+
+  .table-row:hover {
+    background-color: #f8f9fa;
+  }
+
+  .status-col {
+    width: 160px;
+  }
+
+  .num-col {
+    width: 120px;
+    text-align: right;
+  }
+
+  th.num-col ::ng-deep .mat-sort-header-container {
+    justify-content: flex-end;
+  }
+
+  .actions-header,
+  .actions-cell {
+    width: 112px;
+    text-align: right;
+    white-space: nowrap;
+    background: none;
+  }
+
+  .projects-cell {
+    color: #374151;
+    font-size: 13px;
+  }
+
+  .muted {
+    color: #9ca3af;
+    font-style: italic;
+  }
+
+  .no-data-cell {
+    padding: 32px 16px;
+    text-align: center;
+    color: $muted;
+  }
+}
+
+.status-select {
+  width: 120px;
+  padding: 4px 10px;
+  border-radius: 16px;
+  font-size: 13px;
+  font-weight: 600;
+  background: #dcfce7;
+  border: 1px solid #bbf7d0;
+
+  ::ng-deep .mat-select-value {
+    color: #166534;
+  }
+
+  &.inactive {
+    background: #f3f4f6;
+    border-color: #d1d5db;
+
+    ::ng-deep .mat-select-value {
+      color: #4b5563;
+    }
+  }
+}

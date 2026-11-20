@@ -43,6 +43,32 @@ export const SERVICE_TYPE: any[] = [
 ]
 
 /*
+ * Mentorship Event Status
+ */
+export const MENTORSHIP_EVENT_STATUS: any[] = [
+    {
+        id: '1',
+        status_name: 'Scheduled'
+    },
+    {
+        id: '2',
+        status_name: 'Completed'
+    },
+    {
+        id: '3',
+        status_name: 'Cancelled'
+    },
+    {
+        id: '4',
+        status_name: 'Postponed'
+    },
+    {
+        id: '5',
+        status_name: 'In Progress'
+    }
+];
+
+/*
  * Beneficiary appointment status
  */
 export const APPOINTMENT_STATUS: IComplianceStatus[] = [
@@ -180,8 +206,4 @@ export const RACE = [
     'Indian',
     'White',
     'Other'
-];
-
-export const GENDER_OPTIONS = [
-    
 ];

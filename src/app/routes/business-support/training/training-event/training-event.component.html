@@ -1,113 +1,238 @@
-<div class="tab-content">
-    <div class="table-controls">
-        <mat-form-field>
-            <mat-label>Filter</mat-label>
-            <input matInput (keyup)="applyFilter($event)" placeholder="Ex. Mia" #input>
-            <!-- <mat-label for="">Table columns</mat-label>
-            <mat-select [formControl]="columns" [(ngModel)]="columnsToDisplay"
-                (selectionChange)="selectedToppings($event)" multiple>
-                <mat-option *ngFor="let column of columnsList" [value]="column[1]">{{column[0]}}</mat-option>
-            </mat-select> -->
-        </mat-form-field>
+<div class="event-container">
+<!-- Action Bar Component -->
+<app-table-action-bar
+  [isLoading]="isLoading"
+  [filterLabel]="'Filter training events'"
+  [filterPlaceholder]="'Search by programme, trainer, course...'"
+  [addButtonText]="'Add Training Event'"
+  [addButtonIcon]="'add'"
+  [addButtonTooltip]="'Add a new training event'"
+  (openDialog)="openDialog()"
+  (applyFilter)="applyFilterFromEvent($event)"
+  (exportTable)="exportToExcel()"
+  (exportTableToPDF)="exportToPDF()">
+  
+  <!-- Additional View Register Button -->
+  <button mat-stroked-button 
+          [disabled]="selection.isEmpty()"
+          (click)="viewRegister()"
+          class="view-register-btn"
+          matTooltip="View training register for selected events">
+    <mat-icon>assignment</mat-icon>
+    View Register ({{ selection.selected.length }})
+  </button>
+</app-table-action-bar>
 
-        <mat-form-field style="float: right;" id="searchInput">
-            <mat-label>Search</mat-label>
-            <input matInput (keyup)="applyFilter($event)" placeholder="Ex. Mia" #input>
-        </mat-form-field>
-        <button mat-icon-button matTooltip="Export Table To Excel" (click)="exportTable()">
-            <i class="fa-regular fa-file-excel fa-xl"></i>
-        </button>
-        <button mat-icon-button matTooltip="Export Table To PDF" (click)="exportTableToPDF()">
-            <i class="fa-regular fa-file-pdf fa-xl"></i>
-        </button>
-        <button mat-icon-button matTooltip="Load Register" (click)="loadRegister()">
-            <mat-icon>subject</mat-icon>
-        </button>
-    </div>
+  <!-- Loading Spinner -->
+  <div *ngIf="isLoading" class="loading-section">
+    <mat-spinner></mat-spinner>
+    <p>Loading training events...</p>
+  </div>
 
-    <div class="mat-elevation-z8">
-        <table id="TrainingEventTable" mat-table [dataSource]="dataSource" matSort
-            class="full-width-table selectable-row-table">
-            <!-- Checkbox Column -->
-            <ng-container matColumnDef="select">
-                <th mat-header-cell *matHeaderCellDef>
-                    <mat-checkbox (change)="$event ? masterToggle() : null"
-                        [checked]="selection.hasValue() && isAllSelected()"
-                        [indeterminate]="selection.hasValue() && !isAllSelected()" [aria-label]="checkboxLabel()">
-                    </mat-checkbox>
-                </th>
-                <td mat-cell *matCellDef="let row">
-                    <mat-checkbox (click)="$event.stopPropagation()" (change)="$event ? selection.toggle(row) : null"
-                        [checked]="selection.isSelected(row)" [aria-label]="checkboxLabel(row)">
-                    </mat-checkbox>
-                </td>
-            </ng-container>
+  <!-- Data Table Section -->
+  <div class="table-section" *ngIf="!isLoading">
+    <mat-card class="table-card">
+      <div class="table-wrapper">
+        <table mat-table [dataSource]="dataSource" class="data-table" matSort id="TrainingEventsTable">
 
-            <ng-container matColumnDef="programme_name">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header> Programme </th>
-                <td mat-cell *matCellDef="let row"> {{row.programme_name}} </td>
-            </ng-container>
+          <!-- Checkbox Column -->
+          <ng-container matColumnDef="select">
+            <th mat-header-cell *matHeaderCellDef class="header-cell checkbox-cell">
+              <mat-checkbox (change)="$event ? masterToggle() : null"
+                            [checked]="selection.hasValue() && isAllSelected()"
+                            [indeterminate]="selection.hasValue() && !isAllSelected()"
+                            [aria-label]="checkboxLabel()">
+              </mat-checkbox>
+            </th>
+            <td mat-cell *matCellDef="let row" class="data-cell checkbox-cell">
+              <mat-checkbox (click)="$event.stopPropagation()"
+                            (change)="$event ? selection.toggle(row) : null"
+                            [checked]="selection.isSelected(row)"
+                            [aria-label]="checkboxLabel(row)">
+              </mat-checkbox>
+            </td>
+          </ng-container>
 
-            <ng-container matColumnDef="service_provider_name">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header> Trainer </th>
-                <td mat-cell *matCellDef="let row"> {{row.service_provider_name}} </td>
-            </ng-container>
+          <!-- Programme Column -->
+          <ng-container matColumnDef="programme_name">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header class="header-cell">
+              <mat-icon>school</mat-icon>
+              Programme
+            </th>
+            <td mat-cell *matCellDef="let event" class="data-cell">
+              <div class="entity-info">
+                <span class="entity-name">{{ event.programme_name }}</span>
+              </div>
+            </td>
+          </ng-container>
 
-            <ng-container matColumnDef="course_name">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header> Course </th>
-                <td mat-cell *matCellDef="let row"> {{row.course_name}} </td>
-            </ng-container>
+          <!-- Trainer Column -->
+          <ng-container matColumnDef="service_provider_name">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header class="header-cell">
+              <mat-icon>person</mat-icon>
+              Trainer
+            </th>
+            <td mat-cell *matCellDef="let event" class="data-cell">
+              <div class="entity-info">
+                <span class="entity-name">{{ event.service_provider_name }}</span>
+              </div>
+            </td>
+          </ng-container>
 
-            <ng-container matColumnDef="address">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header> Address </th>
-                <td mat-cell *matCellDef="let row"> {{row.address}} </td>
-            </ng-container>
+          <!-- Course Column -->
+          <ng-container matColumnDef="course_name">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header class="header-cell">
+              <mat-icon>book</mat-icon>
+              Course
+            </th>
+            <td mat-cell *matCellDef="let event" class="data-cell">
+              <div class="entity-info">
+                <span class="entity-name">{{ event.course_name }}</span>
+              </div>
+            </td>
+          </ng-container>
 
-            <ng-container matColumnDef="event_date">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header> Date </th>
-                <td mat-cell *matCellDef="let row"> {{row.event_date}} </td>
-            </ng-container>
+          <!-- Address Column -->
+          <ng-container matColumnDef="address">
+            <th mat-header-cell *matHeaderCellDef class="header-cell">
+              <mat-icon>location_on</mat-icon>
+              Address
+            </th>
+            <td mat-cell *matCellDef="let event" class="data-cell">
+              <span class="address" [matTooltip]="event.address">
+                {{ truncateText(event.address, 40) }}
+              </span>
+            </td>
+          </ng-container>
 
-            <ng-container matColumnDef="time">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header> Time </th>
-                <td mat-cell *matCellDef="let row"> {{row.start_time + ' - ' + row.end_time}} </td>
-            </ng-container>
+          <!-- Date Column -->
+          <ng-container matColumnDef="event_date">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header class="header-cell">
+              <mat-icon>calendar_today</mat-icon>
+              Date
+            </th>
+            <td mat-cell *matCellDef="let event" class="data-cell">
+              <div class="date-info">
+                <mat-icon>calendar_today</mat-icon>
+                <span>{{ formatDate(event.event_date) }}</span>
+              </div>
+            </td>
+          </ng-container>
 
-            <ng-container matColumnDef="status_name">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header> Status </th>
-                <td mat-cell *matCellDef="let row"> {{row.status_name}} </td>
-            </ng-container>
+          <!-- Time Column -->
+          <ng-container matColumnDef="time">
+            <th mat-header-cell *matHeaderCellDef class="header-cell">
+              <mat-icon>access_time</mat-icon>
+              Time
+            </th>
+            <td mat-cell *matCellDef="let event" class="data-cell">
+              <div class="time-info">
+                <mat-icon>access_time</mat-icon>
+                <span>{{ event.start_time }} - {{ event.end_time }}</span>
+              </div>
+            </td>
+          </ng-container>
 
-            <ng-container matColumnDef="action">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header> Action </th>
-                <td mat-cell *matCellDef="let row" class="w-120">
-                    <button mat-icon-button matTooltip="Edit Event" color="accern"
-                        (click)="openDialog(row); $event.stopPropagation();">
-                        <mat-icon>edit</mat-icon>
-                    </button>
-                    <button mat-icon-button matTooltip="Delete Event" color="warn"
-                        (click)="deleteEmp(row); $event.stopPropagation();">
-                        <mat-icon>delete</mat-icon>
-                    </button>
-                </td>
-            </ng-container>
+          <!-- Status Column -->
+          <ng-container matColumnDef="status_name">
+            <th mat-header-cell *matHeaderCellDef mat-sort-header class="header-cell">
+              <mat-icon>flag</mat-icon>
+              Status
+            </th>
+            <td mat-cell *matCellDef="let event" class="data-cell">
+              <span class="status-badge" [ngClass]="getStatusClass(event.status_name)">
+                {{ event.status_name }}
+              </span>
+            </td>
+          </ng-container>
 
-            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-            <tr mat-row *matRowDef="let row; columns: displayedColumns;"
-                (click)="selection.toggle(row)" [class.selected-row]="clickedRow == row"></tr>
+          <!-- Actions Column -->
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef class="header-cell actions-header">
+              <mat-icon>settings</mat-icon>
+              Actions
+            </th>
+            <td mat-cell *matCellDef="let event" class="data-cell actions-cell">
+              <div class="action-buttons">
+                <button mat-icon-button 
+                        matTooltip="View Beneficiaries ({{ event.smme_id?.length || 0 }})" 
+                        matTooltipPosition="above"
+                        (click)="viewBeneficiaries(event); $event.stopPropagation();"
+                        class="beneficiaries-btn"
+                        [disabled]="isLoading"
+                        matBadge="{{ event.smme_id?.length || 0 }}"
+                        matBadgeColor="accent"
+                        [matBadgeHidden]="!event.smme_id || event.smme_id.length === 0">
+                  <mat-icon>group</mat-icon>
+                </button>
 
-            <!-- Row shown when there is no matching data. -->
-            <tr class="mat-row" *matNoDataRow>
-                <td class="mat-cell" colspan="7">No data matching the filter "{{input.value}}"</td>
-            </tr>
+                <button mat-icon-button 
+                        matTooltip="View Register" 
+                        matTooltipPosition="above"
+                        (click)="viewSingleRegister(event); $event.stopPropagation();"
+                        class="register-btn"
+                        [disabled]="isLoading">
+                  <mat-icon>assignment</mat-icon>
+                </button>
+                
+                <button mat-icon-button 
+                        matTooltip="Manage Invitations" 
+                        matTooltipPosition="above"
+                        (click)="viewInvitations(event); $event.stopPropagation();"
+                        class="invitations-btn"
+                        [disabled]="isLoading">
+                  <mat-icon>people_outline</mat-icon>
+                </button>
+                
+                <button mat-icon-button 
+                        matTooltip="Edit Training Event" 
+                        matTooltipPosition="above"
+                        (click)="openDialog(event); $event.stopPropagation();"
+                        class="edit-btn"
+                        [disabled]="isLoading">
+                  <mat-icon>edit</mat-icon>
+                </button>
+                
+                <button mat-icon-button 
+                        matTooltip="Delete Training Event" 
+                        matTooltipPosition="above"
+                        (click)="deleteEmp(event); $event.stopPropagation();"
+                        class="delete-btn"
+                        [disabled]="isLoading">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </div>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;" 
+              class="table-row"></tr>
+
+          <!-- No Data Row -->
+          <tr class="mat-row" *matNoDataRow>
+            <td class="mat-cell" [attr.colspan]="displayedColumns.length">
+              <div class="no-data">
+                <div class="no-data-content">
+                  <mat-icon class="no-data-icon">search_off</mat-icon>
+                  <h3>No training events found</h3>
+                  <p *ngIf="searchTerm">No data matching the filter "{{ searchTerm }}"</p>
+                  <p *ngIf="!searchTerm">Start by creating your first training event</p>
+                </div>
+              </div>
+            </td>
+          </tr>
         </table>
 
-        <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" aria-label="Select page of users"></mat-paginator>
-    </div>
-    <div class="add-btn-wrapper" color="primary">
-        <button mat-fab matTooltip="Add Event" aria-label="Add Training Event Button with icon" class="add-btn"
-            (click)="openDialog()">
-            <mat-icon>add</mat-icon>
-        </button>
-    </div>
+        <!-- Paginator -->
+        <mat-paginator 
+          [pageSizeOptions]="[5, 10, 25, 100]"
+          [pageSize]="10"
+          [showFirstLastButtons]="true"
+          aria-label="Select page of training events"
+          class="table-paginator">
+        </mat-paginator>
+      </div>
+    </mat-card>
+  </div>
 </div>

@@ -1,0 +1,40 @@
+<div class="warning-dialog">
+  <div class="header">
+    <mat-icon class="warning-icon">warning</mat-icon>
+    <h2 class="title">Session Expiring Soon</h2>
+    <button mat-icon-button (click)="closeDialog()" class="close-button">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <div class="content">
+    <p class="message">
+      Your session is about to expire. You will be automatically logged out in:
+    </p>
+    
+    <div class="countdown">
+      <div class="time-display">
+        <span class="time">{{ minutesRemaining | number: '2.0-0' }}</span>
+        <span class="unit">minutes</span>
+        <span class="separator">:</span>
+        <span class="time">{{ secondsRemaining | number: '2.0-0' }}</span>
+        <span class="unit">seconds</span>
+      </div>
+    </div>
+
+    <p class="sub-message">
+      Click "Renew Session" to extend your session, or you will be logged out automatically.
+    </p>
+  </div>
+
+  <div class="actions">
+    <button mat-button (click)="logout()" class="logout-btn">
+      <mat-icon>exit_to_app</mat-icon>
+      Logout Now
+    </button>
+    <button mat-raised-button color="primary" (click)="renewToken()" class="renew-btn">
+      <mat-icon>refresh</mat-icon>
+      Renew Session
+    </button>
+  </div>
+</div>

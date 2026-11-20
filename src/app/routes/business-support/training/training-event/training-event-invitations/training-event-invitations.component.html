@@ -1,0 +1,222 @@
+<div class="invitation-container">
+  <!-- Stats Section -->
+  <div class="stats-section" *ngIf="stats">
+    <mat-card class="stat-card">
+      <mat-card-content>
+        <div class="stat-item">
+          <span class="stat-label">Total Invited</span>
+          <span class="stat-value">{{ stats.total_invitations || 0 }}</span>
+        </div>
+      </mat-card-content>
+    </mat-card>
+    <mat-card class="stat-card confirmed">
+      <mat-card-content>
+        <div class="stat-item">
+          <span class="stat-label">Confirmed</span>
+          <span class="stat-value">{{ stats.confirmed || 0 }}</span>
+        </div>
+      </mat-card-content>
+    </mat-card>
+    <mat-card class="stat-card attended">
+      <mat-card-content>
+        <div class="stat-item">
+          <span class="stat-label">Attended</span>
+          <span class="stat-value">{{ stats.attended || 0 }}</span>
+        </div>
+      </mat-card-content>
+    </mat-card>
+    <mat-card class="stat-card declined">
+      <mat-card-content>
+        <div class="stat-item">
+          <span class="stat-label">Declined</span>
+          <span class="stat-value">{{ stats.declined || 0 }}</span>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <!-- Action Bar -->
+  <app-table-action-bar 
+      [isLoading]="isLoading" 
+      [filterLabel]="'Filter Invitations'"
+      [filterPlaceholder]="'Search by beneficiary name...'"
+      [addButtonText]="'Invite Beneficiaries'" 
+      [addButtonIcon]="'person_add'"
+      [addButtonTooltip]="'Invite beneficiaries to this training event'"
+      (openDialog)="openAddInvitationForm()"
+      (applyFilter)="applyFilter($event)">
+      
+      <!-- Additional Action Buttons -->
+      <!-- <button mat-raised-button 
+              color="primary" 
+              class="me-2"
+              [disabled]="isLoading || invitations.length === 0"
+              (click)="openReminderForm()"
+              [matTooltip]="'Send reminders to beneficiaries'">
+        <mat-icon>notifications_active</mat-icon>
+        Send Reminders
+      </button> -->
+      
+      <button mat-raised-button 
+              color="accent" 
+              class="me-2"
+              [disabled]="isLoading || isAutoFilling || getConfirmedCount() === 0"
+              (click)="autoFillRegister()"
+              [matTooltip]="isAutoFilling ? 'Auto-fill in progress...' : 'Add confirmed beneficiaries to training register'">
+        <mat-icon>{{ isAutoFilling ? 'hourglass_empty' : 'assignment_add' }}</mat-icon>
+        {{ isAutoFilling ? 'Processing...' : 'Auto-fill Register (' + getConfirmedCount() + ')' }}
+      </button>
+
+      <button mat-stroked-button 
+              color="primary" 
+              class="me-2"
+              (click)="navigateToRegister()"
+              [matTooltip]="'View and manage training register for ' + (trainingEvent?.course_name || 'this event')">
+        <mat-icon>assignment</mat-icon>
+        View Register
+      </button>
+      
+      <button mat-raised-button 
+              color="warn" 
+              [disabled]="selection.selected.length === 0"
+              (click)="bulkDelete()"
+              [matTooltip]="'Remove selected invitations'">
+        <mat-icon>delete_sweep</mat-icon>
+        Remove Selected ({{ selection.selected.length }})
+      </button>
+      
+  </app-table-action-bar>
+
+  <!-- Table Section -->
+  <div class="table-wrapper mat-elevation-z8">
+    <div class="spinner-wrapper" *ngIf="isLoading">
+      <mat-spinner diameter="40"></mat-spinner>
+    </div>
+
+    <table mat-table [dataSource]="dataSource" matSort *ngIf="!isLoading">
+      
+      <!-- Checkbox Column -->
+      <ng-container matColumnDef="select">
+        <th mat-header-cell *matHeaderCellDef>
+          <mat-checkbox (change)="$event ? masterToggle() : null"
+                        [checked]="selection.hasValue() && isAllSelected()"
+                        [indeterminate]="selection.hasValue() && !isAllSelected()">
+          </mat-checkbox>
+        </th>
+        <td mat-cell *matCellDef="let row">
+          <mat-checkbox (click)="$event.stopPropagation()"
+                        (change)="$event ? selection.toggle(row) : null"
+                        [checked]="selection.isSelected(row)">
+          </mat-checkbox>
+        </td>
+      </ng-container>
+
+      <!-- Beneficiary Name Column -->
+      <ng-container matColumnDef="smme_name">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Beneficiary </th>
+        <td mat-cell *matCellDef="let element"> {{ element.smme_name || element.smme?.business_name || 'N/A' }} </td>
+      </ng-container>
+
+      <!-- Status Column -->
+      <ng-container matColumnDef="invitation_status">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Status </th>
+        <td mat-cell *matCellDef="let element">
+          <span [ngClass]="getStatusClass(element.invitation_status)" class="status-badge">
+            {{ element.invitation_status || 'invited' }}
+          </span>
+        </td>
+      </ng-container>
+
+      <!-- Invited At Column -->
+      <ng-container matColumnDef="invited_at">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Invited Date </th>
+        <td mat-cell *matCellDef="let element"> {{ formatDate(element.invited_at) }} </td>
+      </ng-container>
+
+      <!-- Response At Column -->
+      <ng-container matColumnDef="response_at">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Response Date </th>
+        <td mat-cell *matCellDef="let element"> {{ formatDate(element.response_at) }} </td>
+      </ng-container>
+
+      <!-- Notes Column -->
+      <ng-container matColumnDef="notes">
+        <th mat-header-cell *matHeaderCellDef> Notes </th>
+        <td mat-cell *matCellDef="let element" class="notes-cell"> 
+          {{ element.notes || 'N/A' }} 
+        </td>
+      </ng-container>
+
+      <!-- Action Column -->
+      <ng-container matColumnDef="action">
+        <th mat-header-cell *matHeaderCellDef> Actions </th>
+        <td mat-cell *matCellDef="let element">
+          <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Actions menu">
+            <mat-icon>more_vert</mat-icon>
+          </button>
+          <mat-menu #menu="matMenu">
+            <button mat-menu-item (click)="editInvitation(element)">
+              <mat-icon>edit</mat-icon>
+              <span>Edit Notes</span>
+            </button>
+            <!-- <button mat-menu-item (click)="sendIndividualReminder(element)" 
+                    [disabled]="element.invitation_status === 'cancelled'">
+              <mat-icon>notifications_active</mat-icon>
+              <span>Send Reminder</span>
+            </button> -->
+            <button mat-menu-item [matMenuTriggerFor]="statusMenu">
+              <mat-icon>update</mat-icon>
+              <span>Update Status</span>
+            </button>
+            <button mat-menu-item (click)="deleteInvitation(element)">
+              <mat-icon>delete</mat-icon>
+              <span>Remove</span>
+            </button>
+          </mat-menu>
+          
+          <!-- Status submenu -->
+          <mat-menu #statusMenu="matMenu">
+            <button mat-menu-item (click)="updateStatus(element, 'invited')" *ngIf="element.invitation_status !== 'invited'">
+              <mat-icon>mail</mat-icon>
+              <span>Invited</span>
+            </button>
+            <button mat-menu-item (click)="updateStatus(element, 'confirmed')" *ngIf="element.invitation_status !== 'confirmed'">
+              <mat-icon>check_circle</mat-icon>
+              <span>Confirmed</span>
+            </button>
+            <button mat-menu-item (click)="updateStatus(element, 'attended')" *ngIf="element.invitation_status !== 'attended'">
+              <mat-icon>event_available</mat-icon>
+              <span>Attended</span>
+            </button>
+            <button mat-menu-item (click)="updateStatus(element, 'declined')" *ngIf="element.invitation_status !== 'declined'">
+              <mat-icon>cancel</mat-icon>
+              <span>Declined</span>
+            </button>
+            <button mat-menu-item (click)="updateStatus(element, 'cancelled')" *ngIf="element.invitation_status !== 'cancelled'">
+              <mat-icon>block</mat-icon>
+              <span>Cancelled</span>
+            </button>
+          </mat-menu>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
+      <tr mat-row *matRowDef="let row; columns: columnsToDisplay;"></tr>
+
+      <!-- No Data Row -->
+      <tr class="mat-row no-data-row" *matNoDataRow>
+        <td class="mat-cell" [attr.colspan]="columnsToDisplay.length">
+          <div class="no-data-message">
+            <mat-icon>people_outline</mat-icon>
+            <p>No invitations found</p>
+            <button mat-raised-button color="primary" (click)="openAddInvitationForm()">
+              Invite Beneficiaries
+            </button>
+          </div>
+        </td>
+      </tr>
+    </table>
+
+    <mat-paginator *ngIf="!isLoading" [pageSizeOptions]="[5, 10, 25, 100]" showFirstLastButtons></mat-paginator>
+  </div>
+</div>

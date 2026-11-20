@@ -1,1 +1,171 @@
-<p>coaching works!</p>
+<div class="page-container">
+  <!-- Header Section -->
+  <div class="header-section">
+    <h1 class="page-title">
+      <mat-icon>sports_basketball</mat-icon>
+      Coaching Events
+    </h1>
+    <p class="page-description">Manage and schedule coaching events for small businesses</p>
+  </div>
+
+  <!-- Form Section -->
+  <div class="form-section" *ngIf="showForm">
+    <app-unified-event-form
+      eventType="coaching"
+      [eventData]="editingCoachingEvent"
+      [isEditMode]="isEditMode"
+      (save)="onSaveCoachingEvent($event)"
+      (cancel)="hideForm()">
+    </app-unified-event-form>
+  </div>
+
+  <!-- Content Section -->
+  <div class="content-section" *ngIf="!showForm">
+    <!-- Action Bar -->
+    <div class="action-bar">
+      <div class="search-section">
+        <mat-form-field appearance="outline" class="search-field">
+          <mat-label>Search coaching events...</mat-label>
+          <input matInput (keyup)="applyFilter($event)" [(ngModel)]="searchValue" 
+                 placeholder="Search by programme, coach, or address">
+          <mat-icon matSuffix>search</mat-icon>
+        </mat-form-field>
+        <button mat-icon-button (click)="clearSearch()" *ngIf="searchValue" class="clear-search-btn">
+          <mat-icon>clear</mat-icon>
+        </button>
+      </div>
+      <button mat-raised-button (click)="showAddForm()" class="add-button">
+        <mat-icon>add</mat-icon>
+        Add Coaching Event
+      </button>
+    </div>
+
+    <!-- Loading Section -->
+    <div *ngIf="isLoading" class="loading-section">
+      <mat-spinner diameter="50"></mat-spinner>
+      <p>Loading coaching events...</p>
+    </div>
+
+    <!-- Table Section -->
+    <div *ngIf="!isLoading" class="table-section">
+      <mat-card class="table-card">
+        <div class="table-wrapper">
+          <table mat-table [dataSource]="dataSource" matSort class="data-table">
+
+            <!-- Programme Column -->
+            <ng-container matColumnDef="programme_name">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header class="header-cell">Programme</th>
+              <td mat-cell *matCellDef="let event" class="data-cell">
+                <div class="entity-info">
+                  <div class="entity-name">{{ event.programme_name }}</div>
+                </div>
+              </td>
+            </ng-container>
+
+            <!-- Coach Column -->
+            <ng-container matColumnDef="coach_name">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header class="header-cell">Coach</th>
+              <td mat-cell *matCellDef="let event" class="data-cell">
+                <div class="entity-info">
+                  <div class="entity-name">{{ event.coach_name }} {{ event.coach_surname }}</div>
+                </div>
+              </td>
+            </ng-container>
+
+            <!-- Address Column -->
+            <ng-container matColumnDef="address">
+              <th mat-header-cell *matHeaderCellDef class="header-cell">Address</th>
+              <td mat-cell *matCellDef="let event" class="data-cell">
+                <div class="address">{{ event.address }}</div>
+              </td>
+            </ng-container>
+
+            <!-- Date Column -->
+            <ng-container matColumnDef="event_date">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header class="header-cell">Date</th>
+              <td mat-cell *matCellDef="let event" class="data-cell">
+                <div class="date-info">
+                  <mat-icon>calendar_today</mat-icon>
+                  <span>{{ formatDate(event.event_date) }}</span>
+                </div>
+              </td>
+            </ng-container>
+
+            <!-- Time Column -->
+            <ng-container matColumnDef="event_time">
+              <th mat-header-cell *matHeaderCellDef class="header-cell">Time</th>
+              <td mat-cell *matCellDef="let event" class="data-cell">
+                <div class="time-info">
+                  <mat-icon>access_time</mat-icon>
+                  <span>{{ formatTime(event.event_time) }}</span>
+                </div>
+              </td>
+            </ng-container>
+
+            <!-- SMME Count Column -->
+            <ng-container matColumnDef="smme_count">
+              <th mat-header-cell *matHeaderCellDef class="header-cell">SMMEs</th>
+              <td mat-cell *matCellDef="let event" class="data-cell">
+                <div class="count-info">
+                  <mat-icon>business</mat-icon>
+                  <span>{{ getSMMECount(event.smme) }}</span>
+                </div>
+              </td>
+            </ng-container>
+
+            <!-- Status Column -->
+            <ng-container matColumnDef="status">
+              <th mat-header-cell *matHeaderCellDef class="header-cell">Status</th>
+              <td mat-cell *matCellDef="let event" class="data-cell">
+                <span class="status-badge" [ngClass]="getStatusClass(event.status)">
+                  {{ getStatusName(event.status) }}
+                </span>
+              </td>
+            </ng-container>
+
+            <!-- Actions Column -->
+            <ng-container matColumnDef="actions">
+              <th mat-header-cell *matHeaderCellDef class="header-cell actions-header">Actions</th>
+              <td mat-cell *matCellDef="let event" class="data-cell actions-cell">
+                <div class="action-buttons">
+                  <button mat-icon-button (click)="editCoachingEvent(event)" class="edit-btn" 
+                          matTooltip="Edit coaching event">
+                    <mat-icon>edit</mat-icon>
+                  </button>
+                  <button mat-icon-button (click)="deleteCoachingEvent(event)" class="delete-btn"
+                          matTooltip="Delete coaching event">
+                    <mat-icon>delete</mat-icon>
+                  </button>
+                </div>
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns" class="table-row"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="table-row"></tr>
+          </table>
+
+          <!-- No Data -->
+          <div *ngIf="dataSource.data.length === 0" class="no-data">
+            <div class="no-data-content">
+              <mat-icon class="no-data-icon">sports_basketball</mat-icon>
+              <h3>No coaching events found</h3>
+              <p>Start by creating your first coaching event</p>
+              <button mat-raised-button (click)="showAddForm()" *ngIf="!showForm">
+                <mat-icon>add</mat-icon>
+                Add First Coaching Event
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Paginator -->
+        <mat-paginator 
+          [pageSizeOptions]="[5, 10, 20, 50]" 
+          [pageSize]="10"
+          showFirstLastButtons
+          class="table-paginator">
+        </mat-paginator>
+      </mat-card>
+    </div>
+  </div>
+</div>

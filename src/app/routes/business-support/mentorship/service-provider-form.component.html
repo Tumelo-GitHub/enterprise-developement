@@ -1,0 +1,124 @@
+<div class="mentorship-form-container">
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>
+        {{ isEditMode ? 'Edit Mentor' : 'Add New Mentor' }}
+      </mat-card-title>
+    </mat-card-header>
+
+    <mat-card-content>
+      <form [formGroup]="mentorshipForm" (ngSubmit)="onSubmit()" novalidate>
+        <div class="form-row">
+          <!-- First Name -->
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>First Name</mat-label>
+            <input matInput formControlName="mentor_name" placeholder="Enter first name">
+            <mat-error *ngIf="mentor_name?.touched && mentor_name?.errors">
+              {{ getErrorMessage('mentor_name') }}
+            </mat-error>
+          </mat-form-field>
+
+          <!-- Last Name -->
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Last Name</mat-label>
+            <input matInput formControlName="mentor_surname" placeholder="Enter last name">
+            <mat-error *ngIf="mentor_surname?.touched && mentor_surname?.errors">
+              {{ getErrorMessage('mentor_surname') }}
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="form-row">
+          <!-- Email -->
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Email</mat-label>
+            <input matInput type="email" formControlName="email" placeholder="Enter email address">
+            <mat-icon matSuffix>email</mat-icon>
+            <mat-error *ngIf="email?.touched && email?.errors">
+              {{ getErrorMessage('email') }}
+            </mat-error>
+          </mat-form-field>
+
+          <!-- Cell Number -->
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Cell Number</mat-label>
+            <input matInput formControlName="cell_number" placeholder="Enter cell number">
+            <mat-icon matSuffix>phone</mat-icon>
+            <mat-error *ngIf="cell_number?.touched && cell_number?.errors">
+              {{ getErrorMessage('cell_number') }}
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="form-row">
+          <!-- Telephone Number -->
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Telephone Number</mat-label>
+            <input matInput formControlName="tell_number" placeholder="Enter telephone number (optional)">
+            <mat-icon matSuffix>phone_in_talk</mat-icon>
+            <mat-error *ngIf="tell_number?.touched && tell_number?.errors">
+              {{ getErrorMessage('tell_number') }}
+            </mat-error>
+          </mat-form-field>
+
+          <!-- Qualification -->
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Qualification</mat-label>
+            <input matInput formControlName="qualification" placeholder="Enter qualification">
+            <mat-icon matSuffix>school</mat-icon>
+            <mat-error *ngIf="qualification?.touched && qualification?.errors">
+              {{ getErrorMessage('qualification') }}
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="form-row full-width">
+          <!-- Area of Specialization -->
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Area of Specialization</mat-label>
+            <textarea matInput 
+                      formControlName="area_of_specialization" 
+                      placeholder="Enter area of specialization"
+                      rows="3">
+            </textarea>
+            <mat-icon matSuffix>lightbulb</mat-icon>
+            <mat-error *ngIf="area_of_specialization?.touched && area_of_specialization?.errors">
+              {{ getErrorMessage('area_of_specialization') }}
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="form-actions">
+          <button type="button" 
+                  mat-stroked-button 
+                  color="accent" 
+                  (click)="onReset()"
+                  class="action-button">
+            <mat-icon>refresh</mat-icon>
+            Reset
+          </button>
+
+          <div class="action-buttons-right">
+            <button type="button" 
+                    mat-stroked-button 
+                    (click)="onCancel()"
+                    class="action-button">
+              <mat-icon>cancel</mat-icon>
+              Cancel
+            </button>
+
+            <button type="submit" 
+                    mat-raised-button 
+                    color="primary"
+                    [disabled]="!mentorshipForm.valid"
+                    class="action-button">
+              <mat-icon>save</mat-icon>
+              {{ isEditMode ? 'Update' : 'Save' }}
+            </button>
+          </div>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+</div>

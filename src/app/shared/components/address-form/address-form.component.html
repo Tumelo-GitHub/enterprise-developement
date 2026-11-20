@@ -1,0 +1,82 @@
+<div [formGroup]="group" class="address">
+            <div class="row">
+                <div class="col">
+                    <mat-form-field class="full-width">
+                        <input matInput placeholder="Address Line 1" formControlName="street_address_1">
+                        <mat-error *ngIf="group.controls['street_address_1'].hasError('required')">
+                            Address is <strong>required</strong>
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+                <div class="col">
+                    <mat-form-field class="full-width">
+                        <input matInput placeholder="Address Line 2" formControlName="street_address_2">
+                    </mat-form-field>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <mat-form-field class="full-width">
+                        <input matInput placeholder="City" formControlName="city">
+                        <mat-error *ngIf="group.controls['city'].hasError('required')">
+                            Company name is <strong>required</strong>
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+                <div class="col">
+                    <mat-form-field class="full-width">
+                        <mat-select placeholder="Location Type" formControlName="location_type">
+                            <mat-option value="City">City</mat-option>
+                            <mat-option value="Rural">Rural</mat-option>
+                            <mat-option value="Suburb">Suburb</mat-option>
+                            <mat-option value="Township">Township</mat-option>
+                        </mat-select>
+                        <mat-error *ngIf="group.controls['location_type'].hasError('required')">
+                            location type is <strong>required</strong>
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <mat-form-field class="full-width">
+                        <mat-select placeholder="Province" formControlName="province">
+                            <mat-option value="Eastern Cape">Eastern Cape</mat-option>
+                            <mat-option value="Free State">Free State</mat-option>
+                            <mat-option value="Gauteng">Gauteng</mat-option>
+                            <mat-option value="Kwazulu Natal">Kwazulu Natal</mat-option>
+                            <mat-option value="Limpopo">Limpopo</mat-option>
+                            <mat-option value="Mpumalanga">Mpumalanga</mat-option>
+                            <mat-option value="North West">North West</mat-option>
+                            <mat-option value="Northern West">Northern West</mat-option>
+                            <mat-option value="Western Cape">Western Cape</mat-option>
+                        </mat-select>
+                        <!-- <mat-error *ngIf="form.controls['companyName'].hasError('required')">
+                Company name is <strong>required</strong>
+              </mat-error> -->
+                    </mat-form-field>
+                </div>
+                <div class="col">
+                    <mat-form-field class="full-width">
+                        <input matInput placeholder="Code" formControlName="code">
+                    </mat-form-field>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col">
+                    <mat-form-field class="full-width">
+                        <mat-select placeholder="Country" formControlName="country">
+                            <mat-option value="South Africa">South Africa</mat-option>
+                        </mat-select>
+                        <!-- <mat-error *ngIf="form.controls['companyName'].hasError('required')">
+                Company name is <strong>required</strong>
+              </mat-error> -->
+                    </mat-form-field>
+                </div>
+                <div class="col">
+                    <mat-form-field class="full-width">
+                        <input matInput placeholder="Address Note" formControlName="address_note">
+                    </mat-form-field>
+                </div>
+            </div>
+        </div>

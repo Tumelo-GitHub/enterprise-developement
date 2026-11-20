@@ -1,0 +1,21 @@
+<div class="page-container">
+  <!-- Header Section -->
+  <div class="header-section">
+    <h1 class="page-title">
+      <mat-icon>school</mat-icon>
+      Training Events
+    </h1>
+    <p class="page-description">
+      Manage and organize training events for beneficiaries
+    </p>
+  </div>
+
+  <!-- Training Events Content -->
+  <div class="content-section">
+    <app-training-event 
+      (onRegisterView)="showEventRegister($event)"
+      (onAddEvent)="showAddForm()"
+      (onEditEvent)="showEditForm($event)">
+    </app-training-event>
+  </div>
+</div>

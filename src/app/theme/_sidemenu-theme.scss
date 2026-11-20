@@ -31,12 +31,5 @@
             background: mat.get-color-from-palette($background, hover);
           }
       }
-
-      .selectable-row-table{
-        tr.mat-row:hover,
-        .selected-row {
-          background-color: if($is-dark-theme, rgba(mat.get-color-from-palette($primary), .15), transparent);
-        }
-      }
       
 }

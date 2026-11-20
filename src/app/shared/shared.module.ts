@@ -32,7 +32,14 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatChipsModule } from '@angular/material/chips';
-import {MatCheckboxModule} from '@angular/material/checkbox';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { AddressFormComponent } from './components/address-form/address-form.component';
+import { ContactPersonFormComponent } from './components/contact-person-form/contact-person-form.component';
+import { UnifiedEventFormComponent } from './components/unified-event-form/unified-event-form.component';
+import { CompanyEmployeeComponent } from './components/company-employee/company-employee.component';
+import { CompanyEmployeeFormComponent } from './components/company-employee/company-employee-form.component';
+import { TableActionBarComponent } from './components/table-action-bar/table-action-bar.component';
 
 const MODULES: any[] = [
   CommonModule,
@@ -68,9 +75,17 @@ const MODULES: any[] = [
   MatBadgeModule,
   MatRippleModule,
   MatChipsModule,
-  MatCheckboxModule
+  MatCheckboxModule,
+  MatSnackBarModule
 ];
-const COMPONENTS: any[] = [];
+const COMPONENTS: any[] = [
+  AddressFormComponent, 
+  ContactPersonFormComponent, 
+  UnifiedEventFormComponent,
+  CompanyEmployeeComponent,
+  CompanyEmployeeFormComponent,
+  TableActionBarComponent
+];
 const COMPONENTS_DYNAMIC: any[] = [];
 const DIRECTIVES: any[] = [];
 const PIPES: any[] = [];

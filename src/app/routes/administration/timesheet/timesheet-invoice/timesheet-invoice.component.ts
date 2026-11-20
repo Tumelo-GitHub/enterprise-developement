@@ -48,13 +48,21 @@ export class TimesheetInvoiceComponent implements OnInit {
   }
 
   getTotalDuration(timesheet: ITimesheet[]) {
-    let totalDuration: moment.Duration = moment.duration('00:00:00');
+    const totalSeconds = timesheet.reduce((sum, entry) => {
+      const durationSeconds = moment.duration(entry.duration).asSeconds();
+      return Number.isFinite(durationSeconds) ? sum + durationSeconds : sum;
+    }, 0);
 
-    timesheet.forEach(entry => {
-      totalDuration.add(moment.duration(entry.duration));
-    });
+    return this.formatElapsedDuration(totalSeconds);
+  }
 
-    return moment.utc(totalDuration.asMilliseconds()).format('HH:mm:ss');
+  private formatElapsedDuration(totalSeconds: number): string {
+    const safeSeconds = Math.max(0, Math.round(totalSeconds));
+    const hours = Math.floor(safeSeconds / 3600);
+    const minutes = Math.floor((safeSeconds % 3600) / 60);
+    const seconds = safeSeconds % 60;
+
+    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
   }
 
   generateInvoice(): void {
@@ -149,15 +157,16 @@ export class TimesheetInvoiceComponent implements OnInit {
 
       const existingEntry = group.entries.find(e => e.company_name === entry.company_name);
       const duration = moment.duration(entry.duration).asHours();
+      const safeDuration = Number.isFinite(duration) ? duration : 0;
 
       if (existingEntry) {
-        existingEntry.totalHours += duration;
-        existingEntry.totalCost += duration * hourlyRate;
+        existingEntry.totalHours += safeDuration;
+        existingEntry.totalCost += safeDuration * hourlyRate;
       } else {
         group.entries.push({
           company_name: entry.company_name,
-          totalHours: duration,
-          totalCost: duration * hourlyRate
+          totalHours: safeDuration,
+          totalCost: safeDuration * hourlyRate
         });
       }
     });

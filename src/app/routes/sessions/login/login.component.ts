@@ -12,6 +12,7 @@ import { ILoginRequest } from 'src/app/shared/interfaces';
 })
 export class LoginComponent implements OnInit {
     loginForm: FormGroup;
+    hidePassword = true;
 
     constructor(
         private fb: FormBuilder,
@@ -36,16 +37,16 @@ export class LoginComponent implements OnInit {
 
         const loginData: ILoginRequest = this.loginForm.value as ILoginRequest;
 
-        this.auth.login(loginData).subscribe(
-            (resp) => {
+        this.auth.login(loginData).subscribe({
+            next: (resp) => {
                 this.router.navigateByUrl('/');
                 this.toast.toastNotification('success', 'Welcome Back', resp.message);
             },
-            (err) => {
+            error: (err) => {
                 console.error('Login error:', err);
-                const errorMessage = err || 'An error occurred during login. Please try again.';
-                this.toast.toastNotification('danger', 'Error', errorMessage);
+                const errorMessage = err.message || 'An error occurred during login. Please try again.';
+                this.toast.toastNotification('danger', 'Login Failed', errorMessage);
             }
-        );
+        });
     }
 }

@@ -1,0 +1,22 @@
+<div class="page-container">
+  <!-- Header Section -->
+  <div class="header-section">
+    <h1 class="page-title">
+      <mat-icon>business_center</mat-icon>
+      Programme Management
+    </h1>
+    <p class="page-description">
+      Manage programmes, courses, beneficiary enrollments, and business development service providers
+    </p>
+  </div>
+
+  <!-- Programme List Section -->
+  <div class="content-section">
+    <app-programme-table 
+      (showCourses)="showProgrammeCourses($event)"
+      (showBeneficiaries)="showProgrammeBeneficiaries($event)"
+      (showBdsp)="showProgrammeBdsp($event)"
+      (showDocuments)="showProgrammeDocuments($event)">
+    </app-programme-table>
+  </div>
+</div>

@@ -7,6 +7,8 @@ import { LoginComponent } from './sessions/login/login.component';
 import { RegisterComponent } from './sessions/register/register.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { ForgotPasswordComponent } from './sessions/forgot-password/forgot-password.component';
+import { PasswordResetComponent } from './sessions/password-reset/password-reset.component';
+import { ProfileComponent } from './profile/profile.component';
 
 const routes: Routes = [
   {
@@ -17,6 +19,7 @@ const routes: Routes = [
     children: [
       {path: '', redirectTo: 'dashboard', pathMatch: 'full'},
       {path: 'dashboard', component: DashboardComponent},
+      {path: 'user/profile', component: ProfileComponent},
       {
         path: 'administration',
         loadChildren: () => import('./administration/administration.module').then(m => m.AdministrationModule)
@@ -33,7 +36,8 @@ const routes: Routes = [
     children: [
       {path: 'login', component: LoginComponent},
       {path: 'register', component: RegisterComponent},
-      {path: 'forgot-password', component: ForgotPasswordComponent}
+      {path: 'forgot-password', component: ForgotPasswordComponent},
+      {path: 'password-reset', component: PasswordResetComponent}
     ]
   },
   { path: '**', redirectTo: 'dashboard' },

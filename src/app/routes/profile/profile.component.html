@@ -1,0 +1,349 @@
+<div class="profile-container">
+  <!-- Profile Header -->
+  <div class="profile-header">
+    <div class="header-background"></div>
+    <div class="header-content">
+      <div class="profile-image-section">
+        <div class="profile-avatar">
+          <img [src]="profileImageUrl" alt="Profile Picture" *ngIf="profileImageUrl">
+          <div class="avatar-placeholder" *ngIf="!profileImageUrl">
+            {{ getInitials() }}
+          </div>
+          <button mat-mini-fab class="upload-btn" (click)="fileInput.click()">
+            <mat-icon>camera_alt</mat-icon>
+          </button>
+          <input #fileInput type="file" accept="image/*" (change)="onFileSelected($event)" style="display: none;">
+        </div>
+      </div>
+      
+      <div class="profile-info">
+        <h1 class="user-name">{{ user.first_name }} {{ user.last_name }}</h1>
+        <p class="user-role">{{ user.job_title || 'User' }}</p>
+        <div class="user-meta">
+          <span class="meta-item">
+            <mat-icon>email</mat-icon>
+            {{ user.email }}
+          </span>
+          <span class="meta-item" *ngIf="user.phone">
+            <mat-icon>phone</mat-icon>
+            {{ user.phone }}
+          </span>
+          <span class="meta-item">
+            <mat-icon>event</mat-icon>
+            Member since {{ getMemberSince() }}
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Profile Content -->
+  <div class="profile-content">
+    <mat-tab-group [(selectedIndex)]="selectedTab" class="modern-tabs">
+      
+      <!-- Personal Information Tab -->
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <mat-icon class="tab-icon">person</mat-icon>
+          Personal Information
+        </ng-template>
+        
+        <div class="tab-content">
+          <mat-card class="info-card">
+            <mat-card-header>
+              <div class="card-header-content">
+                <div class="header-left">
+                  <mat-icon class="header-icon">badge</mat-icon>
+                  <div>
+                    <mat-card-title>Personal Information</mat-card-title>
+                    <mat-card-subtitle>Update your personal details and bio</mat-card-subtitle>
+                  </div>
+                </div>
+                <button mat-raised-button 
+                        [color]="isEditingProfile ? 'warn' : 'primary'"
+                        (click)="toggleEditProfile()">
+                  <mat-icon>{{ isEditingProfile ? 'close' : 'edit' }}</mat-icon>
+                  {{ isEditingProfile ? 'Cancel' : 'Edit Profile' }}
+                </button>
+              </div>
+            </mat-card-header>
+
+            <mat-card-content>
+              <form [formGroup]="profileForm" class="profile-form">
+                <div class="form-row">
+                  <mat-form-field appearance="outline" class="form-field">
+                    <mat-label>First Name</mat-label>
+                    <input matInput formControlName="first_name" placeholder="Enter first name">
+                    <mat-icon matPrefix>person</mat-icon>
+                    <mat-error *ngIf="profileForm.get('first_name')?.hasError('required')">
+                      First name is required
+                    </mat-error>
+                    <mat-error *ngIf="profileForm.get('first_name')?.hasError('minlength')">
+                      At least 2 characters required
+                    </mat-error>
+                  </mat-form-field>
+
+                  <mat-form-field appearance="outline" class="form-field">
+                    <mat-label>Last Name</mat-label>
+                    <input matInput formControlName="last_name" placeholder="Enter last name">
+                    <mat-icon matPrefix>person</mat-icon>
+                    <mat-error *ngIf="profileForm.get('last_name')?.hasError('required')">
+                      Last name is required
+                    </mat-error>
+                  </mat-form-field>
+                </div>
+
+                <div class="form-row">
+                  <mat-form-field appearance="outline" class="form-field">
+                    <mat-label>Email</mat-label>
+                    <input matInput formControlName="email" type="email" placeholder="Enter email">
+                    <mat-icon matPrefix>email</mat-icon>
+                    <mat-hint>Email cannot be changed</mat-hint>
+                  </mat-form-field>
+
+                  <mat-form-field appearance="outline" class="form-field">
+                    <mat-label>Phone Number</mat-label>
+                    <input matInput formControlName="phone_number" placeholder="Enter phone number">
+                    <mat-icon matPrefix>phone</mat-icon>
+                  </mat-form-field>
+                </div>
+
+                <div class="form-row">
+                  <mat-form-field appearance="outline" class="form-field">
+                    <mat-label>Job Title</mat-label>
+                    <input matInput formControlName="job_title" placeholder="Enter job title">
+                    <mat-icon matPrefix>work</mat-icon>
+                  </mat-form-field>
+
+                  <mat-form-field appearance="outline" class="form-field">
+                    <mat-label>Department</mat-label>
+                    <input matInput formControlName="department" placeholder="Enter department">
+                    <mat-icon matPrefix>business</mat-icon>
+                  </mat-form-field>
+                </div>
+
+                <mat-form-field appearance="outline" class="form-field full-width">
+                  <mat-label>Bio</mat-label>
+                  <textarea matInput 
+                            formControlName="bio" 
+                            rows="4" 
+                            placeholder="Tell us about yourself..."
+                            maxlength="500"></textarea>
+                  <mat-icon matPrefix>description</mat-icon>
+                  <mat-hint align="end">{{ profileForm.get('bio')?.value?.length || 0 }}/500</mat-hint>
+                </mat-form-field>
+
+                <div class="form-actions" *ngIf="isEditingProfile">
+                  <button mat-raised-button 
+                          color="primary" 
+                          (click)="saveProfile()"
+                          [disabled]="profileForm.invalid || isLoading">
+                    <mat-icon>save</mat-icon>
+                    {{ isLoading ? 'Saving...' : 'Save Changes' }}
+                  </button>
+                </div>
+              </form>
+            </mat-card-content>
+          </mat-card>
+        </div>
+      </mat-tab>
+
+      <!-- Account Settings Tab -->
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <mat-icon class="tab-icon">security</mat-icon>
+          Account Settings
+        </ng-template>
+        
+        <div class="tab-content">
+          <!-- Change Password Card -->
+          <mat-card class="info-card">
+            <mat-card-header>
+              <div class="card-header-content">
+                <div class="header-left">
+                  <mat-icon class="header-icon">lock</mat-icon>
+                  <div>
+                    <mat-card-title>Change Password</mat-card-title>
+                    <mat-card-subtitle>Update your password to keep your account secure</mat-card-subtitle>
+                  </div>
+                </div>
+                <button mat-raised-button 
+                        [color]="isChangingPassword ? 'warn' : 'primary'"
+                        (click)="toggleChangePassword()">
+                  <mat-icon>{{ isChangingPassword ? 'close' : 'vpn_key' }}</mat-icon>
+                  {{ isChangingPassword ? 'Cancel' : 'Change Password' }}
+                </button>
+              </div>
+            </mat-card-header>
+
+            <mat-card-content *ngIf="isChangingPassword">
+              <form [formGroup]="passwordForm" class="profile-form">
+                <mat-form-field appearance="outline" class="form-field full-width">
+                  <mat-label>Current Password</mat-label>
+                  <input matInput 
+                         formControlName="current_password" 
+                         type="password" 
+                         placeholder="Enter current password">
+                  <mat-icon matPrefix>lock_open</mat-icon>
+                  <mat-error>Current password is required</mat-error>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="form-field full-width">
+                  <mat-label>New Password</mat-label>
+                  <input matInput 
+                         formControlName="new_password" 
+                         type="password" 
+                         placeholder="Enter new password">
+                  <mat-icon matPrefix>lock</mat-icon>
+                  <mat-hint>Minimum 8 characters</mat-hint>
+                  <mat-error *ngIf="passwordForm.get('new_password')?.hasError('required')">
+                    New password is required
+                  </mat-error>
+                  <mat-error *ngIf="passwordForm.get('new_password')?.hasError('minlength')">
+                    Password must be at least 8 characters
+                  </mat-error>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="form-field full-width">
+                  <mat-label>Confirm New Password</mat-label>
+                  <input matInput 
+                         formControlName="confirm_password" 
+                         type="password" 
+                         placeholder="Confirm new password">
+                  <mat-icon matPrefix>lock</mat-icon>
+                  <mat-error *ngIf="passwordForm.hasError('passwordMismatch')">
+                    Passwords do not match
+                  </mat-error>
+                </mat-form-field>
+
+                <div class="form-actions">
+                  <button mat-raised-button 
+                          color="primary" 
+                          (click)="changePassword()"
+                          [disabled]="passwordForm.invalid || isLoading">
+                    <mat-icon>check</mat-icon>
+                    {{ isLoading ? 'Updating...' : 'Update Password' }}
+                  </button>
+                </div>
+              </form>
+            </mat-card-content>
+          </mat-card>
+
+          <!-- Account Information Card -->
+          <mat-card class="info-card">
+            <mat-card-header>
+              <div class="header-left">
+                <mat-icon class="header-icon">info</mat-icon>
+                <div>
+                  <mat-card-title>Account Information</mat-card-title>
+                  <mat-card-subtitle>View your account details</mat-card-subtitle>
+                </div>
+              </div>
+            </mat-card-header>
+
+            <mat-card-content>
+              <div class="info-grid">
+                <div class="info-item">
+                  <mat-icon>fingerprint</mat-icon>
+                  <div class="info-details">
+                    <span class="info-label">User ID</span>
+                    <span class="info-value">{{ user.id || 'N/A' }}</span>
+                  </div>
+                </div>
+
+                <div class="info-item">
+                  <mat-icon>event</mat-icon>
+                  <div class="info-details">
+                    <span class="info-label">Account Created</span>
+                    <span class="info-value">{{ getMemberSince() }}</span>
+                  </div>
+                </div>
+
+                <div class="info-item">
+                  <mat-icon>verified_user</mat-icon>
+                  <div class="info-details">
+                    <span class="info-label">Account Status</span>
+                    <span class="info-value status-active">
+                      <mat-icon>check_circle</mat-icon>
+                      Active
+                    </span>
+                  </div>
+                </div>
+
+                <div class="info-item">
+                  <mat-icon>admin_panel_settings</mat-icon>
+                  <div class="info-details">
+                    <span class="info-label">Role</span>
+                    <span class="info-value">{{ user.role || 'User' }}</span>
+                  </div>
+                </div>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        </div>
+      </mat-tab>
+
+      <!-- Activity Tab -->
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <mat-icon class="tab-icon">history</mat-icon>
+          Activity
+        </ng-template>
+        
+        <div class="tab-content">
+          <mat-card class="info-card">
+            <mat-card-header>
+              <div class="header-left">
+                <mat-icon class="header-icon">timeline</mat-icon>
+                <div>
+                  <mat-card-title>Recent Activity</mat-card-title>
+                  <mat-card-subtitle>Your recent actions and updates</mat-card-subtitle>
+                </div>
+              </div>
+            </mat-card-header>
+
+            <mat-card-content>
+              <div class="activity-list">
+                <div class="activity-item">
+                  <div class="activity-icon">
+                    <mat-icon>login</mat-icon>
+                  </div>
+                  <div class="activity-content">
+                    <p class="activity-title">Logged in to the system</p>
+                    <p class="activity-time">Today at 10:30 AM</p>
+                  </div>
+                </div>
+
+                <div class="activity-item">
+                  <div class="activity-icon">
+                    <mat-icon>edit</mat-icon>
+                  </div>
+                  <div class="activity-content">
+                    <p class="activity-title">Updated profile information</p>
+                    <p class="activity-time">Yesterday at 3:45 PM</p>
+                  </div>
+                </div>
+
+                <div class="activity-item">
+                  <div class="activity-icon">
+                    <mat-icon>vpn_key</mat-icon>
+                  </div>
+                  <div class="activity-content">
+                    <p class="activity-title">Changed password</p>
+                    <p class="activity-time">3 days ago</p>
+                  </div>
+                </div>
+
+                <div class="empty-state" style="margin-top: 40px;">
+                  <mat-icon>access_time</mat-icon>
+                  <p>More activity history coming soon...</p>
+                </div>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        </div>
+      </mat-tab>
+
+    </mat-tab-group>
+  </div>
+</div>

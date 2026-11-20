@@ -1,0 +1,87 @@
+<div class="page-container">
+  <!-- Header Section (shown only when viewing register) -->
+  <div class="header-section" *ngIf="!showRegisterForm">
+    <!-- Navigation Breadcrumb -->
+    <div class="breadcrumb-nav">
+      <button mat-button (click)="backToEvents()" class="back-button">
+        <mat-icon>arrow_back</mat-icon>
+        Back to Training Events
+      </button>
+      <span class="breadcrumb-separator">/</span>
+      <span class="current-location">Training Register
+        <span *ngIf="selectedEventIds.length > 1">({{ selectedEventIds.length }} Events)</span>
+      </span>
+    </div>
+
+    <!-- Page Title and Description -->
+    <h1 class="page-title">
+      <mat-icon>list_alt</mat-icon>
+      Training Register
+    </h1>
+    <p class="page-description">
+      View and manage event registrations
+      <span *ngIf="selectedEventIds.length > 1"> for {{ selectedEventIds.length }} events</span>
+    </p>
+  </div>
+
+  <!-- Form Navigation (shown only when form is visible) -->
+  <div class="form-navigation" *ngIf="showRegisterForm">
+    <nav class="breadcrumb-nav">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+          <button mat-button (click)="backToEvents()">
+            <mat-icon>school</mat-icon>
+            Training Events
+          </button>
+        </li>
+        <li class="breadcrumb-separator">
+          <mat-icon>chevron_right</mat-icon>
+        </li>
+        <li class="breadcrumb-item">
+          <button mat-button (click)="hideRegisterForm()">
+            <mat-icon>list_alt</mat-icon>
+            Training Register
+          </button>
+        </li>
+        <li class="breadcrumb-separator">
+          <mat-icon>chevron_right</mat-icon>
+        </li>
+        <li class="breadcrumb-item active">{{ isRegisterEditMode ? 'Edit Registration' : 'Add Registration' }}</li>
+      </ol>
+    </nav>
+  </div>
+
+  <!-- Content Section -->
+  <div class="content-section">
+    <!-- Register Form -->
+    <div *ngIf="showRegisterForm" class="form-section">
+      <app-training-register-form
+        [registerData]="editingRegisterRecord"
+        [isEditMode]="isRegisterEditMode"
+        [registerEventId]="registerEventId"
+        (saved)="onRegisterFormSaved()"
+        (cancelled)="onRegisterFormCancelled()">
+      </app-training-register-form>
+    </div>
+
+    <!-- Register View -->
+    <div *ngIf="!showRegisterForm && selectedEventIds.length > 0">
+      <app-training-register 
+        [event_ids]="selectedEventIds"
+        (onAddRegister)="showAddRegisterForm($event)"
+        (onEditRegister)="showEditRegisterForm($event)">
+      </app-training-register>
+    </div>
+
+    <!-- No Events Selected -->
+    <div *ngIf="!showRegisterForm && selectedEventIds.length === 0" class="no-events">
+      <mat-icon>error_outline</mat-icon>
+      <h3>No Events Selected</h3>
+      <p>Please select training events to view their register.</p>
+      <button mat-raised-button color="primary" (click)="backToEvents()">
+        <mat-icon>arrow_back</mat-icon>
+        Back to Training Events
+      </button>
+    </div>
+  </div>
+</div>

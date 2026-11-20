@@ -1,64 +1,112 @@
-<form [formGroup]="form" novalidate (ngSubmit)="onSubmit()">
-    <h2 mat-dialog-title>Training Event</h2>
-    <mat-dialog-content class="mat-typography">
+<div class="form-container">
+  <div class="form-card">
+    <div class="form-header">
+      <h2 class="form-title">{{ isEditMode ? 'Edit Registration' : 'Add Registration' }}</h2>
+      <p class="form-subtitle">{{ isEditMode ? 'Update registration details' : 'Register attendee for training event' }}</p>
+    </div>
+
+    <form [formGroup]="form" novalidate (ngSubmit)="onSubmit()">
+      <div class="form-content">
         <div class="row">
-            <div class="col">
-                <mat-form-field class="full-width">
-                    <mat-select cdkFocusInitial placeholder="Beneficiary" formControlName="smme_id">
-                        <mat-option *ngFor="let beneficiary of beneficiaryList" [value]="beneficiary.id">{{beneficiary.smme_name}}</mat-option>
-                    </mat-select>
-                    <mat-error *ngIf="form.controls['smme_id'].hasError('required')">
-                        Beneficiary is <strong>required</strong>
-                    </mat-error>
-                </mat-form-field>
-            </div>
+          <div class="col-12">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Beneficiary</mat-label>
+              <mat-icon matPrefix>business</mat-icon>
+              <mat-select cdkFocusInitial placeholder="Select Beneficiary" formControlName="smme_id">
+                <mat-option *ngFor="let beneficiary of beneficiaryList" [value]="beneficiary.smme_id">{{beneficiary.smme_name}}</mat-option>
+              </mat-select>
+              <mat-error *ngIf="form.controls['smme_id'].hasError('required')">
+                Beneficiary is <strong>required</strong>
+              </mat-error>
+            </mat-form-field>
+          </div>
         </div>
+
         <div class="row">
-            <div class="col">
-                <mat-form-field class="full-width">
-                    <input matInput type="text" placeholder="Full Names" formControlName="attendee">
-                </mat-form-field>
-            </div>
-            <div class="col">
-                <mat-form-field class="full-width">
-                    <input matInput type="number" placeholder="Age" formControlName="age">
-                </mat-form-field>
-            </div>
+          <div class="col-12 col-md-6">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Full Names</mat-label>
+              <mat-icon matPrefix>person</mat-icon>
+              <input matInput type="text" placeholder="Enter full names" formControlName="attendee">
+              <mat-error *ngIf="form.controls['attendee'].hasError('required')">
+                Full names are <strong>required</strong>
+              </mat-error>
+            </mat-form-field>
+          </div>
+          <div class="col-12 col-md-6">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Age</mat-label>
+              <mat-icon matPrefix>cake</mat-icon>
+              <input matInput type="number" placeholder="Enter age" formControlName="age">
+              <mat-error *ngIf="form.controls['age'].hasError('required')">
+                Age is <strong>required</strong>
+              </mat-error>
+            </mat-form-field>
+          </div>
         </div>
+
         <div class="row">
-            <div class="col">
-                <mat-form-field class="full-width">
-                    <input matInput type="email" placeholder="Email" formControlName="email">
-                </mat-form-field>
-            </div>
-            <div class="col">
-                <mat-form-field class="full-width">
-                    <input matInput type="text" placeholder="Contact Number" formControlName="tel_number">
-                </mat-form-field>
-            </div>
+          <div class="col-12 col-md-6">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Email</mat-label>
+              <mat-icon matPrefix>email</mat-icon>
+              <input matInput type="email" placeholder="Enter email address" formControlName="email">
+              <mat-error *ngIf="form.controls['email'].hasError('required')">
+                Email is <strong>required</strong>
+              </mat-error>
+              <mat-error *ngIf="form.controls['email'].hasError('email')">
+                Please enter a valid email address
+              </mat-error>
+            </mat-form-field>
+          </div>
+          <div class="col-12 col-md-6">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Contact Number</mat-label>
+              <mat-icon matPrefix>phone</mat-icon>
+              <input matInput type="text" placeholder="Enter contact number" formControlName="tel_number">
+              <mat-error *ngIf="form.controls['tel_number'].hasError('required')">
+                Contact number is <strong>required</strong>
+              </mat-error>
+            </mat-form-field>
+          </div>
         </div>
+
         <div class="row">
-            <div class="col">
-                <mat-form-field class="full-width">
-                    <mat-select placeholder="Qualification" formControlName="qualification">
-                        <mat-option *ngFor="let qualification of qualifications" [value]="qualification">{{ qualification }}</mat-option>
-                    </mat-select>
-                    <mat-error *ngIf="form.controls['qualification'].hasError('required')">
-                        qualification is <strong>required</strong>
-                    </mat-error>
-                </mat-form-field>
-            </div>
-            <div class="col">
-                <mat-form-field class="full-width">
-                    <mat-select placeholder="Gender" formControlName="gender">
-                        <mat-option *ngFor="let gender of genderOptions" [value]="gender.value">{{ gender.description }}</mat-option>
-                    </mat-select>
-                </mat-form-field>
-            </div>
+          <div class="col-12 col-md-6">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Qualification</mat-label>
+              <mat-icon matPrefix>school</mat-icon>
+              <mat-select placeholder="Select qualification" formControlName="qualification">
+                <mat-option *ngFor="let qualification of qualifications" [value]="qualification">{{ qualification }}</mat-option>
+              </mat-select>
+              <mat-error *ngIf="form.controls['qualification'].hasError('required')">
+                Qualification is <strong>required</strong>
+              </mat-error>
+            </mat-form-field>
+          </div>
+          <div class="col-12 col-md-6">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Gender</mat-label>
+              <mat-icon matPrefix>wc</mat-icon>
+              <mat-select placeholder="Select gender" formControlName="gender">
+                <mat-option *ngFor="let gender of genderOptions" [value]="gender.value">{{ gender.description }}</mat-option>
+              </mat-select>
+              <mat-error *ngIf="form.controls['gender'].hasError('required')">
+                Gender is <strong>required</strong>
+              </mat-error>
+            </mat-form-field>
+          </div>
         </div>
-    </mat-dialog-content>
-    <mat-dialog-actions align="end">
-        <button mat-button mat-dialog-close>Cancel</button>
-        <button type="submit" mat-button [disabled]="!form.valid">Submit</button>
-    </mat-dialog-actions>
-</form>
+      </div>
+
+      <div class="form-actions">
+        <button type="button" mat-stroked-button class="cancel-btn" (click)="onCancel()">
+          Cancel
+        </button>
+        <button type="submit" mat-raised-button class="submit-btn" [disabled]="!form.valid">
+          {{ isEditMode ? 'Update Registration' : 'Create Registration' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

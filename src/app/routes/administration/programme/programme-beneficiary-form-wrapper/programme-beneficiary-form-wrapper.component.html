@@ -1,0 +1,43 @@
+<div class="page-container">
+  <!-- Form Navigation -->
+  <div class="form-navigation">
+    <nav class="breadcrumb-nav">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+          <button mat-button (click)="goBackToProgrammes()">
+            <mat-icon>business_center</mat-icon>
+            Programmes
+          </button>
+        </li>
+        <li class="breadcrumb-separator">
+          <mat-icon>chevron_right</mat-icon>
+        </li>
+        <li class="breadcrumb-item">
+          <button mat-button (click)="goBackToBeneficiaries()">
+            <mat-icon>people</mat-icon>
+            Beneficiaries
+          </button>
+        </li>
+        <li class="breadcrumb-separator">
+          <mat-icon>chevron_right</mat-icon>
+        </li>
+        <li class="breadcrumb-item active">{{isEditMode ? 'Edit Beneficiary' : 'Add Beneficiary'}}</li>
+      </ol>
+    </nav>
+  </div>
+
+  <!-- Form Section -->
+  <div class="content-section">
+    <div *ngIf="isLoading" class="loading-container">
+      <mat-spinner diameter="50"></mat-spinner>
+      <p>Loading appointment data...</p>
+    </div>
+    
+    <app-appointed-beneficiary-form
+      *ngIf="!isLoading && data"
+      [data]="data"
+      (formSubmitted)="onFormSubmitted($event)"
+      (formCancelled)="onFormCancelled()">
+    </app-appointed-beneficiary-form>
+  </div>
+</div>

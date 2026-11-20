@@ -1,7 +1,6 @@
-import { Component, Inject, OnInit } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { ToastService } from 'src/app/shared/services/toast.service';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { NotificationUtil } from 'src/app/shared/utils/notificationUtil';
 import { ProgrammeService } from '../../../services/programme.service';
 import { GenericCompanyService } from '../../../services/generic-company.service';
 
@@ -11,36 +10,53 @@ import { GenericCompanyService } from '../../../services/generic-company.service
   styleUrls: ['./programme-form.component.scss']
 })
 export class ProgrammeFormComponent implements OnInit {
-  companyList: any[] =[];
+  @Input() programmeData: any = null;
+  @Input() isEditMode: boolean = false;
+  @Output() formSubmit = new EventEmitter<any>();
+  @Output() formCancel = new EventEmitter<void>();
+
+  companyList: any[] = [];
   types: any[] = [];
-  programmeForm = this.fb.group({
-    programme_name: [null, Validators.required],
-    programme_type: [null, Validators.required],
-    description: [null, Validators.required],
-    generic_company_id: [null, Validators.required],
-    start_date: ['', Validators.required],
-    end_date: ['', Validators.required],
-    sponsor_name: [null, Validators.required],
-    sponsor_surname: [null, Validators.required],
-    sponsor_cell: [null, Validators.required],
-    sponsor_alt_cell: [""],
-    sponsor_email: [null, Validators.email]
-  });
+  programmeForm!: FormGroup;
+  isSubmitting = false;
 
   constructor(
-    private fb: FormBuilder, 
-    public dialog: MatDialog,
-    private toast: ToastService,
+    private fb: FormBuilder,
+    private notification: NotificationUtil,
     private service: ProgrammeService,
-    private companyService: GenericCompanyService,
-    private dialogRef: MatDialogRef<ProgrammeFormComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: any
+    private companyService: GenericCompanyService
   ) { }
 
   ngOnInit(): void {
-    this.programmeForm.patchValue(this.data);
+    this.buildForm();
     this.getGenericCompanyList();
     this.getProgrammeTypes();
+    
+    if (this.isEditMode && this.programmeData) {
+      this.populateForm(this.programmeData);
+    }
+  }
+
+  buildForm(): void {
+    this.programmeForm = this.fb.group({
+      programme_name: ['', [Validators.required]],
+      programme_type: ['', [Validators.required]],
+      description: ['', [Validators.required]],
+      generic_company_id: ['', [Validators.required]],
+      start_date: ['', [Validators.required]],
+      end_date: ['', [Validators.required]]
+    });
+  }
+
+  populateForm(programme: any): void {
+    this.programmeForm.patchValue({
+      programme_name: programme.programme_name || '',
+      programme_type: programme.programme_type || '',
+      description: programme.description || '',
+      generic_company_id: programme.generic_company_id || '',
+      start_date: programme.start_date || '',
+      end_date: programme.end_date || ''
+    });
   }
 
   getGenericCompanyList() {
@@ -54,33 +70,58 @@ export class ProgrammeFormComponent implements OnInit {
 
   getProgrammeTypes() {
     this.service.getProgrammeTypes().subscribe({
-      next: reponse => {
-        this.types = reponse.data;
+      next: response => {
+        this.types = response.data;
       },
       error: console.log
     });
   }
 
   onSubmit(): void {
-    if(this.data.id) {
-      // update
-      this.service.update(this.data.id, this.programmeForm.value).subscribe({
-        next: response => {
-          this.toast.toastNotification('success', '',response.message);
-          this.dialogRef.close(response.data);
-        },
-        error: console.log
-      });
-    } else {
-      // add new
-      this.service.create(this.programmeForm.value).subscribe({
-        next: response => {
-          this.toast.toastNotification('success', '',response.message);
-          this.dialogRef.close(response.data);
-        },
-        error: err => console.log(err)
-      })
+    if (this.programmeForm.valid && !this.isSubmitting) {
+      this.isSubmitting = true;
+      
+      if (this.isEditMode && this.programmeData?.id) {
+        // Update existing programme
+        this.service.update(this.programmeData.id, this.programmeForm.value).subscribe({
+          next: response => {
+            this.notification.showSuccess(response.message || 'Programme updated successfully');
+            this.isSubmitting = false;
+            this.formSubmit.emit(response.data);
+          },
+          error: (err) => {
+            this.notification.showError(err.message || 'Failed to update programme');
+            this.isSubmitting = false;
+            console.error(err);
+          }
+        });
+      } else {
+        // Create new programme
+        this.service.create(this.programmeForm.value).subscribe({
+          next: response => {
+            this.notification.showSuccess(response.message || 'Programme created successfully');
+            this.isSubmitting = false;
+            this.formSubmit.emit(response.data);
+          },
+          error: (err) => {
+            this.notification.showError(err.message || 'Failed to create programme');
+            this.isSubmitting = false;
+            console.error(err);
+          }
+        });
+      }
     }
   }
 
+  onCancel(): void {
+    this.formCancel.emit();
+  }
+
+  onReset(): void {
+    if (this.isEditMode && this.programmeData) {
+      this.populateForm(this.programmeData);
+    } else {
+      this.programmeForm.reset();
+    }
+  }
 }

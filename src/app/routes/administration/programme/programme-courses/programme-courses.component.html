@@ -1,0 +1,43 @@
+<div class="page-container">
+  <!-- Header Section -->
+  <div class="header-section">
+    <!-- Navigation Breadcrumb -->
+    <div class="breadcrumb-nav">
+      <button mat-button (click)="goBackToProgrammes()" class="back-button">
+        <mat-icon>arrow_back</mat-icon>
+        Back to Programmes
+      </button>
+      <span class="breadcrumb-separator">/</span>
+      <span class="current-location">{{programme?.programme_name}} Courses</span>
+    </div>
+
+    <!-- Page Title and Description -->
+    <h1 class="page-title">
+      <mat-icon>school</mat-icon>
+      Courses - {{programme?.programme_name}}
+    </h1>
+    <p class="page-description">
+      Manage courses offered under {{programme?.programme_name}} programme
+    </p>
+  </div>
+
+  <!-- Content Section -->
+  <div class="content-section">
+    <div *ngIf="isLoading" class="loading-container">
+      <mat-spinner diameter="50"></mat-spinner>
+      <p>Loading programme data...</p>
+    </div>
+    
+    <app-programme-course 
+      *ngIf="!isLoading && programme"
+      [programme]="programme"
+      (showForm)="showAddCourseForm($event)"
+      (editForm)="showEditCourseForm($event)">
+    </app-programme-course>
+    
+    <div *ngIf="!isLoading && !programme" class="error-message">
+      <mat-icon>error_outline</mat-icon>
+      <p>Failed to load programme data</p>
+    </div>
+  </div>
+</div>

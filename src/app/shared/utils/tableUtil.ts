@@ -20,7 +20,54 @@ export class TableUtil {
   static exportTableToExcel(tableId: string, name: string) {
     let { sheetName, fileName } = getFileName(name);
     let targetTableElm = document.getElementById(tableId);
-    let wb = XLSX.utils.table_to_book(targetTableElm, <XLSX.Table2SheetOpts>{
+    
+    if (!targetTableElm) {
+      console.error('Table element not found:', tableId);
+      return;
+    }
+    
+    // Clone the table to modify it without affecting the original
+    const clonedTable = targetTableElm.cloneNode(true) as HTMLElement;
+    
+    // Remove all mat-icon elements to prevent icon names from appearing in Excel
+    const matIcons = clonedTable.querySelectorAll('mat-icon');
+    matIcons.forEach(icon => icon.remove());
+    
+    // Remove all other icon elements
+    const allIcons = clonedTable.querySelectorAll('[class*="icon"], i, .material-icons');
+    allIcons.forEach(icon => icon.remove());
+    
+    // Remove action columns from both header and body
+    const headerCells = clonedTable.querySelectorAll('th');
+    const actionColumnIndices: number[] = [];
+    
+    headerCells.forEach((cell, index) => {
+      const cellText = cell.textContent?.toLowerCase() || '';
+      if (cellText.includes('action')) {
+        actionColumnIndices.push(index);
+      }
+    });
+    
+    // Remove action column headers
+    actionColumnIndices.reverse().forEach(index => {
+      const headers = clonedTable.querySelectorAll('th');
+      if (headers[index]) {
+        headers[index].remove();
+      }
+    });
+    
+    // Remove action column cells from all rows
+    const rows = clonedTable.querySelectorAll('tr');
+    rows.forEach(row => {
+      const cells = row.querySelectorAll('td, th');
+      actionColumnIndices.reverse().forEach(index => {
+        if (cells[index]) {
+          cells[index].remove();
+        }
+      });
+    });
+    
+    let wb = XLSX.utils.table_to_book(clonedTable, <XLSX.Table2SheetOpts>{
       sheet: sheetName
     });
     XLSX.writeFile(wb, `${fileName}.xlsx`);
@@ -33,6 +80,30 @@ export class TableUtil {
     var ws = XLSX.utils.json_to_sheet(arr);
     XLSX.utils.book_append_sheet(wb, ws, sheetName);
     XLSX.writeFile(wb, `${fileName}.xlsx`);
+  }
+
+  static exportArrayToCSV(arr: any[], name: string) {
+    let { sheetName, fileName } = getFileName(name);
+
+    const wb = XLSX.utils.book_new();
+    const ws = XLSX.utils.json_to_sheet(arr);
+    XLSX.utils.book_append_sheet(wb, ws, sheetName);
+    XLSX.writeFile(wb, `${fileName}.csv`, { bookType: 'csv' });
+  }
+
+  static exportArrayToPDF(headers: string[], rows: any[][], name: string, title: string): void {
+    const doc = new jsPDF('landscape');
+    doc.setFontSize(16);
+    doc.text(title, 14, 16);
+    autoTable(doc, {
+      head: [headers],
+      body: rows,
+      startY: 24,
+      theme: 'striped',
+      styles: { fontSize: 9 },
+      headStyles: { fillColor: [45, 82, 120] }
+    });
+    doc.save(`${name}-${new Date().toISOString()}.pdf`);
   }
 
   /**
@@ -52,23 +123,75 @@ export class TableUtil {
     
     doc.text(title, 14, finalY + 10);
     
-    if (textCollection) {
+    if (textCollection && textCollection.length >= 4) {
       autoTable(doc, {
         startY: finalY + 20,
         theme: 'plain',
         body: [
-          ['Programme:', textCollection[0].textContent],
-          ['Course:', textCollection[1].textContent],
-          ['Service Provider:', textCollection[2].textContent],
-          ['Event Date: ', textCollection[3].textContent]
+          ['Programme:', textCollection[0]?.textContent || 'N/A'],
+          ['Course:', textCollection[1]?.textContent || 'N/A'],
+          ['Service Provider:', textCollection[2]?.textContent || 'N/A'],
+          ['Event Date: ', textCollection[3]?.textContent || 'N/A']
         ],
         tableWidth: 'wrap'
       });
     }
 
+    // Clone table and remove action columns for PDF export
+    const sourceTable = document.getElementById(tableId);
+    if (!sourceTable) {
+      console.error('Table element not found:', tableId);
+      return;
+    }
+    
+    const clonedTable = sourceTable.cloneNode(true) as HTMLElement;
+    
+    // Remove all mat-icon elements to prevent icon names from appearing in PDF
+    const matIcons = clonedTable.querySelectorAll('mat-icon');
+    matIcons.forEach(icon => icon.remove());
+    
+    // Remove all other icon elements
+    const allIcons = clonedTable.querySelectorAll('[class*="icon"], i, .material-icons');
+    allIcons.forEach(icon => icon.remove());
+    
+    // Find and remove action columns
+    const headerCells = clonedTable.querySelectorAll('th');
+    const actionColumnIndices: number[] = [];
+    
+    headerCells.forEach((cell, index) => {
+      const cellText = cell.textContent?.toLowerCase() || '';
+      if (cellText.includes('action')) {
+        actionColumnIndices.push(index);
+      }
+    });
+    
+    // Remove action column headers
+    actionColumnIndices.reverse().forEach(index => {
+      const headers = clonedTable.querySelectorAll('th');
+      if (headers[index]) {
+        headers[index].remove();
+      }
+    });
+    
+    // Remove action column cells from all rows
+    const rows = clonedTable.querySelectorAll('tr');
+    rows.forEach(row => {
+      const cells = row.querySelectorAll('td, th');
+      actionColumnIndices.forEach(index => {
+        if (cells[index]) {
+          cells[index].remove();
+        }
+      });
+    });
+    
+    // Temporarily add cloned table to DOM for jsPDF autoTable
+    clonedTable.style.display = 'none';
+    clonedTable.id = tableId + '_clone_for_pdf';
+    document.body.appendChild(clonedTable);
+
     // finalY = (doc as any).lastAutoTable.finalY;
     autoTable(doc, {
-      html: '#'+tableId,
+      html: '#'+tableId + '_clone_for_pdf',
       theme: 'striped',
       showHead: 'everyPage',
       showFoot: 'everyPage',
@@ -97,6 +220,12 @@ export class TableUtil {
 
     if (typeof doc.putTotalPages === 'function') {
       doc.putTotalPages(totalPagesExp)
+    }
+    
+    // Remove the cloned table from DOM
+    const clonedTableElement = document.getElementById(tableId + '_clone_for_pdf');
+    if (clonedTableElement) {
+      clonedTableElement.remove();
     }
 
     var out = doc.output();

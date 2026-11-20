@@ -1,202 +1,288 @@
-<div class="container">
-    <div class="page-title">
-        <h2>My Timesheet</h2>
+<div class="page-container">
+  <div class="page-head">
+    <div>
+      <h1 class="page-title">
+        <mat-icon>schedule</mat-icon>
+        Timesheet
+      </h1>
     </div>
+    <button mat-raised-button class="log-btn" (click)="openDialog()">
+      <mat-icon>add</mat-icon>
+      Log time
+    </button>
+  </div>
 
-    <div class="table-controls">
-        <mat-form-field>
-            <mat-label for="columnsSelection">Table columns</mat-label>
-            <mat-select name="columnsSelection" [formControl]="columns" [(ngModel)]="columnsToDisplay"
-                (selectionChange)="selectedColumns($event)" multiple>
-                <mat-option *ngFor="let column of columnList" [value]="column[0]">{{column[1]}}</mat-option>
-            </mat-select>
-        </mat-form-field>
+  <mat-tab-group animationDuration="0ms" class="ts-tabs">
+    <!-- ================================================================ -->
+    <!-- MY TIMESHEET                                                      -->
+    <!-- ================================================================ -->
+    <mat-tab label="My Timesheet">
+      <div class="tab-body">
+        <!-- Filter bar -->
+        <section class="filter-card" aria-label="Filters">
+          <div class="filter-row">
+            <div class="segmented" role="group" aria-label="Period">
+              <button *ngFor="let p of periods" type="button"
+                      [class.active]="period === p.key"
+                      [attr.aria-pressed]="period === p.key"
+                      (click)="setPeriod(p.key)">{{ p.label }}</button>
+            </div>
 
-        <mat-form-field style="float: right;" id="searchInput">
-            <mat-label>Search</mat-label>
-            <input matInput (keyup)="applyFilter($event)" placeholder="Ex. Mia" #input>
-        </mat-form-field>
-        <button mat-icon-button matTooltip="Export Table To Excel" (click)="exportTableToCSV()">
-            <i class="fa-regular fa-file-excel fa-xl"></i>
-        </button>
-        <button mat-icon-button matTooltip="Export Table To PDF" (click)="exportTableToPDF()">
-            <i class="fa-regular fa-file-pdf fa-xl"></i>
-        </button>
-        <button mat-icon-button matTooltip="Generate Invoice" (click)="openInvoiceDialog()">
-            <mat-icon>payment</mat-icon>
-        </button>
-    </div>
+            <mat-form-field *ngIf="period === 'custom'" appearance="outline" class="range-field" [formGroup]="customRange">
+              <mat-label>Date range</mat-label>
+              <mat-date-range-input [rangePicker]="rangePicker">
+                <input matStartDate formControlName="start" placeholder="Start">
+                <input matEndDate formControlName="end" placeholder="End" (dateChange)="onCustomRangeChange()">
+              </mat-date-range-input>
+              <mat-datepicker-toggle matSuffix [for]="rangePicker"></mat-datepicker-toggle>
+              <mat-date-range-picker #rangePicker></mat-date-range-picker>
+            </mat-form-field>
 
-    <div class="content-wrapper">
-        <div class="filters">
-            <mat-accordion class="example-headers-align">
-                <mat-expansion-panel [expanded]="true">
-                    <mat-expansion-panel-header>
-                        <mat-panel-title>
-                            Filters
-                        </mat-panel-title>
-                    </mat-expansion-panel-header>
+            <span class="period-label" *ngIf="periodLabel">
+              <mat-icon>event</mat-icon>{{ periodLabel }}
+            </span>
+          </div>
 
-                    <form (ngSubmit)="applyFilters()" [formGroup]="form">
-                        <div class="row">
-                            <!-- date range filter -->
-                            <div class="col">
-                                <mat-form-field class="full-width">
-                                    <mat-label>Enter a date range</mat-label>
-                                    <mat-date-range-input [rangePicker]="picker">
-                                        <input matStartDate placeholder="Start date" formControlName="start_date">
-                                        <input matEndDate placeholder="End date" formControlName="end_date">
-                                    </mat-date-range-input>
-                                    <mat-hint>MM/DD/YYYY – MM/DD/YYYY</mat-hint>
-                                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-                                    <mat-date-range-picker #picker></mat-date-range-picker>
-                                </mat-form-field>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col">
-                                <mat-form-field class="full-width">
-                                    <mat-select placeholder="Company" formControlName="company_id">
-                                        <mat-option *ngFor="let option of companies"
-                                            value="{{option.id}}">{{option.company_name}}</mat-option>
-                                    </mat-select>
-                                </mat-form-field>
-                            </div>
-                        </div>
-                        <div class="row" *ngIf="user?.role === 'admin'">
-                            <div class="col">
-                                <mat-form-field class="full-width">
-                                    <mat-select placeholder="Employee" formControlName="user_id">
-                                        <mat-option *ngFor="let user of users" value="{{user.id}}">
-                                            {{user.last_name + '
-                                            ' +
-                                            user.first_name}}
-                                        </mat-option>
-                                    </mat-select>
-                                </mat-form-field>
-                            </div>
-                        </div>
-                        <div style="float: right;">
-                            <button type="submit" mat-raised-button matTooltip="Apply filters"
-                                aria-label="Apply filters button" color="primary">Apply</button>
-                        </div>
-                    </form>
-                </mat-expansion-panel>
-            </mat-accordion>
+          <div class="filter-row secondary" [formGroup]="form">
+            <mat-form-field appearance="outline" class="select-field">
+              <mat-label>Company</mat-label>
+              <mat-select formControlName="company_id" (selectionChange)="loadTimesheet()">
+                <mat-option [value]="null">All companies</mat-option>
+                <mat-option *ngFor="let c of companies" [value]="c.id">{{ c.company_name }}</mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <mat-form-field *ngIf="isAdmin" appearance="outline" class="select-field">
+              <mat-label>Employee</mat-label>
+              <mat-select formControlName="user_id" (selectionChange)="loadTimesheet()">
+                <mat-option [value]="null">Me</mat-option>
+                <mat-option *ngFor="let u of users" [value]="u.id">{{ u.first_name }} {{ u.last_name }}</mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="search-field">
+              <mat-label>Search entries</mat-label>
+              <input matInput [value]="search" (input)="onSearch($any($event.target).value)"
+                     placeholder="Project, company, activity, comment" autocomplete="off">
+              <button *ngIf="search" matSuffix mat-icon-button aria-label="Clear search" (click)="clearSearch()">
+                <mat-icon>close</mat-icon>
+              </button>
+              <mat-icon *ngIf="!search" matSuffix>search</mat-icon>
+            </mat-form-field>
+
+            <button mat-stroked-button class="export-btn" [matMenuTriggerFor]="exportMenu">
+              <mat-icon>file_download</mat-icon>
+              Export
+              <mat-icon class="caret">arrow_drop_down</mat-icon>
+            </button>
+            <mat-menu #exportMenu="matMenu" xPosition="before">
+              <button mat-menu-item (click)="exportToExcel()">
+                <mat-icon>table_view</mat-icon><span>Excel</span>
+              </button>
+              <button mat-menu-item (click)="exportToPDF()">
+                <mat-icon>picture_as_pdf</mat-icon><span>PDF</span>
+              </button>
+              <mat-divider></mat-divider>
+              <button mat-menu-item (click)="openInvoiceDialog()">
+                <mat-icon>receipt_long</mat-icon><span>Generate invoice</span>
+              </button>
+            </mat-menu>
+          </div>
+        </section>
+
+        <div *ngIf="viewingSomeoneElse" class="scope-banner">
+          <mat-icon>visibility</mat-icon>
+          <span>You're viewing <strong>{{ getSelectedEmployeeName() }}</strong>'s timesheet. Time you log is always saved to your own.</span>
         </div>
-        <mat-accordion class="example-headers-align">
-            <mat-expansion-panel [expanded]="true">
-                <mat-expansion-panel-header>
-                    <mat-panel-title>
-                        Timesheet
-                    </mat-panel-title>
-                    <mat-panel-description>
-                        Timesheet table
-                        <mat-icon>date_range</mat-icon>
-                    </mat-panel-description>
-                </mat-expansion-panel-header>
-                <div class="table-container">
-                    <div class="mat-elevation-z8">
-                        <table id="timesheet" mat-table [dataSource]="dataSource" matSort class="full-width-table">
 
-                            <ng-container matColumnDef="date">
-                                <th mat-header-cell *matHeaderCellDef mat-sort-header> Date </th>
-                                <td mat-cell *matCellDef="let row"> {{row.date}} </td>
-                                <td mat-footer-cell *matFooterCellDef></td>
-                            </ng-container>
+        <!-- Summary -->
+        <section class="summary" aria-label="Summary">
+          <div class="tile">
+            <span class="tile-label">Total time</span>
+            <span class="tile-value">{{ label(totalSeconds) }}</span>
+            <span class="tile-sub">{{ filteredCount }} {{ filteredCount === 1 ? 'entry' : 'entries' }}</span>
+          </div>
+          <div class="tile">
+            <span class="tile-label">Days logged</span>
+            <span class="tile-value">{{ daysLogged }}</span>
+            <span class="tile-sub">{{ periodLabel }}</span>
+          </div>
+          <div class="tile">
+            <span class="tile-label">Average per day</span>
+            <span class="tile-value">{{ averagePerDay }}</span>
+            <span class="tile-sub">on days with entries</span>
+          </div>
+          <button type="button" class="tile tile-link" (click)="showDisbursements()">
+            <span class="tile-label">Claims</span>
+            <span class="tile-value">{{ disbursementTotal | currency }}</span>
+            <span class="tile-sub">{{ disbursmentItems.length }} {{ disbursmentItems.length === 1 ? 'item' : 'items' }} · view</span>
+          </button>
+        </section>
 
-                            <ng-container matColumnDef="project">
-                                <th mat-header-cell *matHeaderCellDef mat-sort-header> Project </th>
-                                <td mat-cell *matCellDef="let row"> {{row.project_name}} </td>
-                                <td mat-footer-cell *matFooterCellDef></td>
-                            </ng-container>
+        <mat-progress-bar *ngIf="loading" mode="indeterminate" class="loading-bar"></mat-progress-bar>
 
-                            <ng-container matColumnDef="company">
-                                <th mat-header-cell *matHeaderCellDef mat-sort-header> Company </th>
-                                <td mat-cell *matCellDef="let row"> {{row.company_name}} </td>
-                                <td mat-footer-cell *matFooterCellDef></td>
-                            </ng-container>
+        <!-- Entries grouped by day -->
+        <section class="days" aria-label="Time entries" [class.is-loading]="loading">
+          <article *ngFor="let group of dayGroups; trackBy: trackByDate" class="day-card">
+            <header class="day-head">
+              <h3>
+                {{ group.label }}
+                <span *ngIf="group.sublabel" class="day-relative">{{ group.sublabel }}</span>
+              </h3>
+              <span class="day-total">{{ label(group.totalSeconds) }}</span>
+            </header>
 
-                            <ng-container matColumnDef="general_activity">
-                                <th mat-header-cell *matHeaderCellDef mat-sort-header> General Activity </th>
-                                <td mat-cell *matCellDef="let row"> {{row.general_activity}} </td>
-                                <td mat-footer-cell *matFooterCellDef></td>
-                            </ng-container>
-
-                            <ng-container matColumnDef="work_type">
-                                <th mat-header-cell *matHeaderCellDef mat-sort-header> Work Type </th>
-                                <td mat-cell *matCellDef="let row"> {{row.work_type}} </td>
-                                <td mat-footer-cell *matFooterCellDef> Total </td>
-                            </ng-container>
-
-                            <!-- Progress Column -->
-                            <ng-container matColumnDef="time">
-                                <th mat-header-cell *matHeaderCellDef mat-sort-header> Time </th>
-                                <td mat-cell *matCellDef="let row"> {{row.duration}} </td>
-                                <td mat-footer-cell *matFooterCellDef> {{getTotalDuration()}} </td>
-                            </ng-container>
-
-                            <ng-container matColumnDef="comment">
-                                <th mat-header-cell *matHeaderCellDef mat-sort-header> Comment </th>
-                                <td mat-cell *matCellDef="let row"> {{row.comment}} </td>
-                                <td mat-footer-cell *matFooterCellDef></td>
-                            </ng-container>
-
-                            <ng-container matColumnDef="employee">
-                                <th mat-header-cell *matHeaderCellDef mat-sort-header> Employee </th>
-                                <td mat-cell *matCellDef="let row"> {{row.first_name + ' ' + row.last_name}} </td>
-                                <td mat-footer-cell *matFooterCellDef></td>
-                            </ng-container>
-
-                            <!-- Fruit Column -->
-                            <ng-container matColumnDef="action">
-                                <th mat-header-cell *matHeaderCellDef> Action </th>
-                                <td mat-cell *matCellDef="let row">
-                                    <button mat-icon-button color="accern" (click)="openDialog(row)">
-                                        <mat-icon>edit</mat-icon>
-                                    </button>
-                                    <button mat-icon-button color="warn" (click)="deleteItem(row.id)">
-                                        <mat-icon>delete</mat-icon>
-                                    </button>
-                                </td>
-                                <td mat-footer-cell *matFooterCellDef></td>
-                            </ng-container>
-
-                            <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
-                            <tr mat-row *matRowDef="let row; columns: columnsToDisplay;"></tr>
-                            <tr mat-footer-row *matFooterRowDef="columnsToDisplay" class="example-first-footer-row">
-                            </tr>
-
-                            <!-- Row shown when there is no matching data. -->
-                            <tr class="mat-row" *matNoDataRow>
-                                <!-- <td class="mat-cell" colspan="4">No data matching the filter "{{input.value}}"</td> -->
-                            </tr>
-                        </table>
-
-                        <mat-paginator [pageSizeOptions]="[5, 10, 25, 100, 200]"
-                            aria-label="Select page of users"></mat-paginator>
-                    </div>
+            <ul class="entry-list">
+              <li *ngFor="let entry of group.entries; trackBy: trackById" class="entry">
+                <div class="entry-main">
+                  <div class="entry-title">
+                    <span class="project">{{ entry.project_name }}</span>
+                    <mat-icon class="sep" aria-hidden="true">chevron_right</mat-icon>
+                    <span class="company">{{ entry.company_name }}</span>
+                  </div>
+                  <div class="entry-tags">
+                    <span *ngIf="entry.general_activity" class="tag">{{ entry.general_activity }}</span>
+                    <span *ngIf="entry.work_type" class="tag tag-outline">{{ entry.work_type }}</span>
+                  </div>
+                  <p *ngIf="hasComment(entry)" class="entry-comment">{{ entry.comment }}</p>
                 </div>
-            </mat-expansion-panel>
-            <mat-expansion-panel>
-                <mat-expansion-panel-header>
-                    <mat-panel-title>
-                        Claim Disbursement
-                    </mat-panel-title>
-                    <mat-panel-description>
-                        Claim Disbursement Table
-                        <mat-icon>date_range</mat-icon>
-                    </mat-panel-description>
-                </mat-expansion-panel-header>
-                <app-claim-disbursement [disbursementItems]="disbursmentItems"></app-claim-disbursement>
-            </mat-expansion-panel>
-        </mat-accordion>
-    </div>
+                <div class="entry-side">
+                  <span class="entry-duration">{{ entryLabel(entry) }}</span>
+                  <div class="entry-actions">
+                    <button mat-icon-button matTooltip="Edit" aria-label="Edit entry" (click)="openDialog(entry)">
+                      <mat-icon>edit</mat-icon>
+                    </button>
+                    <button mat-icon-button matTooltip="Delete" aria-label="Delete entry" class="delete" (click)="deleteItem(entry)">
+                      <mat-icon>delete_outline</mat-icon>
+                    </button>
+                  </div>
+                </div>
+              </li>
+            </ul>
+          </article>
 
-    <div class="add-btn-wrapper" color="primary">
-        <button mat-fab matTooltip="Add Timesheet Item" aria-label="Add Timesheet Button with icon" class="add-btn"
-            (click)="openDialog()">
-            <mat-icon>add</mat-icon>
-        </button>
-    </div>
+          <div *ngIf="!loading && !dayGroups.length" class="empty-state">
+            <mat-icon>{{ search ? 'search_off' : 'event_available' }}</mat-icon>
+            <ng-container *ngIf="search; else noTime">
+              <h3>No entries match "{{ search }}"</h3>
+              <button mat-button color="primary" (click)="clearSearch()">Clear search</button>
+            </ng-container>
+            <ng-template #noTime>
+              <h3>No time logged for {{ periodLabel || 'this period' }}</h3>
+              <p>Entries you capture will show here, grouped by day.</p>
+              <button mat-raised-button class="log-btn" (click)="openDialog()">
+                <mat-icon>add</mat-icon> Log time
+              </button>
+            </ng-template>
+          </div>
+        </section>
+
+        <!-- Claim disbursements -->
+        <mat-accordion class="disbursements">
+          <mat-expansion-panel #disbursementPanel>
+            <mat-expansion-panel-header>
+              <mat-panel-title>Claim disbursements</mat-panel-title>
+              <mat-panel-description>
+                {{ disbursmentItems.length }} {{ disbursmentItems.length === 1 ? 'item' : 'items' }} · {{ disbursementTotal | currency }}
+              </mat-panel-description>
+            </mat-expansion-panel-header>
+            <app-claim-disbursement [disbursementItems]="disbursmentItems"></app-claim-disbursement>
+          </mat-expansion-panel>
+        </mat-accordion>
+      </div>
+    </mat-tab>
+
+    <!-- ================================================================ -->
+    <!-- COMPANY REPORT (admin)                                            -->
+    <!-- ================================================================ -->
+    <mat-tab label="Company Report" *ngIf="isAdmin">
+      <div class="tab-body">
+        <form class="filter-card report-filters" [formGroup]="reportForm" (ngSubmit)="loadCompanyTimeReport()">
+          <mat-form-field appearance="outline">
+            <mat-label>Date range</mat-label>
+            <mat-date-range-input [rangePicker]="reportPicker">
+              <input matStartDate placeholder="Start date" formControlName="start_date">
+              <input matEndDate placeholder="End date" formControlName="end_date">
+            </mat-date-range-input>
+            <mat-datepicker-toggle matSuffix [for]="reportPicker"></mat-datepicker-toggle>
+            <mat-date-range-picker #reportPicker></mat-date-range-picker>
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Company</mat-label>
+            <mat-select formControlName="company_id">
+              <mat-option value="">All companies</mat-option>
+              <mat-option *ngFor="let option of companies" value="{{option.id}}">{{option.company_name}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Employee</mat-label>
+            <mat-select formControlName="user_id">
+              <mat-option value="">All employees</mat-option>
+              <mat-option *ngFor="let u of users" value="{{u.id}}">{{u.first_name + ' ' + u.last_name}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <button type="submit" mat-raised-button class="log-btn" [disabled]="companyReportLoading">
+            Generate report
+          </button>
+        </form>
+
+        <div class="scope-banner">
+          <mat-icon>groups</mat-icon>
+          <span>Time logged by <strong>{{getReportEmployeeName()}}</strong> on
+            <strong>{{getReportCompanyName()}}</strong>.</span>
+        </div>
+
+        <div class="report-card">
+          <div class="report-toolbar">
+            <div>
+              <strong>Total worked: {{companyTimeReportTotal}}</strong>
+              <span class="report-context">{{companyTimeReport.length}} project rows</span>
+            </div>
+            <div class="report-export-actions">
+              <button type="button" mat-stroked-button [disabled]="!companyTimeReport.length" (click)="exportCompanyReportToCSV()">
+                <mat-icon>description</mat-icon> CSV
+              </button>
+              <button type="button" mat-stroked-button [disabled]="!companyTimeReport.length" (click)="exportCompanyReportToExcel()">
+                <mat-icon>table_view</mat-icon> Excel
+              </button>
+              <button type="button" mat-stroked-button [disabled]="!companyTimeReport.length" (click)="exportCompanyReportToPDF()">
+                <mat-icon>picture_as_pdf</mat-icon> PDF
+              </button>
+            </div>
+          </div>
+          <mat-progress-bar *ngIf="companyReportLoading" mode="indeterminate"></mat-progress-bar>
+          <div class="table-container">
+            <table id="company-time-report" class="report-table">
+              <thead>
+                <tr>
+                  <th>Project</th>
+                  <th>Company</th>
+                  <th>Total time</th>
+                  <th>Comments</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let row of companyTimeReport">
+                  <td>{{row.project_name}}</td>
+                  <td>{{row.company_name}}</td>
+                  <td>{{row.total_time}}</td>
+                  <td>{{row.comments}}</td>
+                </tr>
+                <tr *ngIf="!companyTimeReport.length">
+                  <td colspan="4" class="report-empty">Select filters and generate the report to see totals.</td>
+                </tr>
+              </tbody>
+              <tfoot *ngIf="companyTimeReport.length">
+                <tr>
+                  <th colspan="2">Total</th>
+                  <th>{{companyTimeReportTotal}}</th>
+                  <th></th>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+        </div>
+      </div>
+    </mat-tab>
+  </mat-tab-group>
 </div>

@@ -1,16 +1,106 @@
-<div class="container">
-    <div class="page-title">
-        <h2>Business Developement {{(company) ? ' : ' + company.bdsp_name : ''}}</h2>
+<div class="page-container">
+  <!-- Header Section -->
+  <div class="header-section">
+    <!-- Navigation Breadcrumb -->
+    <div class="breadcrumb-nav" *ngIf="currentView === 'employees' && selectedCompany">
+      <button mat-button (click)="goBackToCompanies()" class="back-button">
+        <mat-icon>arrow_back</mat-icon>
+        Back to Companies
+      </button>
+      <span class="breadcrumb-separator">/</span>
+      <span class="current-location">{{selectedCompany.bdsp_name}} Employees</span>
     </div>
-    <mat-tab-group animationDuration="0ms">
-        <mat-tab label="BDSP">
-            <app-bdsp (onCompanySelect)="selectedCompany($event)"></app-bdsp>
-        </mat-tab>
-        <mat-tab label="Employee">
-            <app-bdsp-employee [bdsp_id]="id"></app-bdsp-employee>
-        </mat-tab>
-        <mat-tab label="Programme">
-            
-        </mat-tab>
-    </mat-tab-group>
+
+    <!-- Page Title -->
+    <h1 class="page-title" *ngIf="currentView === 'companies'">
+      <mat-icon>business</mat-icon>
+      Business Development Service Providers
+    </h1>
+    
+    <h1 class="page-title" *ngIf="currentView === 'employees' && selectedCompany">
+      <mat-icon>people</mat-icon>
+      Employees - {{selectedCompany.bdsp_name}}
+    </h1>
+
+    <!-- Page Description -->
+    <p class="page-description" *ngIf="currentView === 'companies'">
+      Manage business development service provider companies and their information
+    </p>
+    
+    <p class="page-description" *ngIf="currentView === 'employees'">
+      Manage employees for {{selectedCompany?.bdsp_name}}
+    </p>
+  </div>
+
+  <!-- Company Management View -->
+  <div class="companies-view" *ngIf="currentView === 'companies'">
+    <!-- Company Form Section -->
+    <div class="form-section" *ngIf="showForm">
+      <app-bdsp-form
+        [companyData]="editingCompany"
+        [isEditMode]="isEditMode"
+        (save)="onSaveCompany($event)"
+        (cancel)="hideForm()">
+      </app-bdsp-form>
+    </div>
+
+    <!-- Company List Section -->
+    <div class="content-section" [hidden]="showForm">
+      <app-bdsp 
+        [showForm]="showForm" 
+        (toggleForm)="toggleForm($event)"
+        (editCompany)="editCompany($event)"
+        (showEmployees)="showCompanyEmployees($event)">
+      </app-bdsp>
+    </div>
+  </div>
+
+  <!-- Employee Management View -->
+  <div class="employees-view" *ngIf="currentView === 'employees' && selectedCompany">
+    <app-company-employee 
+      [companyId]="selectedCompany.id"
+      [employeeService]="employeeService"
+      (showForm)="showAddEmployeeForm($event)"
+      (editForm)="showEditEmployeeForm($event)">
+    </app-company-employee>
+  </div>
+
+  <!-- Employee Form Views (Add/Edit) -->
+  <ng-container *ngIf="currentView === 'add-employee' || currentView === 'edit-employee'">
+    <div class="form-navigation">
+      <nav class="breadcrumb-nav">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item">
+            <button mat-button (click)="goBackToCompanies()">
+              <mat-icon>business</mat-icon>
+              Companies
+            </button>
+          </li>
+          <li class="breadcrumb-separator">
+            <mat-icon>chevron_right</mat-icon>
+          </li>
+          <li class="breadcrumb-item">
+            <button mat-button (click)="goBackToEmployees()">
+              <mat-icon>people</mat-icon>
+              {{selectedCompany?.bdsp_name}} Employees
+            </button>
+          </li>
+          <li class="breadcrumb-separator">
+            <mat-icon>chevron_right</mat-icon>
+          </li>
+          <li class="breadcrumb-item active">{{currentView === 'add-employee' ? 'Add New Employee' : 'Edit Employee'}}</li>
+        </ol>
+      </nav>
+    </div>
+
+    <app-company-employee-form
+      [employee]="currentView === 'edit-employee' ? employeeFormData.employee : null"
+      [companyId]="employeeFormData!.companyId"
+      [isEditMode]="currentView === 'edit-employee'"
+      [employeeService]="employeeService"
+      (formSubmit)="onEmployeeFormSubmitted($event)"
+      (formCancel)="onEmployeeFormCancelled()"
+      *ngIf="employeeFormData">
+    </app-company-employee-form>
+  </ng-container>
 </div>

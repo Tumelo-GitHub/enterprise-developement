@@ -1,39 +1,84 @@
-<form [formGroup]="loginForm" novalidate (ngSubmit)="onSubmit()">
-    <mat-card-header class="card-header">
-        <mat-card-title class="login-title">Login</mat-card-title>
-    </mat-card-header>
-    <mat-card-content>
-        <div class="row">
-            <div class="col">
-                <mat-form-field class="full-width">
-                    <input matInput placeholder="Email" formControlName="email">
-                    <mat-error *ngIf="loginForm.controls['email'].hasError('required')">
-                        Email is <strong>required</strong>
-                    </mat-error>
-                </mat-form-field>
-            </div>
+<div class="auth-form-wrapper">
+    <!-- Form Header -->
+    <div class="form-header">
+        <div class="header-icon">
+            <mat-icon>login</mat-icon>
         </div>
-        <div class="row">
-            <div class="col">
-                <mat-form-field class="full-width">
-                    <input type="password" matInput placeholder="Password" formControlName="password">
-                    <mat-error *ngIf="loginForm.controls['password'].hasError('required')">
-                        Password is <strong>required</strong>
-                    </mat-error>
-                </mat-form-field>
-                <div>
-                    <p><a routerLink="/auth/forgot-password">Forgot password?</a></p>
-                </div>
-            </div>
-        </div>
-        <div class="server-error">
-
-        </div>
-    </mat-card-content>
-    <mat-card-actions>
-        <button mat-raised-button style="width: -webkit-fill-available;" color="primary" type="submit">Login</button>
-    </mat-card-actions>
-    <div>
-        <p>Don't have account? <a routerLink="/auth/register"><span class="sign-up-link"> Sign up </span></a></p>
+        <h1 class="form-title">Welcome Back</h1>
+        <p class="form-subtitle">Sign in to your account to continue</p>
     </div>
-</form>
+
+    <!-- Login Form -->
+    <form [formGroup]="loginForm" novalidate (ngSubmit)="onSubmit()" class="modern-auth-form">
+        <!-- Email Field -->
+        <mat-form-field appearance="outline" class="auth-field">
+            <mat-label>Email Address</mat-label>
+            <input matInput 
+                   type="email" 
+                   formControlName="email" 
+                   placeholder="Enter your email"
+                   autocomplete="email">
+            <mat-icon matPrefix>email</mat-icon>
+            <mat-error *ngIf="loginForm.controls['email'].hasError('required')">
+                Email is <strong>required</strong>
+            </mat-error>
+            <mat-error *ngIf="loginForm.controls['email'].hasError('email')">
+                Please enter a valid email
+            </mat-error>
+        </mat-form-field>
+
+        <!-- Password Field -->
+        <mat-form-field appearance="outline" class="auth-field">
+            <mat-label>Password</mat-label>
+            <input matInput 
+                   [type]="hidePassword ? 'password' : 'text'" 
+                   formControlName="password" 
+                   placeholder="Enter your password"
+                   autocomplete="current-password">
+            <mat-icon matPrefix>lock</mat-icon>
+            <button mat-icon-button 
+                    matSuffix 
+                    type="button"
+                    (click)="hidePassword = !hidePassword"
+                    [attr.aria-label]="'Hide password'" 
+                    [attr.aria-pressed]="hidePassword">
+                <mat-icon>{{hidePassword ? 'visibility_off' : 'visibility'}}</mat-icon>
+            </button>
+            <mat-error *ngIf="loginForm.controls['password'].hasError('required')">
+                Password is <strong>required</strong>
+            </mat-error>
+        </mat-form-field>
+
+        <!-- Forgot Password Link -->
+        <div class="form-options">
+            <a routerLink="/auth/forgot-password" class="forgot-link">
+                <mat-icon>help_outline</mat-icon>
+                Forgot password?
+            </a>
+        </div>
+
+        <!-- Submit Button -->
+        <button mat-raised-button 
+                color="primary" 
+                type="submit" 
+                class="auth-submit-btn"
+                [disabled]="loginForm.invalid">
+            <mat-icon>login</mat-icon>
+            Sign In
+        </button>
+
+        <!-- Divider -->
+        <div class="form-divider">
+            <span>or</span>
+        </div>
+
+        <!-- Sign Up Link -->
+        <div class="form-footer">
+            <p>Don't have an account?</p>
+            <a routerLink="/auth/register" class="secondary-link">
+                <mat-icon>person_add</mat-icon>
+                Create Account
+            </a>
+        </div>
+    </form>
+</div>

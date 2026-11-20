@@ -1,0 +1,80 @@
+<div class="page-container">
+  <!-- Header Section (shown only when viewing list) -->
+  <div class="header-section" *ngIf="!showForm">
+    <!-- Navigation Breadcrumb -->
+    <div class="breadcrumb-nav">
+      <button mat-button (click)="goBackToProgrammes()" class="back-button">
+        <mat-icon>arrow_back</mat-icon>
+        Back to Programmes
+      </button>
+      <span class="breadcrumb-separator">/</span>
+      <span class="current-location">{{programme?.programme_name}} Documents</span>
+    </div>
+
+    <!-- Page Title and Description -->
+    <h1 class="page-title">
+      <mat-icon>description</mat-icon>
+      Documents - {{programme?.programme_name}}
+    </h1>
+    <p class="page-description">
+      Manage documents and resources for {{programme?.programme_name}} programme
+    </p>
+  </div>
+
+  <!-- Form Navigation (shown only when form is visible) -->
+  <div class="form-navigation" *ngIf="showForm">
+    <nav class="breadcrumb-nav">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+          <button mat-button (click)="goBackToProgrammes()">
+            <mat-icon>business_center</mat-icon>
+            Programmes
+          </button>
+        </li>
+        <li class="breadcrumb-separator">
+          <mat-icon>chevron_right</mat-icon>
+        </li>
+        <li class="breadcrumb-item">
+          <button mat-button (click)="goBackToDocumentsList()">
+            <mat-icon>description</mat-icon>
+            Documents
+          </button>
+        </li>
+        <li class="breadcrumb-separator">
+          <mat-icon>chevron_right</mat-icon>
+        </li>
+        <li class="breadcrumb-item active">{{selectedDocument ? 'Edit Document' : 'Upload Document'}}</li>
+      </ol>
+    </nav>
+  </div>
+
+  <!-- Content Section -->
+  <div class="content-section">
+    <!-- Upload Form -->
+    <div *ngIf="showForm" class="form-section">
+      <div *ngIf="programme; else loadingProgramme">
+        <app-programme-document-form
+          [programme]="programme"
+          [documentData]="selectedDocument"
+          (formSubmitted)="onFormSubmitted($event)"
+          (formCancelled)="onFormCancelled()">
+        </app-programme-document-form>
+      </div>
+      <ng-template #loadingProgramme>
+        <div class="loading-container">
+          <mat-spinner diameter="50"></mat-spinner>
+          <p>Loading programme information...</p>
+        </div>
+      </ng-template>
+    </div>
+
+    <!-- Documents Table -->
+    <div *ngIf="!showForm && programmeId">
+      <app-programme-document-table
+        [programmeId]="programmeId"
+        (editDocument)="onEditDocument($event)"
+        (addDocument)="onAddDocument()">
+      </app-programme-document-table>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,45 @@
+<div [formGroup]="group" class="contact">
+    <button type="button" mat-icon-button (click)="remove.emit(index)">
+        <mat-icon>close</mat-icon>
+    </button>
+    <div class="row">
+        <div class="col">
+            <mat-form-field class="full-width">
+                <input matInput [disabled]="true" placeholder="Full names" formControlName="full_names">
+                <mat-error *ngIf="group.get('full_names')?.hasError('required')">
+                    contact person names is <strong>required</strong>
+                </mat-error>
+            </mat-form-field>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <mat-form-field class="full-width">
+                <input matInput placeholder="Position" formControlName="position">
+            </mat-form-field>
+        </div>
+        <div class="col">
+            <mat-form-field class="full-width">
+                <input matInput placeholder="Tel Number" formControlName="tell_number">
+            </mat-form-field>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <mat-form-field class="full-width">
+                <input matInput placeholder="Cell Number" formControlName="cell_number">
+                <mat-error *ngIf="group.controls[index].get('cell_number')?.hasError('required')">
+                    cell number is <strong>required</strong>
+                </mat-error>
+            </mat-form-field>
+        </div>
+        <div class="col">
+            <mat-form-field class="full-width">
+                <input matInput placeholder="Email" formControlName="email">
+                <mat-error *ngIf="group.controls[index].get('email')?.hasError('required')">
+                    email is <strong>required</strong>
+                </mat-error>
+            </mat-form-field>
+        </div>
+    </div>
+</div>

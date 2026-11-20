@@ -1,0 +1,136 @@
+// Service Provider Form component specific styles
+// Most styles are inherited from _shared-components.scss
+
+// Service Types Section Styling - specific to service provider form
+.service-types-section {
+  width: 100%;
+  padding: 24px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid #e0e0e0;
+
+  .section-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 0 0 8px 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: #333;
+
+    mat-icon {
+      color: #667eea;
+      font-size: 24px;
+      width: 24px;
+      height: 24px;
+    }
+  }
+
+  .section-description {
+    margin: 0 0 20px 0;
+    color: #666;
+    font-size: 14px;
+  }
+
+  .service-types-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+
+    .service-type-item {
+      background-color: white;
+      border-radius: 8px;
+      border: 2px solid #e0e0e0;
+      transition: all 0.2s ease;
+      
+      &:hover {
+        border-color: #667eea;
+        box-shadow: 0 2px 4px rgba(102, 126, 234, 0.1);
+      }
+
+      .service-type-checkbox {
+        width: 100%;
+        padding: 16px;
+        
+        .mat-checkbox-layout {
+          width: 100%;
+        }
+
+        .service-type-content {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          width: 100%;
+          padding-left: 8px;
+
+          .service-type-name {
+            font-weight: 500;
+            color: #333;
+            font-size: 16px;
+          }
+
+          .service-type-icon {
+            color: #666;
+            font-size: 20px;
+            width: 20px;
+            height: 20px;
+          }
+        }
+      }
+
+      // Selected state styling
+      &:has(.mat-checkbox-checked) {
+        border-color: #667eea;
+        background-color: rgba(102, 126, 234, 0.05);
+
+        .service-type-name {
+          color: #667eea;
+          font-weight: 600;
+        }
+
+        .service-type-icon {
+          color: #667eea;
+        }
+      }
+    }
+
+    @media (max-width: 768px) {
+      grid-template-columns: 1fr;
+      gap: 12px;
+
+      .service-type-item {
+        .service-type-checkbox {
+          padding: 12px;
+        }
+      }
+    }
+  }
+
+  .service-type-error {
+    margin-top: 12px;
+    font-size: 12px;
+    display: block;
+    color: #f44336;
+  }
+
+  @media (max-width: 768px) {
+    padding: 16px;
+  }
+}
+
+// Service provider form specific checkbox styling
+::ng-deep {
+  .service-type-checkbox {
+    .mat-checkbox-frame {
+      border-radius: 4px;
+    }
+
+    .mat-checkbox-background {
+      border-radius: 4px;
+    }
+
+    &.mat-checkbox-checked .mat-checkbox-background {
+      background-color: #667eea;
+    }
+  }
+}

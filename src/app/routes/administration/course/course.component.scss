@@ -1,0 +1,18 @@
+// Course component specific styles
+// Most styles are inherited from _shared-components.scss and shared styles
+
+// Course specific animations
+.course-animation {
+  animation: slideInFromBottom 0.4s ease-out;
+}
+
+@keyframes slideInFromBottom {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

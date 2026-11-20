@@ -14,6 +14,10 @@ export class SmmeEmpService {
     return this.http.get<IResponseModelBase<IEmployee[]>>(`api/smmeemp/${id}`)
   }
 
+  getEmployeeById(id: number) : Observable<IResponseModelBase<IEmployee>> {
+    return this.http.get<IResponseModelBase<IEmployee>>(`api/smmeemp/employee/${id}`);
+  }
+
   delete(id: number) : Observable<any> {
     return this.http.delete(`api/smmeemp/${id}`);
   }

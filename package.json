@@ -10,6 +10,9 @@
     "server": "json-server --watch db.json --port 5000"
   },
   "private": true,
+  "overrides": {
+    "@types/node": "16.18.12"
+  },
   "dependencies": {
     "@angular/animations": "^14.2.0",
     "@angular/cdk": "^13.0.0",

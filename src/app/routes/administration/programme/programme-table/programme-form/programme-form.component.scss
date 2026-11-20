@@ -1,0 +1,40 @@
+// Import shared component styles
+@import '../../../../../shared/styles/shared-components';
+
+// Programme specific form styling
+.section-title {
+  display: flex;
+  align-items: center;
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+  margin: 0 0 20px 0;
+  padding-bottom: 8px;
+  border-bottom: 2px solid #f0f0f0;
+  
+  mat-icon {
+    margin-right: 8px;
+    color: #667eea;
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+  }
+}
+
+// Form validation styling
+.mat-form-field {
+  .mat-error {
+    font-size: 12px;
+    margin-top: 4px;
+  }
+}
+
+// Loading state
+.mat-spinner {
+  display: inline-block !important;
+}
+
+// Date picker specific styling
+.mat-datepicker-toggle {
+  margin-left: 8px;
+}

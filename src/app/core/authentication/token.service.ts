@@ -57,7 +57,7 @@ export class TokenService {
     const token = this.getToken();
     if (token) {
       const decodedToken = this.decode(token);
-      if (decodedToken) {
+      if (decodedToken && decodedToken.data?.user) {
         return decodedToken.data.user;
       }
     }
@@ -69,6 +69,12 @@ export class TokenService {
     if (token) {
       const decodedToken = this.decode(token);
       if (decodedToken) {
+        // Validate token structure
+        if (!this.isValidTokenStructure(decodedToken)) {
+          console.warn('Invalid token structure detected');
+          this.remove();
+          return false;
+        }
         if (this.isTokenExpired(decodedToken)) {
           this.remove(); // Remove the token if it is expired
           return false;
@@ -77,6 +83,14 @@ export class TokenService {
       }
     }
     return false;
+  }
+
+  private isValidTokenStructure(token: Token): boolean {
+    return !!(token && 
+              token.exp && 
+              token.iat && 
+              token.data && 
+              token.data.user);
   }
 
   private isTokenExpired(token: Token): boolean {

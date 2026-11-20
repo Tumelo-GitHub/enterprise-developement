@@ -1,0 +1,65 @@
+// @import '../../../../shared/styles/variables';
+// @import '../../../../shared/styles/mixins';
+// @import '../../../../shared/styles/animations';
+
+// Title section with actions
+.title-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  
+  .page-title {
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: #1f2937;
+    font-size: 28px;
+    font-weight: 600;
+    
+    mat-icon {
+      font-size: 32px;
+      width: 32px;
+      height: 32px;
+      color: #667eea;
+    }
+  }
+  
+  .switch-button {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 500;
+    text-transform: none;
+    padding: 12px 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.2);
+    transition: all 0.2s ease;
+    
+    &:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    }
+    
+    mat-icon {
+      font-size: 20px;
+      width: 20px;
+      height: 20px;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .title-section {
+    flex-direction: column;
+    gap: 16px;
+    align-items: flex-start;
+    
+    .switch-button {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+}
+

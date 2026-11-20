@@ -1,0 +1,100 @@
+@import '../../../../../shared/styles/shared-components';
+
+// Document info styling
+.document-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  .file-icon {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+    color: #667eea;
+  }
+
+  .document-name {
+    font-weight: 500;
+    color: #333;
+  }
+}
+
+// File info styling
+.file-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+    color: #667eea;
+  }
+
+  span {
+    font-size: 14px;
+    color: #333;
+  }
+}
+
+// Category badge styling
+.category-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 16px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+
+  &[data-category="contract"] {
+    background-color: #e3f2fd;
+    color: #1976d2;
+  }
+
+  &[data-category="guideline"] {
+    background-color: #f3e5f5;
+    color: #9c27b0;
+  }
+
+  &[data-category="template"] {
+    background-color: #e8f5e9;
+    color: #388e3c;
+  }
+
+  &[data-category="report"] {
+    background-color: #fff3e0;
+    color: #f57c00;
+  }
+
+  &[data-category="presentation"] {
+    background-color: #fce4ec;
+    color: #c2185b;
+  }
+
+  &[data-category="policy"] {
+    background-color: #e0f2f1;
+    color: #00796b;
+  }
+
+  &[data-category="form"] {
+    background-color: #fff9c4;
+    color: #f57f17;
+  }
+
+  &[data-category="other"] {
+    background-color: #f5f5f5;
+    color: #666;
+  }
+}
+
+// Download button specific styling
+.download-btn {
+  color: #4caf50;
+  background-color: rgba(76, 175, 80, 0.1);
+
+  &:hover {
+    background-color: rgba(76, 175, 80, 0.2);
+    transform: scale(1.05);
+  }
+}

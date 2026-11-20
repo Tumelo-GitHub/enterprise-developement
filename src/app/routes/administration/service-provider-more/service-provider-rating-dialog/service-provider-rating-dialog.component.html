@@ -1,0 +1,89 @@
+<h2 mat-dialog-title>
+  Feedback: {{ data.provider.name }} {{ data.provider.surname }}
+  <span class="company">{{ data.provider.company_name }}</span>
+</h2>
+
+<div mat-dialog-content>
+  <div class="summary-bar" *ngIf="!loading">
+    <ng-container *ngIf="ratingCount > 0; else noRatings">
+      <span class="average">
+        <mat-icon>star</mat-icon>
+        {{ averageRating }} / 5
+      </span>
+      <span class="count">based on {{ ratingCount }} rating{{ ratingCount === 1 ? '' : 's' }} across all focus areas</span>
+    </ng-container>
+    <ng-template #noRatings>
+      <span class="count">No feedback captured yet</span>
+    </ng-template>
+  </div>
+
+  <div *ngIf="loading" class="loading-section">
+    <mat-spinner diameter="30"></mat-spinner>
+  </div>
+
+  <div class="rating-list" *ngIf="!loading">
+    <div class="rating-item" *ngFor="let item of ratings">
+      <div class="rating-item-header">
+        <span class="focus-area">{{ item.focus_area }}</span>
+        <span class="stars">
+          <mat-icon *ngFor="let star of stars" [class.filled]="star <= item.rating">star</mat-icon>
+        </span>
+      </div>
+      <p class="comment" *ngIf="item.comment">{{ item.comment }}</p>
+      <div class="rating-item-footer">
+        <span *ngIf="item.rated_by">by {{ item.rated_by }}</span>
+        <span>{{ item.created_at | date: 'medium' }}</span>
+        <button mat-icon-button (click)="editRating(item)" matTooltip="Edit">
+          <mat-icon>edit</mat-icon>
+        </button>
+        <button mat-icon-button color="warn" (click)="deleteRating(item)" matTooltip="Delete">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </div>
+    </div>
+
+    <p class="no-data" *ngIf="ratings.length === 0">No feedback entries yet. Add the first one below.</p>
+  </div>
+
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" class="rating-form">
+    <h3>{{ editingId ? 'Edit feedback' : 'Add feedback' }}</h3>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Focus area</mat-label>
+      <mat-select formControlName="focus_area">
+        <mat-option *ngFor="let area of focusAreas" [value]="area">{{ area }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <div class="star-picker">
+      <span>Rating:</span>
+      <mat-icon
+        *ngFor="let star of stars"
+        [class.filled]="star <= (form.get('rating')?.value || 0)"
+        (click)="selectRating(star)">
+        star
+      </mat-icon>
+    </div>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Rated by (optional)</mat-label>
+      <input matInput formControlName="rated_by" placeholder="e.g. consultant/trainer name">
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Comment (optional)</mat-label>
+      <textarea matInput formControlName="comment" rows="2"></textarea>
+    </mat-form-field>
+
+    <div class="form-actions">
+      <button mat-button type="button" *ngIf="editingId" (click)="cancelEdit()">Cancel edit</button>
+      <button mat-raised-button color="primary" type="submit" [disabled]="submitting">
+        {{ editingId ? 'Update' : 'Add' }} feedback
+      </button>
+    </div>
+  </form>
+</div>
+
+<div mat-dialog-actions align="end">
+  <button mat-button (click)="close()">Close</button>
+</div>

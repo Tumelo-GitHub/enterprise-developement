@@ -1,0 +1,41 @@
+<div class="page-container">
+  <div class="form-navigation">
+    <nav class="breadcrumb-nav">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+          <button mat-button routerLink="/administration/beneficiaries">
+            <mat-icon>business</mat-icon>
+            Companies
+          </button>
+        </li>
+        <li class="breadcrumb-separator">
+          <mat-icon>chevron_right</mat-icon>
+        </li>
+        <li class="breadcrumb-item">
+          <button mat-button (click)="goBack()">
+            <mat-icon>verified_user</mat-icon>
+            {{ company?.smme_name }} Compliance
+          </button>
+        </li>
+        <li class="breadcrumb-separator">
+          <mat-icon>chevron_right</mat-icon>
+        </li>
+        <li class="breadcrumb-item active">{{ isEditMode ? 'Edit Compliance' : 'Add New Compliance' }}</li>
+      </ol>
+    </nav>
+  </div>
+
+  <div class="loading-container" *ngIf="isLoading">
+    <mat-spinner></mat-spinner>
+  </div>
+
+  <app-compliance-form
+    *ngIf="!isLoading"
+    [complianceData]="complianceData"
+    [companyId]="companyId"
+    [types]="types"
+    [statuses]="statuses"
+    (formSubmitted)="onFormSubmitted($event)"
+    (formCancelled)="onFormCancelled()">
+  </app-compliance-form>
+</div>

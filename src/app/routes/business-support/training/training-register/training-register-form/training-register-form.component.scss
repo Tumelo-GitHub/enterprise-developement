@@ -1,0 +1,136 @@
+@import '../../../../../shared/styles/shared-components';
+
+.form-container {
+  padding: 24px;
+  animation: slideInDown 0.3s ease-out;
+}
+
+@media (max-width: 768px) {
+  .form-container {
+    padding: 16px;
+  }
+}
+
+.form-card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.form-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 24px;
+  color: white;
+
+  .form-title {
+    margin: 0;
+    font-size: 24px;
+    font-weight: 600;
+  }
+
+  .form-subtitle {
+    margin: 8px 0 0 0;
+    font-size: 14px;
+    opacity: 0.9;
+  }
+}
+
+.form-content {
+  padding: 24px;
+
+  .row {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 8px;
+  }
+
+  .col-12 {
+    flex: 1;
+  }
+
+  .col-md-6 {
+    flex: 1;
+  }
+
+  ::ng-deep mat-form-field {
+    width: 100%;
+    
+    mat-icon {
+      color: #667eea;
+      margin-right: 8px;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .form-content .row {
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .form-content .col-md-6 {
+    flex: 1 1 100%;
+  }
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 16px 24px;
+  background: #f8f9fa;
+  border-top: 1px solid #e9ecef;
+
+  .cancel-btn {
+    height: 44px;
+    padding: 0 24px;
+    border-color: #dee2e6;
+    color: #495057;
+  }
+
+  .cancel-btn:hover {
+    background-color: #f8f9fa;
+    border-color: #adb5bd;
+  }
+
+  .submit-btn {
+    height: 44px;
+    padding: 0 32px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    font-weight: 500;
+  }
+
+  .submit-btn:hover:not([disabled]) {
+    background: linear-gradient(135deg, #5568d3 0%, #63408a 100%);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+  }
+
+  .submit-btn[disabled] {
+    background: #e9ecef;
+    color: #adb5bd;
+    cursor: not-allowed;
+  }
+}
+
+@media (max-width: 768px) {
+  .form-actions {
+    flex-direction: column-reverse;
+  }
+
+  .form-actions button {
+    width: 100%;
+  }
+}
+
+@keyframes slideInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

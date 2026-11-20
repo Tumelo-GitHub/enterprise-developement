@@ -1,52 +1,410 @@
-.full-width {
-    width: 100%;
+// Import shared auth styles
+@import '../../../shared/styles/auth-shared';
+
+// Component-specific styles for register form
+
+// ===================================
+// Modern Stepper
+// ===================================
+
+::ng-deep {
+  .mat-stepper-horizontal {
+    background: transparent;
+  }
+
+  .mat-horizontal-stepper-header-container {
+    margin-bottom: 20px;
+  }
+
+  .mat-horizontal-stepper-header {
+    padding: 0 16px;
+
+    .mat-step-icon {
+      background: #e5e7eb;
+      color: #6b7280;
+    }
+
+    .mat-step-icon-selected,
+    .mat-step-icon-state-edit {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+
+    .mat-step-label {
+      color: #6b7280;
+      font-weight: 500;
+    }
+
+    .mat-step-label-selected {
+      color: #667eea;
+      font-weight: 600;
+    }
+  }
+
+  .mat-horizontal-content-container {
+    padding: 16px 0;
+  }
 }
 
-.mat-stepper-horizontal {
-    margin-top: 8px;
-}
-  
-.mat-mdc-form-field {
-    margin-top: 16px;
-}
-
-a {
-    text-decoration: none;
-    color: #337683;
-    font-weight: bold;
-}
+// ===================================
+// Form Row Layout
+// ===================================
 
 form {
+    margin: 0;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 8px;
+
+  @media (max-width: 480px) {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+}
+
+// ===================================
+// Password Strength Indicator
+// ===================================
+
+.password-strength {
+  margin-top: 8px;
+  margin-bottom: 16px;
+
+  .strength-label {
     display: flex;
-    flex-direction: column;
-    // margin: 0 20px;
-    justify-content: center;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 13px;
+    margin-bottom: 6px;
+    color: #6b7280;
+
+    .strength-text {
+      font-weight: 600;
+
+      &.weak {
+        color: #ef4444;
+      }
+
+      &.medium {
+        color: #f59e0b;
+      }
+
+      &.strong {
+        color: #10b981;
+      }
+    }
+  }
+
+  .strength-meter {
+    height: 6px;
+    background: #e5e7eb;
+    border-radius: 3px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .strength-bar {
     height: 100%;
+    transition: all 0.3s ease;
+    border-radius: 3px;
+
+    &.weak {
+      width: 33%;
+      background: linear-gradient(90deg, #ef4444 0%, #dc2626 100%);
+    }
+
+    &.medium {
+      width: 66%;
+      background: linear-gradient(90deg, #f59e0b 0%, #d97706 100%);
+    }
+
+    &.strong {
+      width: 100%;
+      background: linear-gradient(90deg, #10b981 0%, #059669 100%);
+    }
+  }
 }
 
-.login-text {
-    padding-left: 24px;
+// ===================================
+// Terms Checkbox
+// ===================================
+
+.terms-checkbox {
+  margin-bottom: 24px;
+  margin-top: 16px;
+
+  ::ng-deep {
+    .mat-mdc-checkbox-label {
+      font-size: 14px;
+      color: #6b7280;
+      line-height: 1.6;
+    }
+
+    .mdc-checkbox__background {
+      border-color: #d1d5db;
+    }
+
+    .mat-mdc-checkbox.mat-accent {
+      --mdc-checkbox-selected-checkmark-color: white;
+      --mdc-checkbox-selected-focus-icon-color: #667eea;
+      --mdc-checkbox-selected-hover-icon-color: #667eea;
+      --mdc-checkbox-selected-icon-color: #667eea;
+      --mdc-checkbox-selected-pressed-icon-color: #667eea;
+    }
+  }
+
+  a {
+    color: #667eea;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s ease;
+
+    &:hover {
+      color: #764ba2;
+      text-decoration: underline;
+    }
+  }
 }
 
-.mat-horizontal-content-container {
-/* overflow: hidden; */
-padding: 0 24px 24px 0px;
+// ===================================
+// Stepper Navigation Buttons
+// ===================================
+
+.stepper-buttons {
+  display: flex;
+  gap: 12px;
+  margin-top: 24px;
 }
 
-.mat-horizontal-stepper-header {
-    padding: 0 !important;
+.back-btn {
+  height: 48px;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 600;
+  text-transform: none;
+  padding: 0 32px;
+  border: 2px solid #e5e7eb;
+  color: #6b7280;
+  transition: all 0.3s ease;
+
+  mat-icon {
+    margin-right: 8px;
+  }
+
+  &:hover:not([disabled]) {
+    border-color: #667eea;
+    color: #667eea;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+  }
 }
 
-// :host{
-//     .card-header {
-//         display: block;
-//         text-align: center;
-//         padding: 1rem 0;
-//     }
-  
-//     .mat-card-header .mat-card-title {
-//       margin-bottom: 12px;
-//       font-size: 3rem;
-//       color: #337683;
-//     }
-// }
+.next-btn,
+.submit-btn {
+  flex: 1;
+  height: 48px;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 600;
+  text-transform: none;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+  transition: all 0.3s ease;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+
+  mat-icon {
+    margin-left: 8px;
+  }
+
+  &:hover:not([disabled]) {
+    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+    transform: translateY(-2px);
+  }
+
+  &:active:not([disabled]) {
+    transform: translateY(0);
+  }
+
+  &[disabled] {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+// ===================================
+// Completion Step
+// ===================================
+
+.completion-step {
+  text-align: center;
+  padding: 40px 20px;
+  animation: fadeInScale 0.6s ease;
+
+  .completion-icon {
+    width: 100px;
+    height: 100px;
+    margin: 0 auto 24px;
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: successPulse 1.5s infinite;
+
+    mat-icon {
+      font-size: 60px;
+      width: 60px;
+      height: 60px;
+      color: white;
+    }
+  }
+
+  h2 {
+    font-size: 28px;
+    font-weight: 700;
+    color: #1f2937;
+    margin: 0 0 12px 0;
+  }
+
+  p {
+    font-size: 15px;
+    color: #6b7280;
+    margin: 0 0 32px 0;
+    line-height: 1.6;
+  }
+
+  .completion-btn {
+    height: 50px;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    text-transform: none;
+    padding: 0 48px;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    transition: all 0.3s ease;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+
+    mat-icon {
+      margin-right: 8px;
+    }
+
+    &:hover {
+      box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+      transform: translateY(-2px);
+    }
+  }
+}
+
+@keyframes successPulse {
+  0%,
+  100% {
+    transform: scale(1);
+    box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
+  }
+  50% {
+    transform: scale(1.05);
+    box-shadow: 0 12px 30px rgba(16, 185, 129, 0.4);
+  }
+}
+
+// ===================================
+// Responsive Design
+// ===================================
+
+@media (max-width: 480px) {
+  .stepper-buttons {
+    flex-direction: column;
+    gap: 12px;
+
+    .back-btn,
+    .next-btn,
+    .submit-btn {
+      width: 100%;
+    }
+  }
+
+  .completion-step {
+    padding: 30px 10px;
+
+    .completion-icon {
+      width: 80px;
+      height: 80px;
+
+      mat-icon {
+        font-size: 48px;
+        width: 48px;
+        height: 48px;
+      }
+    }
+
+    h2 {
+      font-size: 24px;
+    }
+  }
+}
+
+// ===================================
+// Dark Theme Support
+// ===================================
+
+.dark-theme-mode {
+  .password-strength {
+    .strength-label {
+      color: rgba(255, 255, 255, 0.7);
+    }
+
+    .strength-meter {
+      background: rgba(255, 255, 255, 0.1);
+    }
+  }
+
+  .terms-checkbox {
+    ::ng-deep {
+      .mat-mdc-checkbox-label {
+        color: rgba(255, 255, 255, 0.7);
+      }
+
+      .mdc-checkbox__background {
+        border-color: rgba(255, 255, 255, 0.3);
+      }
+    }
+  }
+
+  .back-btn {
+    border-color: rgba(255, 255, 255, 0.2);
+    color: rgba(255, 255, 255, 0.7);
+
+    &:hover:not([disabled]) {
+      border-color: #667eea;
+      color: #667eea;
+    }
+  }
+
+  .completion-step {
+    h2 {
+      color: rgba(255, 255, 255, 0.95);
+    }
+
+    p {
+      color: rgba(255, 255, 255, 0.6);
+    }
+  }
+
+  ::ng-deep {
+    .mat-step-label {
+      color: rgba(255, 255, 255, 0.5) !important;
+    }
+
+    .mat-step-label-selected {
+      color: #667eea !important;
+    }
+
+    .mat-step-icon {
+      background: rgba(255, 255, 255, 0.1);
+      color: rgba(255, 255, 255, 0.5);
+    }
+  }
+}

@@ -1,60 +1,261 @@
-<div class="container">
-    <div class="page-title">
-        <h2>Timesheet Manager</h2>
-    </div>
-    <mat-form-field>
-        <mat-label>Filter</mat-label>
-        <input matInput (keyup)="applyFilter($event)" placeholder="Ex. Mia" #input>
-    </mat-form-field>
-    
-    <div class="mat-elevation-z8">
-        <div class="table-container">
-          <table mat-table [dataSource]="dataSource" matSort class="full-width-table">
-      
-            <ng-container matColumnDef="project_name">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header> Project Name </th>
-              <td mat-cell *matCellDef="let row"> {{row.project_name}} </td>
-            </ng-container>
-  
-            <ng-container matColumnDef="company_name">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header> Company Name </th>
-              <td mat-cell *matCellDef="let row"> {{row.company_name}} </td>
-            </ng-container>
-  
-            <ng-container matColumnDef="status">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header> Status </th>
-              <td mat-cell *matCellDef="let row"> {{row.status}} </td>
-            </ng-container>
-      
-            <!-- Action Column -->
-            <ng-container matColumnDef="action">
-              <th mat-header-cell *matHeaderCellDef> Action </th>
-              <td mat-cell *matCellDef="let row">
-                  <button mat-icon-button matTooltip="Edit entry" color="accern" (click)="openDialog(row); $event.stopPropagation();">
-                      <mat-icon>edit</mat-icon>
-                  </button>
-                  <button mat-icon-button matTooltip="Delete Company" color="warn" (click)="remove(row); $event.stopPropagation();">
-                      <mat-icon>delete</mat-icon>
-                  </button>
-              </td>
-            </ng-container>
-        
-            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-            <tr 
-              mat-row 
-              *matRowDef="let row; columns: displayedColumns;"></tr>
-        
-            <!-- Row shown when there is no matching data. -->
-            <tr class="mat-row" *matNoDataRow>
-              <td class="mat-cell" colspan="4">No data matching the filter "{{input.value}}"</td>
-            </tr>
-          </table>
-        </div>
-        <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" [showFirstLastButtons]="true" aria-label="Select page of users"></mat-paginator>
-      </div>    
-      <div class="add-btn-wrapper" color="primary">
-        <button mat-fab matTooltip="Add Company" aria-label="Add Employee Button with icon" class="add-btn" (click)="openDialog()">
-          <mat-icon>add</mat-icon>
-        </button>
+<div class="page-container">
+  <div class="header-section">
+    <h1 class="page-title">
+      <mat-icon>assignment</mat-icon>
+      Timesheet Setup
+    </h1>
+    <p class="page-description">
+      Manage the projects, companies, activities and work types users pick from when they capture time.
+    </p>
+  </div>
+
+  <div *ngIf="loading" class="loading-section">
+    <mat-spinner diameter="48"></mat-spinner>
+    <p>Loading timesheet setup…</p>
+  </div>
+
+  <div *ngIf="!loading && loadError" class="loading-section">
+    <mat-icon class="error-icon">error_outline</mat-icon>
+    <p>Couldn't load timesheet setup.</p>
+    <button mat-stroked-button color="primary" (click)="loadAll()">Try again</button>
+  </div>
+
+  <mat-tab-group *ngIf="!loading && !loadError" class="content-section" animationDuration="0ms">
+    <!-- ============================================================ -->
+    <!-- PROJECTS TAB                                                  -->
+    <!-- ============================================================ -->
+    <mat-tab label="Projects">
+      <div class="manager-layout">
+        <!-- Project list -->
+        <section class="panel projects-panel" aria-label="Projects">
+          <div class="panel-header">
+            <h2>Projects <span class="count">{{ projects.length }}</span></h2>
+            <button mat-icon-button color="primary" matTooltip="New project" aria-label="New project"
+                    (click)="openProjectDialog()">
+              <mat-icon>add</mat-icon>
+            </button>
+          </div>
+
+          <mat-form-field appearance="outline" class="panel-search">
+            <mat-label>Search projects</mat-label>
+            <input matInput [(ngModel)]="projectSearch" autocomplete="off">
+            <mat-icon matSuffix>search</mat-icon>
+          </mat-form-field>
+
+          <mat-nav-list class="project-list" *ngIf="filteredProjects.length; else noProjects">
+            <a mat-list-item
+               *ngFor="let project of filteredProjects; trackBy: trackById"
+               [class.selected]="project.id === selectedProject?.id"
+               [attr.aria-current]="project.id === selectedProject?.id ? 'true' : null"
+               (click)="selectProject(project)">
+              <div mat-line class="project-name">{{ project.project_name }}</div>
+              <div mat-line class="project-meta">
+                {{ project.company_count }} {{ project.company_count === 1 ? 'company' : 'companies' }}
+                · {{ project.active_company_count }} active
+              </div>
+              <button mat-icon-button [matMenuTriggerFor]="projectMenu" aria-label="Project actions"
+                      (click)="$event.stopPropagation()">
+                <mat-icon>more_vert</mat-icon>
+              </button>
+              <mat-menu #projectMenu="matMenu" xPosition="before">
+                <button mat-menu-item (click)="openProjectDialog(project)">
+                  <mat-icon>edit</mat-icon>
+                  <span>Rename</span>
+                </button>
+                <button mat-menu-item (click)="deleteProject(project)" [disabled]="project.entry_count > 0">
+                  <mat-icon>delete</mat-icon>
+                  <span>{{ project.entry_count > 0 ? 'Delete (has time entries)' : 'Delete' }}</span>
+                </button>
+              </mat-menu>
+            </a>
+          </mat-nav-list>
+
+          <ng-template #noProjects>
+            <p class="panel-empty">
+              {{ projects.length ? 'No projects match your search.' : 'No projects yet.' }}
+            </p>
+          </ng-template>
+        </section>
+
+        <!-- Companies in selected project -->
+        <section class="panel detail-panel" aria-label="Companies in project">
+          <ng-container *ngIf="selectedProject; else noSelection">
+            <div class="panel-header detail-header">
+              <div>
+                <h2>{{ selectedProject.project_name }}</h2>
+                <p class="detail-sub">
+                  {{ selectedProject.company_count }} {{ selectedProject.company_count === 1 ? 'company' : 'companies' }},
+                  {{ selectedProject.active_company_count }} active ·
+                  {{ selectedProject.entry_count }} time {{ selectedProject.entry_count === 1 ? 'entry' : 'entries' }}
+                </p>
+              </div>
+              <button mat-raised-button class="add-button" (click)="openAddCompaniesDialog()">
+                <mat-icon>add</mat-icon>
+                Add companies
+              </button>
+            </div>
+
+            <mat-form-field appearance="outline" class="panel-search">
+              <mat-label>Filter companies in this project</mat-label>
+              <input matInput (keyup)="applyProjectCompanyFilter($event)" autocomplete="off">
+              <mat-icon matSuffix>search</mat-icon>
+            </mat-form-field>
+
+            <mat-progress-bar *ngIf="projectCompaniesLoading" mode="indeterminate"></mat-progress-bar>
+
+            <div class="table-wrapper">
+              <table mat-table [dataSource]="projectCompanyData" matSort #pcSort="matSort" class="data-table">
+                <ng-container matColumnDef="company_name">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header class="header-cell">Company</th>
+                  <td mat-cell *matCellDef="let row" class="data-cell">{{ row.company_name }}</td>
+                </ng-container>
+
+                <ng-container matColumnDef="status">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header class="header-cell status-col">Status</th>
+                  <td mat-cell *matCellDef="let row" class="data-cell status-col">
+                    <mat-select class="status-select" [class.inactive]="!isActive(row)"
+                                [value]="row.status_id"
+                                [disabled]="savingStatusIds.has(row.id)"
+                                [aria-label]="'Status for ' + row.company_name"
+                                (selectionChange)="changeStatus(row, $event)">
+                      <mat-option *ngFor="let s of statuses" [value]="s.id">{{ s.status }}</mat-option>
+                    </mat-select>
+                  </td>
+                </ng-container>
+
+                <ng-container matColumnDef="entry_count">
+                  <th mat-header-cell *matHeaderCellDef mat-sort-header class="header-cell num-col">Time entries</th>
+                  <td mat-cell *matCellDef="let row" class="data-cell num-col">{{ row.entry_count }}</td>
+                </ng-container>
+
+                <ng-container matColumnDef="actions">
+                  <th mat-header-cell *matHeaderCellDef class="header-cell actions-header"></th>
+                  <td mat-cell *matCellDef="let row" class="data-cell actions-cell">
+                    <span [matTooltip]="row.entry_count > 0 ? 'Time has been captured against this company. Set it to inactive instead.' : 'Remove from project'">
+                      <button mat-icon-button color="warn" aria-label="Remove from project"
+                              [disabled]="row.entry_count > 0"
+                              (click)="removeFromProject(row)">
+                        <mat-icon>link_off</mat-icon>
+                      </button>
+                    </span>
+                  </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="projectCompanyColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: projectCompanyColumns" class="table-row"></tr>
+
+                <tr class="mat-row" *matNoDataRow>
+                  <td class="mat-cell no-data-cell" [attr.colspan]="projectCompanyColumns.length">
+                    <ng-container *ngIf="!projectCompaniesLoading">
+                      {{ projectCompanyData.filter ? 'No companies match your filter.' : 'No companies in this project yet. Use "Add companies" to link some.' }}
+                    </ng-container>
+                  </td>
+                </tr>
+              </table>
+            </div>
+            <mat-paginator #pcPaginator [pageSizeOptions]="[10, 25, 100]" [showFirstLastButtons]="true"
+                           class="table-paginator" aria-label="Select page of project companies"></mat-paginator>
+          </ng-container>
+
+          <ng-template #noSelection>
+            <div class="panel-empty large">
+              <mat-icon>folder_open</mat-icon>
+              <p>{{ projects.length ? 'Select a project to manage its companies.' : 'Create a project to get started.' }}</p>
+              <button *ngIf="!projects.length" mat-raised-button class="add-button" (click)="openProjectDialog()">
+                <mat-icon>add</mat-icon> New project
+              </button>
+            </div>
+          </ng-template>
+        </section>
       </div>
+    </mat-tab>
+
+    <!-- ============================================================ -->
+    <!-- COMPANIES TAB                                                 -->
+    <!-- ============================================================ -->
+    <mat-tab label="Companies">
+      <div class="tab-body">
+        <app-table-action-bar
+          filterLabel="Search companies"
+          filterPlaceholder="Company or project name"
+          addButtonText="New company"
+          (applyFilter)="applyCompanyFilter($event)"
+          (openDialog)="openCompanyDialog()">
+        </app-table-action-bar>
+
+        <div class="panel">
+          <div class="table-wrapper">
+            <table mat-table [dataSource]="companyData" matSort #companySort="matSort" class="data-table">
+              <ng-container matColumnDef="company_name">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header class="header-cell">Company</th>
+                <td mat-cell *matCellDef="let row" class="data-cell">{{ row.company_name }}</td>
+              </ng-container>
+
+              <ng-container matColumnDef="project_names">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header class="header-cell">Projects</th>
+                <td mat-cell *matCellDef="let row" class="data-cell projects-cell">
+                  <span *ngIf="row.project_names; else unassigned">{{ row.project_names }}</span>
+                  <ng-template #unassigned><span class="muted">Not in any project</span></ng-template>
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="entry_count">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header class="header-cell num-col">Time entries</th>
+                <td mat-cell *matCellDef="let row" class="data-cell num-col">{{ row.entry_count }}</td>
+              </ng-container>
+
+              <ng-container matColumnDef="actions">
+                <th mat-header-cell *matHeaderCellDef class="header-cell actions-header"></th>
+                <td mat-cell *matCellDef="let row" class="data-cell actions-cell">
+                  <button mat-icon-button matTooltip="Rename" aria-label="Rename company" (click)="openCompanyDialog(row)">
+                    <mat-icon>edit</mat-icon>
+                  </button>
+                  <span [matTooltip]="row.entry_count > 0 ? 'Has time entries, so it cannot be deleted' : 'Delete company'">
+                    <button mat-icon-button color="warn" aria-label="Delete company"
+                            [disabled]="row.entry_count > 0"
+                            (click)="deleteCompany(row)">
+                      <mat-icon>delete</mat-icon>
+                    </button>
+                  </span>
+                </td>
+              </ng-container>
+
+              <tr mat-header-row *matHeaderRowDef="companyColumns"></tr>
+              <tr mat-row *matRowDef="let row; columns: companyColumns" class="table-row"></tr>
+
+              <tr class="mat-row" *matNoDataRow>
+                <td class="mat-cell no-data-cell" [attr.colspan]="companyColumns.length">
+                  {{ companyData.filter ? 'No companies match your search.' : 'No companies yet.' }}
+                </td>
+              </tr>
+            </table>
+          </div>
+          <mat-paginator #companyPaginator [pageSizeOptions]="[25, 50, 100]" [showFirstLastButtons]="true"
+                         class="table-paginator" aria-label="Select page of companies"></mat-paginator>
+        </div>
+      </div>
+    </mat-tab>
+
+    <!-- ============================================================ -->
+    <!-- ACTIVITIES & WORK TYPES TAB                                   -->
+    <!-- ============================================================ -->
+    <mat-tab label="Activities & work types">
+      <div class="lookup-layout">
+        <app-timesheet-lookup-panel
+          kind="activities"
+          title="Activities"
+          singular="activity"
+          icon="label"
+          description="Optional on each entry. What the time was spent on, e.g. a meeting or reporting.">
+        </app-timesheet-lookup-panel>
+        <app-timesheet-lookup-panel
+          kind="work-types"
+          title="Work types"
+          singular="work type"
+          icon="category"
+          description="Required on each entry. Used to group time on invoices.">
+        </app-timesheet-lookup-panel>
+      </div>
+    </mat-tab>
+  </mat-tab-group>
 </div>

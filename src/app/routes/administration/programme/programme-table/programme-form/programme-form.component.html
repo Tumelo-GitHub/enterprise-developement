@@ -1,102 +1,123 @@
-<form [formGroup]="programmeForm" novalidate (ngSubmit)="onSubmit()">
-    <h2 mat-dialog-title>Programme Information</h2>
-    <mat-dialog-content class="mat-typography">
-  
-        <div class="row">
-            <div class="col">
-            <mat-form-field class="full-width">
-                <input matInput cdkFocusInitial placeholder="Programme Name" formControlName="programme_name">
-                <mat-error *ngIf="programmeForm.controls['programme_name'].hasError('required')">
+<div class="form-container">
+  <mat-card class="form-card">
+    <div class="form-header">
+      <h2 class="form-title">
+        {{isEditMode ? 'Edit' : 'Add'}} Programme
+      </h2>
+      <p class="form-subtitle">
+        {{isEditMode ? 'Update' : 'Enter'}} programme information and details
+      </p>
+    </div>
+
+    <form [formGroup]="programmeForm" novalidate (ngSubmit)="onSubmit()">
+      <div class="form-content">
+        <!-- Basic Information -->
+        <div class="form-section">
+          <h3 class="section-title">
+            <mat-icon>business_center</mat-icon>
+            Basic Information
+          </h3>
+          
+          <div class="form-row one-column">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Programme Name</mat-label>
+              <input matInput formControlName="programme_name" placeholder="Enter programme name">
+              <mat-icon matSuffix>label</mat-icon>
+              <mat-error *ngIf="programmeForm.controls['programme_name'].hasError('required')">
                 Programme name is <strong>required</strong>
-                </mat-error>
+              </mat-error>
             </mat-form-field>
-            </div>
+          </div>
+
+          <div class="form-row one-column">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Programme Description</mat-label>
+              <textarea matInput formControlName="description" placeholder="Enter programme description" rows="3"></textarea>
+              <mat-icon matSuffix>description</mat-icon>
+            </mat-form-field>
+          </div>
         </div>
-        <div class="row">
-            <div class="col">
-                <mat-form-field class="full-width">
-                    <textarea matInput placeholder="Programme description" formControlName="description"></textarea>
-                </mat-form-field>
-            </div>
+
+        <!-- Company & Type Information -->
+        <div class="form-section">
+          <h3 class="section-title">
+            <mat-icon>business</mat-icon>
+            Company & Type
+          </h3>
+
+          <div class="form-row two-columns">
+            <mat-form-field appearance="outline" class="half-width">
+              <mat-label>Generic Company</mat-label>
+              <mat-select formControlName="generic_company_id">
+                <mat-option *ngFor="let company of companyList" [value]="company.id">
+                  {{ company.company_name }}
+                </mat-option>
+              </mat-select>
+              <mat-icon matSuffix>domain</mat-icon>
+              <mat-error *ngIf="programmeForm.controls['generic_company_id'].hasError('required')">
+                Company is <strong>required</strong>
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="half-width">
+              <mat-label>Programme Type</mat-label>
+              <mat-select formControlName="programme_type">
+                <mat-option *ngFor="let type of types" [value]="type.id">
+                  {{ type.type_name }}
+                </mat-option>
+              </mat-select>
+              <mat-icon matSuffix>category</mat-icon>
+              <mat-error *ngIf="programmeForm.controls['programme_type'].hasError('required')">
+                Programme type is <strong>required</strong>
+              </mat-error>
+            </mat-form-field>
+          </div>
         </div>
-        <div class="row">
-            <div class="col">
-                <mat-form-field class="full-width">
-                    <mat-select cdkFocusInitial placeholder="Generic Company" formControlName="generic_company_id">
-                        <mat-option *ngFor="let company of companyList" [value]="company.id">{{ company.company_name }}</mat-option>
-                    </mat-select>
-                    <mat-error *ngIf="programmeForm.controls['generic_company_id'].hasError('required')">
-                        Company name is <strong>required</strong>
-                    </mat-error>
-                </mat-form-field>
-            </div>
-            <div class="col">
-                <mat-form-field class="full-width">
-                    <mat-select cdkFocusInitial placeholder="Programme Type" formControlName="programme_type">
-                        <mat-option *ngFor="let type of types" [value]="type.id">{{ type.type_name }}</mat-option>
-                    </mat-select>
-                    <mat-error *ngIf="programmeForm.controls['programme_type'].hasError('required')">
-                    Programme type is <strong>required</strong>
-                    </mat-error>
-                </mat-form-field>
-            </div>
+
+        <!-- Timeline Information -->
+        <div class="form-section">
+          <h3 class="section-title">
+            <mat-icon>schedule</mat-icon>
+            Programme Timeline
+          </h3>
+
+          <div class="form-row two-columns">
+            <mat-form-field appearance="outline" class="half-width">
+              <mat-label>Start Date</mat-label>
+              <input matInput [matDatepicker]="picker" formControlName="start_date" placeholder="Select start date">
+              <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+              <mat-datepicker #picker></mat-datepicker>
+              <mat-icon matSuffix>event</mat-icon>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="half-width">
+              <mat-label>End Date</mat-label>
+              <input matInput [matDatepicker]="picker1" formControlName="end_date" placeholder="Select end date">
+              <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+              <mat-datepicker #picker1></mat-datepicker>
+              <mat-icon matSuffix>event_available</mat-icon>
+            </mat-form-field>
+          </div>
         </div>
-        <div class="row">
-            <div class="col">
-                <mat-form-field class="full-width">
-                    <!-- <input matInput placeholder="Start Date" formControlName="start_date"> -->
-                    <input matInput [matDatepicker]="picker" placeholder="Start Date" formControlName="start_date">
-                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-                    <mat-datepicker #picker></mat-datepicker>
-                </mat-form-field>
-            </div>
-            <div class="col">
-                <mat-form-field class="full-width">
-                    <input matInput [matDatepicker]="picker1" placeholder="End Date" formControlName="end_date">
-                    <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
-                    <mat-datepicker #picker1></mat-datepicker>
-                </mat-form-field>
-            </div>
+      </div>
+
+      <div class="form-actions">
+        <div class="action-button-set">
+          <button type="button" mat-stroked-button (click)="onCancel()" class="cancel-btn" [disabled]="isSubmitting">
+            <mat-icon>close</mat-icon>
+            Cancel
+          </button>
+          <button type="button" mat-stroked-button (click)="onReset()" class="reset-btn" [disabled]="isSubmitting">
+            <mat-icon>refresh</mat-icon>
+            Reset
+          </button>
+          <button type="submit" mat-raised-button [disabled]="!programmeForm.valid || isSubmitting" class="submit-btn">
+            <mat-spinner *ngIf="isSubmitting" diameter="20" style="margin-right: 8px;"></mat-spinner>
+            <mat-icon *ngIf="!isSubmitting">{{isEditMode ? 'update' : 'save'}}</mat-icon>
+            {{isSubmitting ? 'Saving...' : (isEditMode ? 'Update' : 'Save')}} Programme
+          </button>
         </div>
-        <div class="row">
-            <div class="col">
-                <mat-form-field class="full-width">
-                    <input matInput placeholder="Sponsor Name" formControlName="sponsor_name">
-                </mat-form-field>
-            </div>
-            <div class="col">
-                <mat-form-field class="full-width">
-                    <input matInput placeholder="Sponsor Surname" formControlName="sponsor_surname">
-                </mat-form-field>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col">
-                <mat-form-field class="full-width">
-                    <input matInput placeholder="Cell" formControlName="sponsor_cell">
-                </mat-form-field>
-            </div>
-            <div class="col">
-                <mat-form-field class="full-width">
-                    <input matInput placeholder="Alt Cell" formControlName="sponsor_alt_cell">
-                </mat-form-field>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col">
-                <mat-form-field class="full-width">
-                    <input matInput placeholder="Email" formControlName="sponsor_email">
-                </mat-form-field>
-            </div>
-            <div class="col">
-                <!-- <mat-form-field class="full-width">
-                    <input matInput placeholder="Tax Number" formControlName="tax_number">
-                </mat-form-field> -->
-            </div>
-        </div>
-    </mat-dialog-content>
-    <mat-dialog-actions align="end">
-        <button mat-button mat-dialog-close>Cancel</button>
-        <button type="submit" mat-button [disabled]="!programmeForm.valid">Submit</button>
-    </mat-dialog-actions>
-</form>
+      </div>
+    </form>
+  </mat-card>
+</div>

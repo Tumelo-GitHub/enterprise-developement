@@ -1,115 +1,862 @@
+// ===================================
+// Modern Sidenav Styles
+// ===================================
+
 .sidenav-container {
-    height: 100%;
+  height: 100%;
+}
+
+// .mat-menu-panel {
+//   width: 220px !important;
+// }
+
+.sidenav {
+  width: 280px;
+  border-right: none;
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
+  background: linear-gradient(180deg, #ffffff 0%, #f8f9fa 100%);
+
+  ::ng-deep .mat-drawer-inner-container {
+    overflow-x: hidden;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(102, 126, 234, 0.3) transparent;
+
+    &::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: rgba(102, 126, 234, 0.3);
+      border-radius: 10px;
+
+      &:hover {
+        background: rgba(102, 126, 234, 0.5);
+      }
+    }
   }
-  
-  .sidenav {
-    width: 300px;
-  }
-  
-  .sidenav .mat-toolbar {
-    background: inherit;
-  }
-  
-  .mat-toolbar.mat-primary {
-    position: sticky;
-    top: 0;
-    z-index: 1;
-  }
-  
-  .mat-list-base {
-    padding-top: 0;
-    margin-left: 25px;
-  }
-  
-  .linkMenu{
-    padding-top: 0 !important;
-    margin-left: 0px !important;
-  }
-  
-  .mat-nav-list a.listMenuItem {
-    display: flex !important;
-    padding-left: 7px;
-    width: 100%;
-  }
-  
-  .mat-expansion-panel-body {
-    padding: 0 50px 16px;
-  }
-  
-  .listMenuItem .mat-icon, 
-  mat-accordion .mat-icon {
-    margin-right: 16px;
-  }
-  
-  .menu-name {
-    margin-top: 3px;
-  }
-  
-  .mat-expansion-panel-spacing {
-    margin: 0;
-  }
-  
-  .mat-expansion-panel-header.mat-expanded {
-    height: 48px;
-  }
-  
-  .mat-expansion-panel-header {
-    font-size: 17px;
-  }
-  .flex-fill {
-    flex: 1 1 auto!important;
-  }
-  
-  /* .mat-list-item {
-    margin: 0;
-    border-bottom-color: rgba(0, 0, 0, 0.12);
-    border-bottom-width: 1px;;
-    border-bottom-style: solid;
-  } */
-  
-  .user-panel {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 12px 0;
-  }
-  
-  .user-panel img {
-    // width: 100px;
-    height: 160px;
-    // margin-bottom: 8px;
-    // border-radius: 50rem;
-    transition: transform .4s cubic-bezier(.25,.8,.25,1);
-  }
-  
-  .user-panel-name {
-    margin: 0;
-  }
-  
-  .settings-btn {
-    position: fixed;
-    right: 30px;
-    bottom: 30px;
-    z-index: 1;
+}
+
+// ===================================
+// Sidenav Header
+// ===================================
+
+.sidenav-header {
+  padding: 20px 16px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.2);
+}
+
+.sidenav-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: white;
+
+  .brand-icon {
+    font-size: 28px;
+    width: 28px;
+    height: 28px;
   }
 
-  .loader-container {
-    position: fixed;
-    width: 100%;
-    z-index: 99;
+  .brand-text {
+    font-size: 20px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
   }
+}
 
-  .page-content {
+// ===================================
+// Modern User Panel
+// ===================================
+
+.user-panel {
+  padding: 20px 16px;
+  margin-bottom: 8px;
+}
+
+.user-card {
+  border-radius: 16px;
+  border: 1px solid rgba(102, 126, 234, 0.1);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+  &:hover {
+    transform: translateY(-2px);
+  }
+}
+
+.user-card-content {
+  padding: 20px !important;
+}
+
+.user-avatar {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 16px;
+
+  img {
+    height: 80px;
+    width: auto;
+    object-fit: contain;
+    transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+
+    &:hover {
+      transform: scale(1.05);
+    }
+  }
+}
+
+.user-info {
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+.user-name {
+  margin: 0 0 4px 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #1f2937;
+  line-height: 1.4;
+}
+
+.user-email {
+  margin: 0;
+  font-size: 12px;
+  color: #6b7280;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.user-actions {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  padding-top: 12px;
+  border-top: 1px solid #e5e7eb;
+
+  .action-btn {
+    width: 36px;
+    height: 36px;
+    transition: all 0.2s ease;
+
+    mat-icon {
+      font-size: 20px;
+      color: #667eea;
+    }
+
+    &:hover {
+      background: rgba(102, 126, 234, 0.1);
+      transform: translateY(-2px);
+
+      mat-icon {
+        color: #764ba2;
+      }
+    }
+
+    &.logout-btn {
+      mat-icon {
+        color: #dc2626;
+      }
+
+      &:hover {
+        background: rgba(220, 38, 38, 0.1);
+
+        mat-icon {
+          color: #b91c1c;
+        }
+      }
+    }
+  }
+}
+
+// ===================================
+// Navigation Menu
+// ===================================
+
+.navigation-menu {
+  padding: 0 12px;
+}
+
+.menu-section {
+  margin-bottom: 8px;
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  margin: 4px 0;
+  border-radius: 12px;
+  text-decoration: none;
+  color: #4b5563;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
     position: absolute;
-    width: 100%;
-    height: 90vb;
-    top: 64px;
-    right: 0;
-    bottom: 0;
     left: 0;
-    overflow: auto;
+    top: 0;
+    height: 100%;
+    width: 0;
+    background: linear-gradient(90deg, rgba(102, 126, 234, 0.1), transparent);
+    transition: width 0.3s ease;
   }
 
-  // a.active {
-  //   color: gold;
-  // }
+  .menu-item-content {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex: 1;
+    z-index: 1;
+  }
+
+  .menu-icon {
+    font-size: 22px;
+    width: 22px;
+    height: 22px;
+    color: #667eea;
+    transition: all 0.3s ease;
+  }
+
+  .menu-label {
+    font-weight: 500;
+  }
+
+  .menu-indicator {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: transparent;
+    transition: all 0.3s ease;
+  }
+
+  &:hover {
+    background: rgba(102, 126, 234, 0.08);
+    color: #667eea;
+    transform: translateX(4px);
+
+    &::before {
+      width: 100%;
+    }
+
+    .menu-icon {
+      transform: scale(1.1);
+      color: #764ba2;
+    }
+  }
+
+  &.active {
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.15), rgba(118, 75, 162, 0.15));
+    color: #667eea;
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.2);
+
+    .menu-icon {
+      color: #764ba2;
+      transform: scale(1.15);
+    }
+
+    .menu-indicator {
+      background: #667eea;
+      box-shadow: 0 0 8px rgba(102, 126, 234, 0.6);
+    }
+  }
+}
+
+// ===================================
+// Modern Accordion
+// ===================================
+
+.modern-accordion {
+  background: transparent;
+
+  .menu-expansion-panel {
+    background: transparent;
+    box-shadow: none;
+    margin: 4px 0;
+    border-radius: 12px;
+    overflow: hidden;
+
+    &::before {
+      display: none;
+    }
+
+    &.mat-expansion-panel-spacing {
+      margin: 4px 0;
+    }
+  }
+
+  .modern-expansion-header {
+    padding: 12px 16px;
+    border-radius: 12px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    background: transparent;
+
+    &:hover {
+      background: rgba(102, 126, 234, 0.08);
+      transform: translateX(4px);
+
+      .mat-content .expansion-title {
+        color: #667eea;
+
+        .menu-icon {
+          color: #764ba2;
+          transform: scale(1.1);
+        }
+      }
+    }
+
+    &.mat-expanded {
+      height: 48px;
+      background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+      border-bottom: 2px solid rgba(102, 126, 234, 0.2);
+
+      .mat-content .expansion-title {
+        color: #667eea;
+        font-weight: 600;
+
+        .menu-icon {
+          color: #764ba2;
+        }
+      }
+    }
+  }
+
+  .expansion-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: #4b5563;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+
+    .menu-icon {
+      font-size: 22px;
+      width: 22px;
+      height: 22px;
+      color: #667eea;
+      transition: all 0.3s ease;
+    }
+
+    .menu-label {
+      font-weight: 500;
+    }
+  }
+}
+
+// ===================================
+// Submenu Styles
+// ===================================
+
+.submenu-container {
+  padding: 8px 0;
+  background: linear-gradient(180deg, rgba(248, 250, 252, 0.5), transparent);
+}
+
+.submenu-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px 10px 52px;
+  text-decoration: none;
+  color: #6b7280;
+  font-size: 13px;
+  font-weight: 400;
+  transition: all 0.2s ease;
+  position: relative;
+
+  .submenu-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #d1d5db;
+    transition: all 0.3s ease;
+  }
+
+  .submenu-label {
+    flex: 1;
+  }
+
+  &::before {
+    content: '';
+    position: absolute;
+    left: 32px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: transparent;
+    transition: background 0.3s ease;
+  }
+
+  &:hover {
+    color: #667eea;
+    background: rgba(102, 126, 234, 0.05);
+    padding-left: 56px;
+
+    .submenu-dot {
+      background: #667eea;
+      transform: scale(1.3);
+      box-shadow: 0 0 8px rgba(102, 126, 234, 0.4);
+    }
+  }
+
+  &.active {
+    color: #667eea;
+    font-weight: 600;
+    background: linear-gradient(90deg, rgba(102, 126, 234, 0.1), transparent);
+
+    &::before {
+      background: linear-gradient(180deg, #667eea, #764ba2);
+    }
+
+    .submenu-dot {
+      background: #764ba2;
+      transform: scale(1.5);
+      box-shadow: 0 0 10px rgba(118, 75, 162, 0.6);
+    }
+  }
+}
+
+// ===================================
+// Expansion Panel Body Override
+// ===================================
+
+::ng-deep .mat-expansion-panel-body {
+  padding: 0 !important;
+}
+
+// ===================================
+// Toolbar
+// ===================================
+
+.modern-toolbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+  box-shadow: 0 2px 12px rgba(102, 126, 234, 0.25);
+  padding: 0 24px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+
+  .toolbar-left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .menu-toggle-btn {
+    color: white;
+    transition: all 0.3s ease;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.15);
+      transform: rotate(90deg);
+    }
+  }
+
+  .company-branding {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: white;
+    padding: 8px 16px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 24px;
+    transition: all 0.3s ease;
+
+    .company-icon {
+      font-size: 24px;
+      width: 24px;
+      height: 24px;
+    }
+
+    .company-name {
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+    }
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+  }
+
+  .toolbar-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .toolbar-action-btn {
+    color: white;
+    width: 40px;
+    height: 40px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+
+    mat-icon {
+      font-size: 22px;
+      width: 22px;
+      height: 22px;
+    }
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.15);
+      transform: translateY(-2px);
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+
+    &.theme-btn:hover {
+      transform: translateY(-2px) rotate(180deg);
+    }
+
+    &.notification-btn {
+      ::ng-deep .mat-badge-content {
+        background: #ef4444;
+        color: white;
+        font-weight: 600;
+        font-size: 10px;
+        animation: pulse 2s infinite;
+      }
+
+      &:hover {
+        animation: shake 0.5s ease;
+      }
+    }
+
+    &.profile-menu-btn {
+      mat-icon {
+        font-size: 28px;
+        width: 28px;
+        height: 28px;
+      }
+    }
+  }
+}
+
+// Modern Menu Styles
+::ng-deep .modern-menu {
+  .mat-mdc-menu-content {
+    padding: 0 !important;
+  }
+
+  .menu-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 20px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    font-weight: 600;
+    font-size: 16px;
+
+    mat-icon {
+      font-size: 24px;
+      width: 24px;
+      height: 24px;
+    }
+  }
+
+  .menu-item-with-icon {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 20px;
+    transition: all 0.2s ease;
+    font-size: 14px;
+
+    mat-icon {
+      font-size: 20px;
+      width: 20px;
+      height: 20px;
+      color: #667eea;
+    }
+
+    &:hover {
+      background: rgba(102, 126, 234, 0.08);
+      padding-left: 24px;
+
+      mat-icon {
+        color: #764ba2;
+        transform: scale(1.1);
+      }
+    }
+
+    &.logout-item {
+      mat-icon {
+        color: #dc2626;
+      }
+
+      &:hover {
+        background: rgba(220, 38, 38, 0.08);
+
+        mat-icon {
+          color: #b91c1c;
+        }
+      }
+    }
+  }
+}
+
+// Modern Progress Bar
+.modern-progress {
+  ::ng-deep .mat-mdc-progress-bar-fill::after {
+    background: linear-gradient(90deg, #667eea, #764ba2, #667eea);
+  }
+}
+
+// Animations
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+@keyframes shake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-4px);
+  }
+  75% {
+    transform: translateX(4px);
+  }
+}
+
+.flex-fill {
+  flex: 1 1 auto !important;
+}
+
+.settings-btn {
+  position: fixed;
+  right: 30px;
+  bottom: 30px;
+  z-index: 1;
+}
+
+.loader-container {
+  position: fixed;
+  width: 100%;
+  z-index: 99;
+}
+
+.page-content {
+  position: absolute;
+  width: 100%;
+  height: 90vb;
+  top: 64px;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  overflow: auto;
+}
+
+// ===================================
+// Dark Theme Support
+// ===================================
+
+.dark-theme-mode {
+  .sidenav {
+    background: linear-gradient(180deg, #1f2937 0%, #111827 100%);
+    box-shadow: 2px 0 12px rgba(0, 0, 0, 0.5);
+  }
+
+  .sidenav-header {
+    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+  }
+
+  .user-card {
+    background: #374151;
+    border-color: rgba(79, 70, 229, 0.3);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+
+    &:hover {
+      box-shadow: 0 6px 20px rgba(79, 70, 229, 0.4);
+    }
+  }
+
+  .user-name {
+    color: #f9fafb;
+  }
+
+  .user-email {
+    color: #9ca3af;
+  }
+
+  .user-actions {
+    border-top-color: #4b5563;
+  }
+
+  .menu-item {
+    color: #d1d5db;
+
+    .menu-icon {
+      color: #818cf8;
+    }
+
+    &:hover {
+      background: rgba(79, 70, 229, 0.2);
+      color: #c7d2fe;
+
+      .menu-icon {
+        color: #a78bfa;
+      }
+    }
+
+    &.active {
+      background: linear-gradient(135deg, rgba(79, 70, 229, 0.3), rgba(124, 58, 237, 0.3));
+      color: #c7d2fe;
+
+      .menu-icon {
+        color: #a78bfa;
+      }
+    }
+  }
+
+  .expansion-title {
+    color: #d1d5db;
+
+    .menu-icon {
+      color: #818cf8;
+    }
+  }
+
+  .modern-expansion-header {
+    &:hover {
+      background: rgba(79, 70, 229, 0.2);
+
+      .mat-content .expansion-title {
+        color: #c7d2fe;
+
+        .menu-icon {
+          color: #a78bfa;
+        }
+      }
+    }
+
+    &.mat-expanded {
+      background: linear-gradient(135deg, rgba(79, 70, 229, 0.25), rgba(124, 58, 237, 0.25));
+      border-bottom-color: rgba(79, 70, 229, 0.4);
+
+      .mat-content .expansion-title {
+        color: #c7d2fe;
+
+        .menu-icon {
+          color: #a78bfa;
+        }
+      }
+    }
+  }
+
+  .submenu-container {
+    background: linear-gradient(180deg, rgba(31, 41, 55, 0.5), transparent);
+  }
+
+  .submenu-item {
+    color: #9ca3af;
+
+    .submenu-dot {
+      background: #6b7280;
+    }
+
+    &:hover {
+      color: #c7d2fe;
+      background: rgba(79, 70, 229, 0.15);
+
+      .submenu-dot {
+        background: #818cf8;
+      }
+    }
+
+    &.active {
+      color: #c7d2fe;
+      background: linear-gradient(90deg, rgba(79, 70, 229, 0.25), transparent);
+
+      &::before {
+        background: linear-gradient(180deg, #818cf8, #a78bfa);
+      }
+
+      .submenu-dot {
+        background: #a78bfa;
+      }
+    }
+  }
+
+  // Dark Toolbar
+  .modern-toolbar {
+    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%) !important;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
+  }
+}
+
+// ===================================
+// Responsive Design
+// ===================================
+
+@media (max-width: 768px) {
+  .sidenav {
+    width: 260px;
+  }
+
+  .user-avatar img {
+    height: 60px;
+  }
+
+  .user-name {
+    font-size: 14px;
+  }
+
+  .user-email {
+    font-size: 11px;
+  }
+
+  .modern-toolbar {
+    padding: 0 12px;
+
+    .company-branding {
+      .company-name {
+        display: none;
+      }
+    }
+
+    .toolbar-action-btn {
+      width: 36px;
+      height: 36px;
+
+      mat-icon {
+        font-size: 20px;
+        width: 20px;
+        height: 20px;
+      }
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .modern-toolbar {
+    .search-btn,
+    .fullscreen-btn {
+      display: none;
+    }
+  }
+}

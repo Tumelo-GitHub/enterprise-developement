@@ -1,0 +1,30 @@
+<div class="page-container">
+  <div class="form-navigation">
+    <nav class="breadcrumb-nav">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+          <button mat-button (click)="goBackToProgrammes()">
+            <mat-icon>business_center</mat-icon>
+            Programmes
+          </button>
+        </li>
+        <li class="breadcrumb-separator">
+          <mat-icon>chevron_right</mat-icon>
+        </li>
+        <li class="breadcrumb-item active">{{ isEditMode ? 'Edit Programme' : 'Add New Programme' }}</li>
+      </ol>
+    </nav>
+  </div>
+
+  <div class="loading-container" *ngIf="isLoading">
+    <mat-spinner></mat-spinner>
+  </div>
+
+  <app-programme-form
+    *ngIf="!isLoading"
+    [programmeData]="data"
+    [isEditMode]="isEditMode"
+    (formSubmit)="onFormSubmitted($event)"
+    (formCancel)="onFormCancelled()">
+  </app-programme-form>
+</div>

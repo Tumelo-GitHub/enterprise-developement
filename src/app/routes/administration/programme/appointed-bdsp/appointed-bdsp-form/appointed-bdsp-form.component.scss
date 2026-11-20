@@ -1,0 +1,166 @@
+@import '../../../../../shared/styles/shared-components';
+
+.form-container {
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.form-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 24px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+
+    .form-title {
+        margin: 0;
+        font-size: 1.5rem;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+
+        mat-icon {
+            font-size: 24px;
+        }
+    }
+
+    .close-button {
+        color: white;
+        
+        &:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+    }
+}
+
+.bdsp-form {
+    padding: 24px;
+}
+
+.form-section {
+    margin-bottom: 32px;
+
+    &:last-child {
+        margin-bottom: 24px;
+    }
+
+    .section-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 20px;
+        padding-bottom: 8px;
+        border-bottom: 2px solid #ecf0f1;
+
+        mat-icon {
+            color: #3498db;
+            font-size: 20px;
+        }
+
+        h3 {
+            margin: 0;
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: #2c3e50;
+        }
+    }
+}
+
+.form-row {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 16px;
+
+    &.two-columns {
+        .form-field {
+            flex: 1;
+        }
+    }
+
+    .form-field {
+        flex: 1;
+
+        .full-width {
+            width: 100%;
+        }
+    }
+}
+
+// Form field styling
+.mat-form-field {
+    &.full-width {
+        width: 100%;
+    }
+
+    .mat-form-field-wrapper {
+        padding-bottom: 0;
+    }
+}
+
+// Form actions
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    padding-top: 24px;
+    border-top: 1px solid #ecf0f1;
+    margin-top: 32px;
+
+    .cancel-button {
+        color: #95a5a6;
+        
+        &:hover {
+            background-color: #ecf0f1;
+            color: #7f8c8d;
+        }
+    }
+
+    .submit-button {
+        min-width: 140px;
+        
+        mat-spinner {
+            margin-right: 8px;
+        }
+        
+        &:disabled {
+            background-color: #bdc3c7;
+            color: #7f8c8d;
+        }
+    }
+}
+
+// Responsive design
+@media (max-width: 768px) {
+    .form-row {
+        flex-direction: column;
+        gap: 0;
+
+        .form-field {
+            margin-bottom: 16px;
+        }
+    }
+
+    .form-header {
+        padding: 16px 20px;
+        
+        .form-title {
+            font-size: 1.3rem;
+        }
+    }
+
+    .bdsp-form {
+        padding: 20px;
+    }
+
+    .form-actions {
+        flex-direction: column-reverse;
+        gap: 12px;
+
+        button {
+            width: 100%;
+        }
+    }
+}

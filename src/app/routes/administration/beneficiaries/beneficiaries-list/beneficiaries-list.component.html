@@ -1,0 +1,23 @@
+<div class="page-container">
+    <div class="header-section">
+        <div class="title-section">
+            <h1 class="page-title">
+                <mat-icon>business</mat-icon>
+                Beneficiaries Management
+            </h1>
+            <button mat-raised-button color="primary" (click)="switchToPersons()" class="switch-button">
+                <mat-icon>person</mat-icon>
+                Switch to Persons
+            </button>
+        </div>
+        <p class="page-description">
+            Manage beneficiary companies, employees, and compliance information
+        </p>
+    </div>
+
+    <div class="content-section">
+        <app-smme (showEmployees)="onShowEmployees($event)" (showCompliance)="onShowCompliance($event)"
+            (showForm)="onShowForm()" (editForm)="onEditForm($event)">
+        </app-smme>
+    </div>
+</div>

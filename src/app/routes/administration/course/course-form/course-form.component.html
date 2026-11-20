@@ -1,73 +1,98 @@
-<form [formGroup]="form" novalidate (ngSubmit)="onSubmit()">
-    <h2 mat-dialog-title>Course Information</h2>
-    <mat-dialog-content class="mat-typography">
-  
-        <div class="row">
-            <div class="col">
-                <mat-form-field class="full-width">
-                    <mat-select cdkFocusInitial placeholder="Training Institude" formControlName="training_institute_id">
-                        <mat-option *ngFor="let type of institudes" [value]="type.id">{{ type.name }}</mat-option>
-                    </mat-select>
-                    <mat-error *ngIf="form.controls['training_institute_id'].hasError('required')">
-                        Institude is <strong>required</strong>
-                    </mat-error>
-                </mat-form-field>
-            </div>
+<div class="form-container">
+  <mat-card class="form-card">
+    <div class="form-header">
+      <h2 class="form-title">Course Information</h2>
+      <p class="form-subtitle">Enter course details and configuration</p>
+    </div>
+
+    <div class="form-content">
+      <form [formGroup]="form" novalidate (ngSubmit)="onSubmit()">
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Training Institution</mat-label>
+            <mat-select formControlName="training_institute_id" placeholder="Select training institution">
+              <mat-option *ngFor="let type of institudes" [value]="type.id">{{ type.name }}</mat-option>
+            </mat-select>
+            <mat-icon matSuffix>business</mat-icon>
+            <mat-error *ngIf="form.controls['training_institute_id'].hasError('required')">
+              Institution is <strong>required</strong>
+            </mat-error>
+          </mat-form-field>
         </div>
-        <div class="row">
-            <div class="col">
-                <mat-form-field class="full-width">
-                    <input matInput placeholder="Course Name" formControlName="course_name">
-                </mat-form-field>
-            </div>
-            <div class="col">
-                <mat-form-field class="full-width">
-                    <input matInput placeholder="Course Code" formControlName="course_code">
-                </mat-form-field>
-            </div>
+
+        <div class="form-row two-columns">
+          <mat-form-field appearance="outline" class="half-width">
+            <mat-label>Course Name</mat-label>
+            <input matInput placeholder="Enter course name" formControlName="course_name">
+            <mat-icon matSuffix>book</mat-icon>
+          </mat-form-field>
+          
+          <mat-form-field appearance="outline" class="half-width">
+            <mat-label>Course Code</mat-label>
+            <input matInput placeholder="Enter course code" formControlName="course_code">
+            <mat-icon matSuffix>tag</mat-icon>
+          </mat-form-field>
         </div>
-        <div class="row">
-            <div class="col">
-                <mat-form-field class="full-width">
-                    <input matInput placeholder="Duration" formControlName="duration">
-                </mat-form-field>
-            </div>
-            <div class="col">
-                <mat-form-field class="full-width">
-                    <input matInput placeholder="Credits" formControlName="credits">
-                </mat-form-field>
-            </div>
+
+        <div class="form-row two-columns">
+          <mat-form-field appearance="outline" class="half-width">
+            <mat-label>Duration</mat-label>
+            <input matInput placeholder="Enter duration (e.g., 6 months)" formControlName="duration">
+            <mat-icon matSuffix>schedule</mat-icon>
+          </mat-form-field>
+          
+          <mat-form-field appearance="outline" class="half-width">
+            <mat-label>Credits</mat-label>
+            <input matInput placeholder="Enter credits" formControlName="credits">
+            <mat-icon matSuffix>star</mat-icon>
+          </mat-form-field>
         </div>
-        <div class="row">
-            <div class="col">
-                <mat-form-field class="full-width">
-                    <input type="number" matInput placeholder="NQF Level" formControlName="nqf_level">
-                </mat-form-field>
-            </div>
-            <div class="col">
-                <mat-form-field class="full-width">
-                    <mat-select cdkFocusInitial placeholder="Exam" formControlName="exam">
-                        <mat-option value="Yes">Yes</mat-option>
-                        <mat-option value="No">No</mat-option>
-                    </mat-select>
-                </mat-form-field>
-            </div>
+
+        <div class="form-row two-columns">
+          <mat-form-field appearance="outline" class="half-width">
+            <mat-label>NQF Level</mat-label>
+            <input type="number" matInput placeholder="Enter NQF level" formControlName="nqf_level">
+            <mat-icon matSuffix>grade</mat-icon>
+          </mat-form-field>
+          
+          <mat-form-field appearance="outline" class="half-width">
+            <mat-label>Exam Required</mat-label>
+            <mat-select formControlName="exam" placeholder="Select exam requirement">
+              <mat-option value="Yes">Yes</mat-option>
+              <mat-option value="No">No</mat-option>
+            </mat-select>
+            <mat-icon matSuffix>assignment</mat-icon>
+          </mat-form-field>
         </div>
-        <div class="row">
-            <div class="col">
-                <mat-form-field class="full-width">
-                    <textarea matInput placeholder="Target Audience" formControlName="target_audiance"></textarea>
-                </mat-form-field>
-            </div>
-            <div class="col">
-                <mat-form-field class="full-width">
-                    <textarea matInput placeholder="Description" formControlName="description"></textarea>
-                </mat-form-field>
-            </div>
+
+        <div class="form-row two-columns">
+          <mat-form-field appearance="outline" class="half-width">
+            <mat-label>Target Audience</mat-label>
+            <textarea matInput placeholder="Describe target audience" formControlName="target_audiance" rows="3"></textarea>
+            <mat-icon matSuffix>people</mat-icon>
+          </mat-form-field>
+          
+          <mat-form-field appearance="outline" class="half-width">
+            <mat-label>Description</mat-label>
+            <textarea matInput placeholder="Enter course description" formControlName="description" rows="3"></textarea>
+            <mat-icon matSuffix>description</mat-icon>
+          </mat-form-field>
         </div>
-    </mat-dialog-content>
-    <mat-dialog-actions align="end">
-        <button mat-button mat-dialog-close>Cancel</button>
-        <button type="submit" mat-button [disabled]="!form.valid">Submit</button>
-    </mat-dialog-actions>
-</form>
+      </form>
+    </div>
+
+    <div class="form-actions">
+      <div class="action-button-set">
+        <button type="button" mat-stroked-button (click)="onCancel()" class="cancel-btn">
+          <mat-icon>close</mat-icon>
+          Cancel
+        </button>
+        
+        <button type="submit" mat-raised-button [disabled]="!form.valid" class="submit-btn" (click)="onSubmit()">
+          <mat-icon>save</mat-icon>
+          Submit
+        </button>
+      </div>
+    </div>
+  </mat-card>
+</div>

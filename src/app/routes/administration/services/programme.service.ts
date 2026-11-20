@@ -14,6 +14,10 @@ export class ProgrammeService {
     return this.http.get<IResponseModelBase<IProgramme[]>>(`api/programme`);
   }
 
+  getProgrammeById(id: number) : Observable<IResponseModelBase<IProgramme>> {
+    return this.http.get<IResponseModelBase<IProgramme>>(`api/programme/${id}`);
+  }
+
   delete(id: number) : Observable<any> {
     return this.http.delete(`api/programme/${id}`);
   }
@@ -34,8 +38,16 @@ export class ProgrammeService {
     return this.http.get(`api/appoint/smme/${id}`);
   }
 
+  getAppointmentById(appointmentId: number) : Observable<any> {
+    return this.http.get(`api/appoint/smme/detail/${appointmentId}`);
+  }
+
   appointBeneficiaries(data : any) : Observable<any> {
     return this.http.post(`api/appoint/smme`, data);
+  }
+
+  updateBeneficiaryAppointment(id: number, data: any) : Observable<any> {
+    return this.http.post(`api/appoint/smme/${id}`, data);
   }
 
   deleteAppointment(id: number) : Observable<any> {

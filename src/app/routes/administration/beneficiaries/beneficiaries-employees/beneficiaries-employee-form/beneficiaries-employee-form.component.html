@@ -1,0 +1,41 @@
+<div class="page-container">
+  <div class="form-navigation">
+    <nav class="breadcrumb-nav">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+          <button mat-button routerLink="/administration/beneficiaries">
+            <mat-icon>business</mat-icon>
+            Companies
+          </button>
+        </li>
+        <li class="breadcrumb-separator">
+          <mat-icon>chevron_right</mat-icon>
+        </li>
+        <li class="breadcrumb-item">
+          <button mat-button (click)="goBack()">
+            <mat-icon>people</mat-icon>
+            {{ company?.smme_name }} Employees
+          </button>
+        </li>
+        <li class="breadcrumb-separator">
+          <mat-icon>chevron_right</mat-icon>
+        </li>
+        <li class="breadcrumb-item active">{{ isEditMode ? 'Edit Employee' : 'Add New Employee' }}</li>
+      </ol>
+    </nav>
+  </div>
+
+  <div class="loading-container" *ngIf="isLoading">
+    <mat-spinner></mat-spinner>
+  </div>
+
+  <app-company-employee-form
+    *ngIf="!isLoading"
+    [employee]="employee"
+    [companyId]="companyId"
+    [isEditMode]="isEditMode"
+    [employeeService]="employeeService"
+    (formSubmit)="onFormSubmit($event)"
+    (formCancel)="onFormCancel()">
+  </app-company-employee-form>
+</div>

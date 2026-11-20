@@ -1,223 +1,413 @@
-<div class="tab-content">
-    <div class="table-controls">
-      <mat-form-field>
-          <mat-label for="">Table columns</mat-label>
-          <mat-select [formControl]="columns" [(ngModel)]="columnsToDisplay" (selectionChange)="selectedToppings($event)" multiple>
-            <mat-option *ngFor="let column of columnsList" [value]="column[1]">{{column[0]}}</mat-option>
-          </mat-select>
-      </mat-form-field>
-      
-      <mat-form-field style="float: right;" id="searchInput">
-          <mat-label>Search</mat-label>
-          <input matInput (keyup)="applyFilter($event)" placeholder="Ex. Mia" #input>
-      </mat-form-field>
-      <button mat-icon-button matTooltip="Export Table To Excel" (click)="exportTable()">
-        <i class="fa-regular fa-file-excel fa-xl"></i>
-      </button>
-      <button mat-icon-button matTooltip="Export Table To PDF" (click)="exportTableToPDF()">
-        <i class="fa-regular fa-file-pdf fa-xl"></i>
-      </button>
-    </div>
+<!-- Action Bar -->
+<app-table-action-bar
+  [columnsList]="columnsList"
+  [columns]="columns"
+  [columnsToDisplay]="columnsToDisplay"
+  [isLoading]="isLoading"
+  [filterLabel]="'Filter companies'"
+  [filterPlaceholder]="'Search by company name, address, or email'"
+  [columnLabel]="'Display Columns'"
+  [addButtonText]="'Add Company'"
+  [addButtonTooltip]="'Add a new company'"
+  (selectedToppings)="selectedToppings($event)"
+  (exportTable)="exportTable()"
+  (exportTableToPDF)="exportTableToPDF()"
+  (openDialog)="openDialog()"
+  (applyFilter)="applyFilter($event)">
+</app-table-action-bar>
 
-      
-    <div class="mat-elevation-z8">
-        <div class="table-container">
-          <table id="ExampleMaterialTable" mat-table [dataSource]="dataSource" matSort class="full-width-table selectable-row-table">
-      
-            <ng-container matColumnDef="smme_name">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header> Company </th>
-              <td mat-cell *matCellDef="let row"> {{row.smme_name}} </td>
-            </ng-container>
-  
-            <ng-container matColumnDef="trading_name">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header> Trading Name </th>
-              <td mat-cell *matCellDef="let row"> {{row.trading_name}} </td>
-            </ng-container>
-  
-            <ng-container matColumnDef="business_type">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header> Business Type </th>
-              <td mat-cell *matCellDef="let row"> {{row.business_type}} </td>
-            </ng-container>
-  
-            <ng-container matColumnDef="products">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header> Products </th>
-              <td mat-cell *matCellDef="let row"> {{row.products}} </td>
-            </ng-container>
-  
-            <ng-container matColumnDef="description">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header> Description </th>
-              <td mat-cell *matCellDef="let row"> {{row.description}} </td>
-            </ng-container>
-        
-            <!-- Progress Column -->
-            <ng-container matColumnDef="street_address_1">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header> Physical Address</th>
-              <td mat-cell *matCellDef="let row"> 
-                {{row.address.street_address_1}} 
-                {{row.address.street_address_2}} 
-                {{row.address.city}} 
-                {{row.address.province}} 
-                {{row.address.code}} 
-                {{row.address.country}} 
-              </td>
-            </ng-container>
-        
-            <ng-container matColumnDef="postal_address">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header> Postal Address </th>
-              <td mat-cell *matCellDef="let row"> {{row.postal_address}} </td>
-            </ng-container>
-        
-            <ng-container matColumnDef="address_note">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header> Address Note </th>
-              <td mat-cell *matCellDef="let row"> {{row.address.address_note}} </td>
-            </ng-container>
-  
-            <ng-container matColumnDef="contact_person">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header> Contact Person </th>
-              <td mat-cell *matCellDef="let row"> {{row.contacts[0].full_names}} </td>
-            </ng-container>
-  
-            <ng-container matColumnDef="contact_person_position">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header> Contact Person Position </th>
-              <td mat-cell *matCellDef="let row"> {{row.contacts[0].position }} </td>
-            </ng-container>
-  
-            <ng-container matColumnDef="tel_number">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header> Tell Number </th>
-              <td mat-cell *matCellDef="let row"> {{row.contacts[0].tell_number}} </td>
-            </ng-container>
-  
-            <ng-container matColumnDef="cel_number">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header> Cell Number </th>
-              <td mat-cell *matCellDef="let row"> {{row.contacts[0].cell_number}} </td>
-            </ng-container>
-  
-            <ng-container matColumnDef="email">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header> Email </th>
-              <td mat-cell *matCellDef="let row"> <a href = "mailto: {{row.contacts[0].email}}" class="email-link" (click)="$event.stopPropagation();">{{row.contacts[0].email}}</a> </td>
-            </ng-container>
-  
-            <ng-container matColumnDef="registration_number">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header> registration Number </th>
-              <td mat-cell *matCellDef="let row"> {{row.registration_number}} </td>
-            </ng-container>
-  
-            <ng-container matColumnDef="turnover_range">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header> Turnover Range </th>
-              <td mat-cell *matCellDef="let row"> {{row.turnover_range}} </td>
-            </ng-container>
-  
-            <ng-container matColumnDef="web_address">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header> Web Address </th>
-              <td mat-cell *matCellDef="let row"> {{row.web_address}} </td>
-            </ng-container>
-  
-            <ng-container matColumnDef="tax_number">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header> Tax Number </th>
-              <td mat-cell *matCellDef="let row"> {{row.tax_number}} </td>
-            </ng-container>
-  
-            <ng-container matColumnDef="bbbee">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header> BBBEE </th>
-              <td mat-cell *matCellDef="let row"> {{row.bbbee}} </td>
-            </ng-container>
-  
-            <ng-container matColumnDef="full_time_emp">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header> Full Time Emp </th>
-              <td mat-cell *matCellDef="let row"> {{row.full_time_emp}} </td>
-            </ng-container>
-  
-            <ng-container matColumnDef="part_time_emp">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header> Part Time Emp </th>
-              <td mat-cell *matCellDef="let row"> {{row.part_time_emp}} </td>
-            </ng-container>
-  
-            <ng-container matColumnDef="casual_emp">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header> Casual Emp </th>
-              <td mat-cell *matCellDef="let row"> {{row.casual_emp}} </td>
-            </ng-container>
-  
-            <ng-container matColumnDef="black_owned">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header> Black Owned </th>
-              <td mat-cell *matCellDef="let row"> {{row.black_owned}} </td>
-            </ng-container>
-  
-            <ng-container matColumnDef="woman_owned">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header> Woman Owned </th>
-              <td mat-cell *matCellDef="let row"> {{row.woman_owned}} </td>
-            </ng-container>
-  
-            <ng-container matColumnDef="youth_owned">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header> Youth Owned </th>
-              <td mat-cell *matCellDef="let row"> {{row.youth_owned}} </td>
-            </ng-container>
-  
-            <ng-container matColumnDef="disabled_owned">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header> Disabled Owned </th>
-              <td mat-cell *matCellDef="let row"> {{row.disabled_owned}} </td>
-            </ng-container>
-  
-            <ng-container matColumnDef="industry">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header> Industry</th>
-              <td mat-cell *matCellDef="let row"> {{row.industry}} </td>
-            </ng-container>
-  
-            <ng-container matColumnDef="business_years">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header> Business Years</th>
-              <td mat-cell *matCellDef="let row"> {{row.business_years}} </td>
-            </ng-container>
-  
-            <ng-container matColumnDef="programme">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header> Programme Intrested </th>
-              <td mat-cell *matCellDef="let row"> {{row.programme}} </td>
-            </ng-container>
-  
-            <ng-container matColumnDef="location_type">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header> Location Type </th>
-              <td mat-cell *matCellDef="let row"> {{row.address.location_type}} </td>
-            </ng-container>
-  
-            <ng-container matColumnDef="contact_origin">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header> Contact Orgin </th>
-              <td mat-cell *matCellDef="let row"> {{row.contact_origin}} </td>
-            </ng-container>
-  
-            <ng-container matColumnDef="registered">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header> Company Registration </th>
-              <td mat-cell *matCellDef="let row"> {{row.registered}} </td>
-            </ng-container>
-      
-            <!-- Action Column -->
-            <ng-container matColumnDef="action">
-              <th mat-header-cell *matHeaderCellDef> Action </th>
-              <td mat-cell *matCellDef="let row">
-                  <button mat-icon-button matTooltip="Edit Company" color="accern" (click)="openEditForm(row); $event.stopPropagation();">
-                      <mat-icon>edit</mat-icon>
-                  </button>
-                  <button mat-icon-button matTooltip="Delete Company" color="warn" (click)="deleteCompany(row.id); $event.stopPropagation();">
-                      <mat-icon>delete</mat-icon>
-                  </button>
-              </td>
-            </ng-container>
-        
-            <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
-            <tr 
-              mat-row 
-              *matRowDef="let row; columns: columnsToDisplay;" 
-              (click)="getClickedRow(row);"
-              [class.selected-row]="clickedRow == row"></tr>
-        
-            <!-- Row shown when there is no matching data. -->
-            <tr class="mat-row" *matNoDataRow>
-              <td class="mat-cell" colspan="4">No data matching the filter "{{input.value}}"</td>
-            </tr>
-          </table>
-        </div>
-        <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" [showFirstLastButtons]="true" aria-label="Select page of users"></mat-paginator>
-      </div>    
-      <div class="add-btn-wrapper" color="primary">
-        <button mat-fab matTooltip="Add Company" aria-label="Add Employee Button with icon" class="add-btn" (click)="openDialog()">
-          <mat-icon>add</mat-icon>
-        </button>
-      </div>
+<!-- Data Table Section -->
+<div class="table-section">
+  <!-- Loading Section -->
+  <div class="loading-section" *ngIf="isLoading">
+    <mat-spinner></mat-spinner>
+    <p>Loading companies...</p>
+  </div>
+
+  <!-- Table Card -->
+  <mat-card class="table-card" *ngIf="!isLoading">
+    <div class="table-wrapper">
+      <table id="ExampleMaterialTable" mat-table [dataSource]="dataSource" matSort class="data-table">
+
+        <ng-container matColumnDef="smme_name">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header class="header-cell">
+            <mat-icon>business</mat-icon>
+            Company Name
+          </th>
+          <td mat-cell *matCellDef="let row" class="data-cell">
+            <div class="entity-info">
+              <span class="entity-name">{{row.smme_name}}</span>
+              <span class="entity-subtitle" *ngIf="row.trading_name">{{row.trading_name}}</span>
+            </div>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="trading_name">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header class="header-cell">
+            <mat-icon>storefront</mat-icon>
+            Trading Name
+          </th>
+          <td mat-cell *matCellDef="let row" class="data-cell">{{row.trading_name}}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="business_type">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header class="header-cell">
+            <mat-icon>category</mat-icon>
+            Business Type
+          </th>
+          <td mat-cell *matCellDef="let row" class="data-cell">
+            <span class="business-type-badge">{{row.business_type}}</span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="products">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header class="header-cell">
+            <mat-icon>inventory_2</mat-icon>
+            Products
+          </th>
+          <td mat-cell *matCellDef="let row" class="data-cell">
+            <span [matTooltip]="row.products">
+              {{truncateText(row.products, 40)}}
+            </span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="description">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header class="header-cell">
+            <mat-icon>description</mat-icon>
+            Description
+          </th>
+          <td mat-cell *matCellDef="let row" class="data-cell">
+            <span [matTooltip]="row.description">
+              {{truncateText(row.description, 50)}}
+            </span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="street_address_1">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header class="header-cell">
+            <mat-icon>location_on</mat-icon>
+            Physical Address
+          </th>
+          <td mat-cell *matCellDef="let row" class="data-cell">
+            <span class="address">
+              {{row.address?.street_address_1}} 
+              {{row.address?.street_address_2}} 
+              {{row.address?.city}} 
+              {{row.address?.province}}
+            </span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="postal_address">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header class="header-cell">
+            <mat-icon>mail_outline</mat-icon>
+            Postal Address
+          </th>
+          <td mat-cell *matCellDef="let row" class="data-cell">
+            <span class="address">{{row.postal_address}}</span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="address_note">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header class="header-cell">
+            <mat-icon>note</mat-icon>
+            Address Note
+          </th>
+          <td mat-cell *matCellDef="let row" class="data-cell">{{row.address?.address_note}}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="contact_person">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header class="header-cell">
+            <mat-icon>person</mat-icon>
+            Contact Person
+          </th>
+          <td mat-cell *matCellDef="let row" class="data-cell">
+            <div class="contact-info">
+              <span class="contact-name">{{row.contacts?.[0]?.full_names}}</span>
+              <span class="contact-position">{{row.contacts?.[0]?.position}}</span>
+            </div>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="contact_person_position">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header class="header-cell">
+            <mat-icon>work</mat-icon>
+            Position
+          </th>
+          <td mat-cell *matCellDef="let row" class="data-cell">{{row.contacts?.[0]?.position}}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="tel_number">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header class="header-cell">
+            <mat-icon>phone</mat-icon>
+            Tel Number
+          </th>
+          <td mat-cell *matCellDef="let row" class="data-cell">{{row.contacts?.[0]?.tell_number}}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="cel_number">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header class="header-cell">
+            <mat-icon>smartphone</mat-icon>
+            Cell Number
+          </th>
+          <td mat-cell *matCellDef="let row" class="data-cell">{{row.contacts?.[0]?.cell_number}}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="email">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header class="header-cell">
+            <mat-icon>email</mat-icon>
+            Email
+          </th>
+          <td mat-cell *matCellDef="let row" class="data-cell">
+            <a href="mailto:{{row.contacts?.[0]?.email}}" class="email-link" (click)="$event.stopPropagation();">
+              {{row.contacts?.[0]?.email}}
+            </a>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="registration_number">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header class="header-cell">
+            <mat-icon>assignment</mat-icon>
+            Registration Number
+          </th>
+          <td mat-cell *matCellDef="let row" class="data-cell">{{row.registration_number}}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="turnover_range">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header class="header-cell">
+            <mat-icon>trending_up</mat-icon>
+            Turnover Range
+          </th>
+          <td mat-cell *matCellDef="let row" class="data-cell">{{row.turnover_range}}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="web_address">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header class="header-cell">
+            <mat-icon>language</mat-icon>
+            Website
+          </th>
+          <td mat-cell *matCellDef="let row" class="data-cell">
+            <a [href]="row.web_address" target="_blank" class="website-link" (click)="$event.stopPropagation();">
+              {{row.web_address}}
+            </a>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="tax_number">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header class="header-cell">
+            <mat-icon>receipt_long</mat-icon>
+            Tax Number
+          </th>
+          <td mat-cell *matCellDef="let row" class="data-cell">{{row.tax_number}}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="bbbee">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header class="header-cell">
+            <mat-icon>stars</mat-icon>
+            BBBEE Level
+          </th>
+          <td mat-cell *matCellDef="let row" class="data-cell">
+            <span class="status-badge status-scheduled">Level {{row.bbbee}}</span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="full_time_emp">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header class="header-cell">
+            <mat-icon>people</mat-icon>
+            Full Time Employees
+          </th>
+          <td mat-cell *matCellDef="let row" class="data-cell">{{row.full_time_emp}}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="part_time_emp">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header class="header-cell">
+            <mat-icon>people_outline</mat-icon>
+            Part Time Employees
+          </th>
+          <td mat-cell *matCellDef="let row" class="data-cell">{{row.part_time_emp}}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="casual_emp">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header class="header-cell">
+            <mat-icon>group</mat-icon>
+            Casual Employees
+          </th>
+          <td mat-cell *matCellDef="let row" class="data-cell">{{row.casual_emp}}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="black_owned">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header class="header-cell">
+            <mat-icon>diversity_1</mat-icon>
+            Black Owned
+          </th>
+          <td mat-cell *matCellDef="let row" class="data-cell">
+            <span [class]="'ownership-badge ' + (row.black_owned === 'Y' ? 'yes' : 'no')">
+              {{row.black_owned === 'Y' ? 'Yes' : 'No'}}
+            </span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="woman_owned">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header class="header-cell">
+            <mat-icon>diversity_2</mat-icon>
+            Woman Owned
+          </th>
+          <td mat-cell *matCellDef="let row" class="data-cell">
+            <span [class]="'ownership-badge ' + (row.woman_owned === 'Y' ? 'yes' : 'no')">
+              {{row.woman_owned === 'Y' ? 'Yes' : 'No'}}
+            </span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="youth_owned">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header class="header-cell">
+            <mat-icon>diversity_3</mat-icon>
+            Youth Owned
+          </th>
+          <td mat-cell *matCellDef="let row" class="data-cell">
+            <span [class]="'ownership-badge ' + (row.youth_owned === 'Y' ? 'yes' : 'no')">
+              {{row.youth_owned === 'Y' ? 'Yes' : 'No'}}
+            </span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="disabled_owned">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header class="header-cell">
+            <mat-icon>accessibility</mat-icon>
+            Disabled Owned
+          </th>
+          <td mat-cell *matCellDef="let row" class="data-cell">
+            <span [class]="'ownership-badge ' + (row.disabled_owned === 'Y' ? 'yes' : 'no')">
+              {{row.disabled_owned === 'Y' ? 'Yes' : 'No'}}
+            </span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="industry">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header class="header-cell">
+            <mat-icon>business_center</mat-icon>
+            Industry
+          </th>
+          <td mat-cell *matCellDef="let row" class="data-cell">{{row.industry}}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="business_years">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header class="header-cell">
+            <mat-icon>schedule</mat-icon>
+            Business Years
+          </th>
+          <td mat-cell *matCellDef="let row" class="data-cell">{{row.business_years}} years</td>
+        </ng-container>
+
+        <ng-container matColumnDef="programme">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header class="header-cell">
+            <mat-icon>school</mat-icon>
+            Programme
+          </th>
+          <td mat-cell *matCellDef="let row" class="data-cell">
+            <span class="programme-badge">{{row.programme}}</span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="location_type">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header class="header-cell">
+            <mat-icon>place</mat-icon>
+            Location Type
+          </th>
+          <td mat-cell *matCellDef="let row" class="data-cell">{{row.address?.location_type}}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="contact_origin">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header class="header-cell">
+            <mat-icon>contact_support</mat-icon>
+            Contact Origin
+          </th>
+          <td mat-cell *matCellDef="let row" class="data-cell">{{row.contact_origin}}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="registered">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header class="header-cell">
+            <mat-icon>verified</mat-icon>
+            Registered
+          </th>
+          <td mat-cell *matCellDef="let row" class="data-cell">
+            <span [class]="'registration-badge ' + (row.registered === 'Yes' ? 'registered' : 'not-registered')">
+              {{row.registered}}
+            </span>
+          </td>
+        </ng-container>
+
+        <!-- Action Column -->
+        <ng-container matColumnDef="action">
+          <th mat-header-cell *matHeaderCellDef class="header-cell actions-header">
+            <mat-icon>settings</mat-icon>
+            Actions
+          </th>
+          <td mat-cell *matCellDef="let row" class="data-cell actions-cell">
+            <div class="action-buttons">
+              <button mat-icon-button 
+                      matTooltip="View & Manage Employees" 
+                      matTooltipPosition="above"
+                      (click)="viewEmployees(row); $event.stopPropagation();" 
+                      class="employees-btn"
+                      [disabled]="isLoading">
+                <mat-icon>people</mat-icon>
+              </button>
+              <button mat-icon-button 
+                      matTooltip="View Compliance Information" 
+                      matTooltipPosition="above"
+                      (click)="viewCompliance(row); $event.stopPropagation();" 
+                      class="compliance-btn"
+                      [disabled]="isLoading">
+                <mat-icon>verified_user</mat-icon>
+              </button>
+              <button mat-icon-button 
+                      matTooltip="Edit Company Details" 
+                      matTooltipPosition="above"
+                      (click)="openEditForm(row); $event.stopPropagation();" 
+                      class="edit-btn"
+                      [disabled]="isLoading">
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button mat-icon-button 
+                      matTooltip="Delete Company" 
+                      matTooltipPosition="above"
+                      (click)="deleteCompany(row.id); $event.stopPropagation();" 
+                      class="delete-btn"
+                      [disabled]="isLoading">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </div>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
+        <tr mat-row *matRowDef="let row; columns: columnsToDisplay;" 
+            class="table-row"></tr>
+
+        <!-- No Data Row -->
+        <tr class="mat-row" *matNoDataRow>
+          <td class="mat-cell" [attr.colspan]="columnsToDisplay.length">
+            <div class="no-data">
+              <div class="no-data-content">
+                <mat-icon class="no-data-icon">search_off</mat-icon>
+                <h3>No companies found</h3>
+                <p>No data matching the filter "{{searchTerm}}"</p>
+              </div>
+            </div>
+          </td>
+        </tr>
+      </table>
+
+      <!-- Paginator -->
+      <mat-paginator 
+        [pageSizeOptions]="[5, 10, 25, 100]"
+        [pageSize]="10"
+        [showFirstLastButtons]="true"
+        class="table-paginator"
+        aria-label="Select page of companies">
+      </mat-paginator>
+    </div>
+  </mat-card>
 </div>

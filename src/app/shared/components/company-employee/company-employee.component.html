@@ -1,0 +1,127 @@
+<div class="employee-container">
+  <!-- Action Bar Card -->
+   <app-table-action-bar
+    [isLoading]="isLoading"
+    [filterLabel]="'Filter employees'"
+    [filterPlaceholder]="'Search by employee name, email, or position'"
+    [columnLabel]="'Display Columns'"
+    [addButtonText]="'Add Employee'"
+    [addButtonTooltip]="'Add a new employee'"
+    [addButtonIcon]="'person_add'"
+    (openDialog)="openEmployeeForm()"
+    (applyFilter)="applyFilter($event)">
+  </app-table-action-bar>
+
+  <!-- Loading State -->
+  <div class="loading-section" *ngIf="isLoading">
+    <mat-spinner diameter="50"></mat-spinner>
+    <p>Loading employees...</p>
+  </div>
+
+  <!-- Employee Table Card -->
+  <div class="table-section" *ngIf="!isLoading">
+    <mat-card class="table-card">
+    <table mat-table [dataSource]="dataSource" matSort class="employee-table full-width">
+      <!-- Employee Column -->
+      <ng-container matColumnDef="employee">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Employee</th>
+        <td mat-cell *matCellDef="let employee">
+          <div class="employee-info">
+            <div class="employee-avatar">
+              <mat-icon>account_circle</mat-icon>
+            </div>
+            <div class="employee-details">
+              <div class="employee-name">{{employee.name}} {{employee.surname}}</div>
+              <div class="employee-email">{{employee.email}}</div>
+            </div>
+          </div>
+        </td>
+      </ng-container>
+
+      <!-- Role Info Column -->
+      <ng-container matColumnDef="role_info">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>Position & Role</th>
+        <td mat-cell *matCellDef="let employee">
+          <div class="role-info">
+            <div class="position" *ngIf="employee.position">
+              {{employee.position}}
+            </div>
+            <div class="role" *ngIf="employee.role">
+              {{employee.role}}
+            </div>
+            <div class="no-info" *ngIf="!employee.position && !employee.role">
+              <span class="text-muted">No position/role assigned</span>
+            </div>
+          </div>
+        </td>
+      </ng-container>
+
+      <!-- Contact Column -->
+      <ng-container matColumnDef="contact">
+        <th mat-header-cell *matHeaderCellDef>Contact</th>
+        <td mat-cell *matCellDef="let employee">
+          <div class="contact-info">
+            <div class="contact-item" *ngIf="employee.cell_number">
+              <mat-icon class="contact-icon">smartphone</mat-icon>
+              <span>{{employee.cell_number}}</span>
+            </div>
+            <div class="contact-item" *ngIf="employee.email">
+              <mat-icon class="contact-icon">email</mat-icon>
+              <span>{{employee.email}}</span>
+            </div>
+          </div>
+        </td>
+      </ng-container>
+
+      <!-- Actions Column -->
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef class="header-cell actions-header">
+          <mat-icon>settings</mat-icon>
+          Actions
+        </th>
+        <td mat-cell *matCellDef="let employee" class="data-cell actions-cell">
+          <div class="action-buttons">
+            <button mat-icon-button 
+                    matTooltip="Edit Employee" 
+                    matTooltipPosition="above"
+                    (click)="editEmployee(employee)"
+                    class="edit-btn">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-icon-button 
+                    matTooltip="Delete Employee" 
+                    matTooltipPosition="above"
+                    (click)="deleteEmp(employee)"
+                    class="delete-btn">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </div>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+      <!-- No Data Row -->
+      <tr class="mat-row no-data-row" *matNoDataRow>
+        <td class="mat-cell" [attr.colspan]="displayedColumns.length">
+          <div class="no-data-container">
+            <mat-icon>people_outline</mat-icon>
+            <p>No employees found</p>
+            <button mat-stroked-button (click)="openEmployeeForm()">
+              <mat-icon>person_add</mat-icon>
+              Add First Employee
+            </button>
+          </div>
+        </td>
+      </tr>
+    </table>
+
+    <mat-paginator 
+      [pageSizeOptions]="[5, 10, 25, 100]"
+      [pageSize]="10"
+      showFirstLastButtons>
+    </mat-paginator>
+    </mat-card>
+  </div>
+</div>

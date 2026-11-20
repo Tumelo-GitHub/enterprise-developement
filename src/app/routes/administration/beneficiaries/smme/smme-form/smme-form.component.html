@@ -1,445 +1,555 @@
-<form [formGroup]="form" novalidate (ngSubmit)="onSubmit()">
-    <h2 mat-dialog-title>SMME Information</h2>
-    <mat-dialog-content class="mat-typography">
+<div class="form-container">
+  <mat-card class="form-card">
+    <div class="form-header">
+      <h2 class="form-title">
+        {{isEditMode ? 'Edit' : 'Add'}} SMME Company
+      </h2>
+      <p class="form-subtitle">
+        {{isEditMode ? 'Update' : 'Enter'}} Small, Medium & Micro Enterprise information
+      </p>
+    </div>
 
-        <div class="row">
-            <div class="col">
-                <mat-form-field class="full-width">
-                    <input matInput placeholder="Company Name" formControlName="smme_name">
-                    <mat-error *ngIf="form.controls['smme_name'].hasError('required')">
-                        Company name is <strong>required</strong>
-                    </mat-error>
-                </mat-form-field>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col">
-                <mat-form-field class="full-width">
-                    <!-- TODO: This options should come from backend configs/constants -->
-                    <mat-select placeholder="Programme Interested In" formControlName="programme">
-                        <mat-option value="SBSA">SBSA</mat-option>
-                        <mat-option value="Financial Litaracy">Financial Litaracy</mat-option>
-                        <mat-option value="Risk Management">Risk Management</mat-option>
-                        <mat-option value="SBSA">Financial Litaracy & Risk Management</mat-option>
-                    </mat-select>
-                    <mat-error *ngIf="form.controls['programme'].hasError('required')">
-                        programme is <strong>required</strong>
-                    </mat-error>
-                </mat-form-field>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col">
-                <mat-form-field class="full-width">
-                    <input matInput placeholder="Trading Name" formControlName="trading_name">
-                </mat-form-field>
-            </div>
-            <div class="col">
-                <mat-form-field class="full-width">
-                    <mat-select placeholder="Industry" formControlName="industry">
-                        <mat-option *ngFor="let option of business_industries"
-                            value="{{option.id}}">{{option.name}}</mat-option>
-                    </mat-select>
-                    <mat-error *ngIf="form.controls['industry'].hasError('required')">
-                        Industry is <strong>required</strong>
-                    </mat-error>
-                </mat-form-field>
-            </div>
-        </div>
-        <!-- <div>
-      <label>Is your business registered: </label>
-      <mat-radio-group formControlName="registered">
-        <mat-radio-button value="auto">Auto</mat-radio-button>
-        <mat-radio-button value="always">Always</mat-radio-button>
-      </mat-radio-group>
-    </div> -->
-        <div class="row">
-            <div class="col">
-                <mat-form-field class="full-width">
-                    <input matInput placeholder="Registration Number" formControlName="registration_number">
-                </mat-form-field>
-            </div>
-            <div class="col">
-                <mat-form-field class="full-width">
-                    <input matInput placeholder="Tax Number" formControlName="tax_number">
-                </mat-form-field>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col">
-                <mat-form-field class="full-width">
-                    <input matInput placeholder="VAT Number" formControlName="vat_number">
-                </mat-form-field>
-            </div>
-            <div class="col">
-                <mat-form-field class="full-width">
-                    <input matInput placeholder="Vendor Number With Host Company" formControlName="vendor_number">
-                </mat-form-field>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col">
-                <mat-form-field class="full-width">
-                    <mat-select placeholder="Business Type" formControlName="business_type">
-                        <mat-option *ngFor="let type of businessTypeOptions" value="{{type}}">{{type}}</mat-option>
-                    </mat-select>
-                    <!-- <mat-error *ngIf="form.controls['companyName'].hasError('required')">
-            Company name is <strong>required</strong>
-          </mat-error> -->
-                </mat-form-field>
-            </div>
-            <div class="col">
-                <mat-form-field class="full-width">
-                    <input matInput placeholder="Where did you hear aboout us?" formControlName="contact_origin">
-                </mat-form-field>
-            </div>
-        </div>
-        <h3>Physical Address</h3>
-        <div [formGroup]="address" class="address">
-            <div class="row">
-                <div class="col">
-                    <mat-form-field class="full-width">
-                        <input matInput placeholder="Address Line 1" formControlName="street_address_1">
-                        <mat-error *ngIf="address.controls['street_address_1'].hasError('required')">
-                            Address is <strong>required</strong>
-                        </mat-error>
-                    </mat-form-field>
-                </div>
-                <div class="col">
-                    <mat-form-field class="full-width">
-                        <input matInput placeholder="Address Line 2" formControlName="street_address_2">
-                    </mat-form-field>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col">
-                    <mat-form-field class="full-width">
-                        <input matInput placeholder="City" formControlName="city">
-                        <mat-error *ngIf="address.controls['city'].hasError('required')">
-                            Company name is <strong>required</strong>
-                        </mat-error>
-                    </mat-form-field>
-                </div>
-                <div class="col">
-                    <mat-form-field class="full-width">
-                        <mat-select placeholder="Location Type" formControlName="location_type">
-                            <mat-option value="City">City</mat-option>
-                            <mat-option value="Rural">Rural</mat-option>
-                            <mat-option value="Suburb">Suburb</mat-option>
-                            <mat-option value="Township">Township</mat-option>
-                        </mat-select>
-                        <mat-error *ngIf="address.controls['location_type'].hasError('required')">
-                            location type is <strong>required</strong>
-                        </mat-error>
-                    </mat-form-field>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col">
-                    <mat-form-field class="full-width">
-                        <mat-select placeholder="Province" formControlName="province">
-                            <mat-option value="Eastern Cape">Eastern Cape</mat-option>
-                            <mat-option value="Free State">Free State</mat-option>
-                            <mat-option value="Gauteng">Gauteng</mat-option>
-                            <mat-option value="Kwazulu Natal">Kwazulu Natal</mat-option>
-                            <mat-option value="Limpopo">Limpopo</mat-option>
-                            <mat-option value="Mpumalanga">Mpumalanga</mat-option>
-                            <mat-option value="North West">North West</mat-option>
-                            <mat-option value="Northern West">Northern West</mat-option>
-                            <mat-option value="Western Cape">Western Cape</mat-option>
-                        </mat-select>
-                        <!-- <mat-error *ngIf="form.controls['companyName'].hasError('required')">
+    <form [formGroup]="form" novalidate (ngSubmit)="onSubmit()">
+      <div class="form-content">
+        <!-- Company Basic Information -->
+        <div class="form-section">
+          <h3 class="section-title">
+            <mat-icon>business</mat-icon>
+            Company Information
+          </h3>
+          
+          <div class="form-row">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Company Name</mat-label>
+              <input matInput formControlName="smme_name" placeholder="Enter company name">
+              <mat-icon matSuffix>business</mat-icon>
+              <mat-error *ngIf="form.controls['smme_name'].hasError('required')">
                 Company name is <strong>required</strong>
-              </mat-error> -->
-                    </mat-form-field>
-                </div>
-                <div class="col">
-                    <mat-form-field class="full-width">
-                        <input matInput placeholder="Code" formControlName="code">
-                    </mat-form-field>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col">
-                    <mat-form-field class="full-width">
-                        <mat-select placeholder="Country" formControlName="country">
-                            <mat-option value="South Africa">South Africa</mat-option>
-                        </mat-select>
-                        <!-- <mat-error *ngIf="form.controls['companyName'].hasError('required')">
-                Company name is <strong>required</strong>
-              </mat-error> -->
-                    </mat-form-field>
-                </div>
-                <div class="col">
-                    <mat-form-field class="full-width">
-                        <input matInput placeholder="Address Note" formControlName="address_note">
-                    </mat-form-field>
-                </div>
-            </div>
+              </mat-error>
+            </mat-form-field>
+          </div>
+
+          <div class="form-row two-columns">
+            <mat-form-field appearance="outline" class="half-width">
+              <mat-label>Trading Name</mat-label>
+              <input matInput formControlName="trading_name" placeholder="Enter trading name">
+              <mat-icon matSuffix>storefront</mat-icon>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="half-width">
+              <mat-label>Industry</mat-label>
+              <mat-select formControlName="industry">
+                <mat-option *ngFor="let option of business_industries" [value]="option">{{option}}</mat-option>
+              </mat-select>
+              <mat-icon matSuffix>category</mat-icon>
+              <mat-error *ngIf="form.controls['industry'].hasError('required')">
+                Industry is <strong>required</strong>
+              </mat-error>
+            </mat-form-field>
+          </div>
+
+          <div class="form-row two-columns">
+            <mat-form-field appearance="outline" class="half-width">
+              <mat-label>Programme Interested In</mat-label>
+              <mat-select formControlName="programme">
+                <mat-option value="SBSA">SBSA</mat-option>
+                <mat-option value="Financial Litaracy">Financial Literacy</mat-option>
+                <mat-option value="Risk Management">Risk Management</mat-option>
+                <mat-option value="Financial Litaracy & Risk Management">Financial Literacy & Risk Management</mat-option>
+              </mat-select>
+              <mat-icon matSuffix>school</mat-icon>
+              <mat-error *ngIf="form.controls['programme'].hasError('required')">
+                Programme is <strong>required</strong>
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="half-width">
+              <mat-label>Business Type</mat-label>
+              <mat-select formControlName="business_type">
+                <mat-option *ngFor="let type of businessTypeOptions" [value]="type">{{type}}</mat-option>
+              </mat-select>
+              <mat-icon matSuffix>domain</mat-icon>
+            </mat-form-field>
+          </div>
+
+          <div class="form-row">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Where did you hear about us?</mat-label>
+              <input matInput formControlName="contact_origin" placeholder="Enter contact origin">
+              <mat-icon matSuffix>contact_support</mat-icon>
+            </mat-form-field>
+          </div>
         </div>
-        <div class="row">
-            <div class="col">
-                <mat-form-field class="full-width">
-                    <textarea matInput placeholder="Alternative Address"></textarea>
-                    <!-- <mat-error *ngIf="form.controls['companyName'].hasError('required')">
-            Company name is <strong>required</strong>
-          </mat-error> -->
-                </mat-form-field>
-            </div>
+
+        <!-- Registration & Legal Information -->
+        <div class="form-section">
+          <h3 class="section-title">
+            <mat-icon>how_to_reg</mat-icon>
+            Registration & Legal
+          </h3>
+
+          <div class="form-row two-columns">
+            <mat-form-field appearance="outline" class="half-width">
+              <mat-label>Registration Number</mat-label>
+              <input matInput formControlName="registration_number" placeholder="Enter registration number">
+              <mat-icon matSuffix>assignment</mat-icon>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="half-width">
+              <mat-label>Tax Number</mat-label>
+              <input matInput formControlName="tax_number" placeholder="Enter tax number">
+              <mat-icon matSuffix>receipt_long</mat-icon>
+            </mat-form-field>
+          </div>
+
+          <div class="form-row two-columns">
+            <mat-form-field appearance="outline" class="half-width">
+              <mat-label>VAT Number</mat-label>
+              <input matInput formControlName="vat_number" placeholder="Enter VAT number">
+              <mat-icon matSuffix>account_balance</mat-icon>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="half-width">
+              <mat-label>Vendor Number</mat-label>
+              <input matInput formControlName="vendor_number" placeholder="Enter vendor number with host company">
+              <mat-icon matSuffix>badge</mat-icon>
+            </mat-form-field>
+          </div>
+
+          <div class="form-row two-columns">
+            <mat-form-field appearance="outline" class="half-width">
+              <mat-label>Is Business Registered?</mat-label>
+              <mat-select formControlName="registered">
+                <mat-option value="Yes">Yes</mat-option>
+                <mat-option value="No">No</mat-option>
+              </mat-select>
+              <mat-icon matSuffix>verified</mat-icon>
+              <mat-error *ngIf="form.controls['registered'].hasError('required')">
+                Registration status is <strong>required</strong>
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="half-width">
+              <mat-label>BBBEE Level</mat-label>
+              <input matInput formControlName="bbbee" placeholder="Enter BBBEE level">
+              <mat-icon matSuffix>stars</mat-icon>
+              <mat-error *ngIf="form.controls['bbbee'].hasError('required')">
+                BBBEE level is <strong>required</strong>
+              </mat-error>
+            </mat-form-field>
+          </div>
         </div>
-        <div class="row">
-            <div class="col">
-                <mat-form-field class="full-width">
-                    <input matInput placeholder="Postal Address" formControlName="postal_address">
-                    <mat-hint align="end">If not the same as physical address</mat-hint>
-                </mat-form-field>
-            </div>
+
+        <!-- Address Information -->
+        <div class="form-section" [formGroup]="address">
+          <h3 class="section-title">
+            <mat-icon>location_on</mat-icon>
+            Physical Address
+          </h3>
+
+          <div class="form-row two-columns">
+            <mat-form-field appearance="outline" class="half-width">
+              <mat-label>Address Line 1</mat-label>
+              <input matInput formControlName="street_address_1" placeholder="Enter address line 1">
+              <mat-icon matSuffix>home</mat-icon>
+              <mat-error *ngIf="address.controls['street_address_1'].hasError('required')">
+                Address is <strong>required</strong>
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="half-width">
+              <mat-label>Address Line 2</mat-label>
+              <input matInput formControlName="street_address_2" placeholder="Enter address line 2 (optional)">
+              <mat-icon matSuffix>home</mat-icon>
+            </mat-form-field>
+          </div>
+
+          <div class="form-row two-columns">
+            <mat-form-field appearance="outline" class="half-width">
+              <mat-label>City</mat-label>
+              <input matInput formControlName="city" placeholder="Enter city">
+              <mat-icon matSuffix>location_city</mat-icon>
+              <mat-error *ngIf="address.controls['city'].hasError('required')">
+                City is <strong>required</strong>
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="half-width">
+              <mat-label>Location Type</mat-label>
+              <mat-select formControlName="location_type">
+                <mat-option value="City">City</mat-option>
+                <mat-option value="Rural">Rural</mat-option>
+                <mat-option value="Suburb">Suburb</mat-option>
+                <mat-option value="Township">Township</mat-option>
+              </mat-select>
+              <mat-icon matSuffix>place</mat-icon>
+              <mat-error *ngIf="address.controls['location_type'].hasError('required')">
+                Location type is <strong>required</strong>
+              </mat-error>
+            </mat-form-field>
+          </div>
+
+          <div class="form-row two-columns">
+            <mat-form-field appearance="outline" class="half-width">
+              <mat-label>Province</mat-label>
+              <mat-select formControlName="province">
+                <mat-option value="Eastern Cape">Eastern Cape</mat-option>
+                <mat-option value="Free State">Free State</mat-option>
+                <mat-option value="Gauteng">Gauteng</mat-option>
+                <mat-option value="Kwazulu Natal">Kwazulu Natal</mat-option>
+                <mat-option value="Limpopo">Limpopo</mat-option>
+                <mat-option value="Mpumalanga">Mpumalanga</mat-option>
+                <mat-option value="North West">North West</mat-option>
+                <mat-option value="Northern Cape">Northern Cape</mat-option>
+                <mat-option value="Western Cape">Western Cape</mat-option>
+              </mat-select>
+              <mat-icon matSuffix>map</mat-icon>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="half-width">
+              <mat-label>Postal Code</mat-label>
+              <input matInput formControlName="code" placeholder="Enter postal code">
+              <mat-icon matSuffix>markunread_mailbox</mat-icon>
+            </mat-form-field>
+          </div>
+
+          <div class="form-row two-columns">
+            <mat-form-field appearance="outline" class="half-width">
+              <mat-label>Country</mat-label>
+              <mat-select formControlName="country">
+                <mat-option value="South Africa">South Africa</mat-option>
+              </mat-select>
+              <mat-icon matSuffix>flag</mat-icon>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="half-width">
+              <mat-label>Address Note</mat-label>
+              <input matInput formControlName="address_note" placeholder="Enter additional address notes">
+              <mat-icon matSuffix>note</mat-icon>
+            </mat-form-field>
+          </div>
+
+          <div class="form-row two-columns">
+            <mat-form-field appearance="outline" class="half-width">
+              <mat-label>Postal Address</mat-label>
+              <textarea matInput formControlName="postal_address" placeholder="Enter postal address if different from physical" rows="2"></textarea>
+              <mat-icon matSuffix>mail_outline</mat-icon>
+              <mat-hint>If different from physical address</mat-hint>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="half-width">
+              <mat-label>Web Address</mat-label>
+              <input matInput formControlName="web_address" placeholder="Enter website URL">
+              <mat-icon matSuffix>language</mat-icon>
+            </mat-form-field>
+          </div>
         </div>
-        <div class="row">
-            <div class="col">
-                <mat-form-field class="full-width">
-                    <input matInput placeholder="Web Address" formControlName="web_address">
-                </mat-form-field>
-            </div>
-        </div>
-        <div class="contact-header">
-            <h3>Contact Person</h3>
-            <button type="button" mat-icon-button aria-label="Example icon button with a home icon"
-                matTooltip="Add Contact Person" (click)="addContact()">
-                <mat-icon>add</mat-icon>
+        <!-- Contact Persons -->
+        <div class="form-section">
+          <div class="section-header">
+            <h3 class="section-title">
+              <mat-icon>contacts</mat-icon>
+              Contact Persons
+            </h3>
+            <button type="button" mat-raised-button color="primary" (click)="addContact()" class="add-contact-btn">
+              <mat-icon>person_add</mat-icon>
+              Add Contact Person
             </button>
-        </div>
-        <div formArrayName="contacts">
-            <div class="contact" *ngFor="let contact of contacts.controls; let i = index;" [formGroupName]="i">
-                <button type="button" style="display: block; float: right;" mat-icon-button
-                    aria-label="Example icon button with a home icon" matTooltip="remove Contact Person"
-                    (click)="removeContact(i)">
-                    <mat-icon>close</mat-icon>
+          </div>
+
+          <div formArrayName="contacts">
+            <div class="contact-card" *ngFor="let contact of contacts.controls; let i = index;" [formGroupName]="i">
+              <div class="contact-header">
+                <h4 class="contact-title">Contact Person {{i + 1}}</h4>
+                <button type="button" mat-icon-button color="warn" 
+                        matTooltip="Remove Contact Person" 
+                        (click)="removeContact(i)" 
+                        *ngIf="contacts.controls.length > 1">
+                  <mat-icon>person_remove</mat-icon>
                 </button>
-                <div class="row">
-                    <div class="col">
-                        <mat-form-field class="full-width">
-                            <input matInput [disabled]="true" placeholder="Full names" formControlName="full_names">
-                            <mat-error *ngIf="contacts.controls[i].get('full_names')?.hasError('required')">
-                                contact person names is <strong>required</strong>
-                            </mat-error>
-                        </mat-form-field>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col">
-                        <mat-form-field class="full-width">
-                            <input matInput placeholder="Position" formControlName="position">
-                        </mat-form-field>
-                    </div>
-                    <div class="col">
-                        <mat-form-field class="full-width">
-                            <input matInput placeholder="Tel Number" formControlName="tell_number">
-                        </mat-form-field>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col">
-                        <mat-form-field class="full-width">
-                            <input matInput placeholder="Cell Number" formControlName="cell_number">
-                            <mat-error *ngIf="contacts.controls[i].get('cell_number')?.hasError('required')">
-                                cell number is <strong>required</strong>
-                            </mat-error>
-                        </mat-form-field>
-                    </div>
-                    <div class="col">
-                        <mat-form-field class="full-width">
-                            <input matInput placeholder="Email" formControlName="email">
-                            <mat-error *ngIf="contacts.controls[i].get('email')?.hasError('required')">
-                                email is <strong>required</strong>
-                            </mat-error>
-                        </mat-form-field>
-                    </div>
-                </div>
+              </div>
+
+              <div class="form-row">
+                <mat-form-field appearance="outline" class="full-width">
+                  <mat-label>Full Names</mat-label>
+                  <input matInput formControlName="full_names" placeholder="Enter full names">
+                  <mat-icon matSuffix>person</mat-icon>
+                  <mat-error *ngIf="contacts.controls[i].get('full_names')?.hasError('required')">
+                    Contact person names is <strong>required</strong>
+                  </mat-error>
+                </mat-form-field>
+              </div>
+
+              <div class="form-row two-columns">
+                <mat-form-field appearance="outline" class="half-width">
+                  <mat-label>Position</mat-label>
+                  <input matInput formControlName="position" placeholder="Enter position/title">
+                  <mat-icon matSuffix>work</mat-icon>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="half-width">
+                  <mat-label>Tel Number</mat-label>
+                  <input matInput formControlName="tell_number" placeholder="Enter telephone number">
+                  <mat-icon matSuffix>phone</mat-icon>
+                </mat-form-field>
+              </div>
+
+              <div class="form-row two-columns">
+                <mat-form-field appearance="outline" class="half-width">
+                  <mat-label>Cell Number</mat-label>
+                  <input matInput formControlName="cell_number" placeholder="Enter cell number">
+                  <mat-icon matSuffix>smartphone</mat-icon>
+                  <mat-error *ngIf="contacts.controls[i].get('cell_number')?.hasError('required')">
+                    Cell number is <strong>required</strong>
+                  </mat-error>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="half-width">
+                  <mat-label>Email</mat-label>
+                  <input matInput formControlName="email" placeholder="Enter email address" type="email">
+                  <mat-icon matSuffix>email</mat-icon>
+                  <mat-error *ngIf="contacts.controls[i].get('email')?.hasError('required')">
+                    Email is <strong>required</strong>
+                  </mat-error>
+                </mat-form-field>
+              </div>
             </div>
+          </div>
         </div>
 
-        <h3>Business Operation</h3>
-        <div class="row">
-            <div class="col">
-                <mat-form-field class="full-width">
-                    <textarea matInput placeholder="Core Business" formControlName="description"></textarea>
-                </mat-form-field>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col">
-                <mat-form-field class="full-width">
-                    <textarea matInput placeholder="Products and Services" formControlName="products"></textarea>
-                    <!-- <mat-error *ngIf="form.controls['companyName'].hasError('required')">
-            Company name is <strong>required</strong>
-          </mat-error> -->
-                </mat-form-field>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col">
-                <mat-form-field class="full-width">
-                    <input matInput placeholder="Business Duration" formControlName="business_years">
-                </mat-form-field>
-            </div>
-        </div>
-        <h3>Business Size</h3>
-        <div formArrayName="annual_turnovers">
-            <div class="turnover-range" *ngFor="let annual_turnover of annual_turnovers.controls; let i = index;"
-                [formGroupName]="i">
-                <div class="row">
-                    <div class="col">
-                        <mat-form-field class="full-width">
-                            <input matInput placeholder="Annual Turnover" formControlName="turnover">
-                        </mat-form-field>
-                    </div>
-                    <div class="col">
-                        <mat-form-field class="full-width">
-                            <input matInput placeholder="Year" formControlName="year">
-                        </mat-form-field>
-                    </div>
-                </div>
-                <div class="action-buttons">
-                    <button type="button" mat-mini-fab [color]="i == 0 ? 'primary' : 'warn'"
-                        aria-label="Example icon button with a home icon"
-                        [matTooltip]="i == 0 ? 'Add Annual Turnover' : 'Remove Annual Turnover'"
-                        (click)="i == 0 ? addAnnualTurnover() : removeAnnualTurnover(i)">
-                        <mat-icon>{{ i === 0 ? 'add' : 'close' }}</mat-icon>
-                    </button>
-                </div>
-            </div>
-        </div>
-        <div formArrayName="emp_stats">
-            <div class="turnover-range" *ngFor="let stats of emp_stats.controls; let i = index;" [formGroupName]="i">
-                <div class="row">
-                    <div class="col">
-                        <mat-form-field class="full-width">
-                            <input matInput placeholder="Number of full time employees" formControlName="full_time">
-                        </mat-form-field>
-                    </div>
-                    <div class="col">
-                        <mat-form-field class="full-width">
-                            <input matInput placeholder="Number of part time employees" formControlName="part_time">
-                        </mat-form-field>
-                    </div>
-                    <div class="col">
-                        <mat-form-field class="full-width">
-                            <input matInput placeholder="Number of casual employees" formControlName="casual">
-                        </mat-form-field>
-                    </div>
-                    <div class="col">
-                        <mat-form-field class="full-width">
-                            <mat-label>Date</mat-label>
-                            <input matInput [matDatepicker]="picker1" formControlName="updated_date">
-                            <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
-                            <mat-datepicker #picker1></mat-datepicker>
-                        </mat-form-field>
-                    </div>
-                </div>
-                <div class="action-buttons">
-                    <button type="button" mat-mini-fab [color]="i == 0 ? 'primary' : 'warn'"
-                        aria-label="Example icon button with a home icon"
-                        [matTooltip]="i == 0 ? 'Add Employee Statistic' : 'Remove Employee Statistic'"
-                        (click)="i == 0 ? addEmpStats() : removeEmpStats(i)">
-                        <mat-icon>{{ i === 0 ? 'add' : 'close' }}</mat-icon>
-                    </button>
-                </div>
-            </div>
+        <!-- Business Operations -->
+        <div class="form-section">
+          <h3 class="section-title">
+            <mat-icon>business_center</mat-icon>
+            Business Operations
+          </h3>
+
+          <div class="form-row two-columns">
+            <mat-form-field appearance="outline" class="half-width">
+              <mat-label>Core Business Description</mat-label>
+              <textarea matInput formControlName="description" placeholder="Describe your core business activities" rows="4"></textarea>
+              <mat-icon matSuffix>description</mat-icon>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="half-width">
+              <mat-label>Products and Services</mat-label>
+              <textarea matInput formControlName="products" placeholder="List your products and services" rows="4"></textarea>
+              <mat-icon matSuffix>inventory_2</mat-icon>
+            </mat-form-field>
+          </div>
+
+          <div class="form-row">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Business Duration (Years)</mat-label>
+              <input matInput formControlName="business_years" placeholder="How many years in business" type="number">
+              <mat-icon matSuffix>schedule</mat-icon>
+            </mat-form-field>
+          </div>
         </div>
 
-        <div class="row">
-            <div class="col">
-                <mat-form-field class="full-width">
-                    <input matInput placeholder="BBBEE Level" formControlName="bbbee">
-                    <mat-error *ngIf="form.controls['bbbee'].hasError('required')">
-                        BBBEE level is <strong>required</strong>
-                    </mat-error>
-                </mat-form-field>
+        <!-- Business Size & Financial Information -->
+        <div class="form-section">
+          <h3 class="section-title">
+            <mat-icon>trending_up</mat-icon>
+            Business Size & Financial Information
+          </h3>
+
+          <div class="subsection">
+            <div class="section-header">
+              <h3 class="section-title">
+                <mat-icon>trending_up</mat-icon>
+                Annual Turnover Records
+              </h3>
+              <button type="button" mat-raised-button color="primary" (click)="addAnnualTurnover()" class="add-contact-btn">
+                <mat-icon>attach_money</mat-icon>
+                Add Annual Turnover
+              </button>
             </div>
-        </div>
-        <!-- <div class="row">
-            <div class="col">
-                <mat-form-field class="full-width">
-                    <input matInput placeholder="Number of casual employees" formControlName="casual">
-                </mat-form-field>
-            </div>
-        </div> -->
-        <h3>Business Owner</h3>
-        <div class="row">
-            <div class="col">
-                <div>
-                    <label>Black owned: </label>
-                    <mat-radio-group formControlName="black_owned">
-                        <mat-radio-button value="Yes">Yes</mat-radio-button>
-                        <mat-radio-button value="No">No</mat-radio-button>
-                    </mat-radio-group>
-                    <!-- <mat-error *ngIf="form.controls['black_owned'].hasError('required')">
-            Company name is <strong>required</strong>
-          </mat-error> -->
+
+            <div formArrayName="annual_turnovers">
+              <mat-card *ngIf="annual_turnovers.controls.length === 0" class="empty-state-card">
+                <div class="empty-state">
+                  <mat-icon class="empty-state-icon">trending_up</mat-icon>
+                  <p class="empty-state-text">No annual turnover records added yet.</p>
+                  <p class="empty-state-hint">Click the button above to add your first turnover record</p>
                 </div>
-            </div>
-            <div class="col">
-                <div>
-                    <label>Black woman owned: </label>
-                    <mat-radio-group formControlName="woman_owned">
-                        <mat-radio-button value="Yes">Yes</mat-radio-button>
-                        <mat-radio-button value="No">No</mat-radio-button>
-                    </mat-radio-group>
-                    <!-- <mat-error *ngIf="form.controls['companyName'].hasError('required')">
-            Company name is <strong>required</strong>
-          </mat-error> -->
+              </mat-card>
+
+              <div class="dynamic-form-item" *ngFor="let annual_turnover of annual_turnovers.controls; let i = index;" [formGroupName]="i">
+                <div class="form-row two-columns">
+                  <mat-form-field appearance="outline" class="half-width">
+                    <mat-label>Annual Turnover</mat-label>
+                    <input matInput formControlName="turnover" placeholder="Enter annual turnover amount" type="number">
+                    <mat-icon matSuffix>attach_money</mat-icon>
+                  </mat-form-field>
+
+                  <mat-form-field appearance="outline" class="half-width">
+                    <mat-label>Year</mat-label>
+                    <input matInput formControlName="year" placeholder="Enter year" type="number">
+                    <mat-icon matSuffix>event</mat-icon>
+                  </mat-form-field>
                 </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col">
-                <div>
-                    <label>Youth owned: </label>
-                    <mat-radio-group formControlName="youth_owned">
-                        <mat-radio-button value="Yes">Yes</mat-radio-button>
-                        <mat-radio-button value="No">No</mat-radio-button>
-                    </mat-radio-group>
-                    <!-- <mat-error *ngIf="form.controls['companyName'].hasError('required')">
-            Company name is <strong>required</strong>
-          </mat-error> -->
+
+                <div class="dynamic-actions">
+                  <button type="button" mat-icon-button color="warn" 
+                          matTooltip="Remove Annual Turnover" 
+                          (click)="removeAnnualTurnover(i)">
+                    <mat-icon>remove</mat-icon>
+                  </button>
                 </div>
+              </div>
             </div>
-            <div class="col">
-                <div>
-                    <label>Disabled owned: </label>
-                    <mat-radio-group formControlName="disabled_owned">
-                        <mat-radio-button value="Yes">Yes</mat-radio-button>
-                        <mat-radio-button value="No">No</mat-radio-button>
-                    </mat-radio-group>
-                    <!-- <mat-error *ngIf="form.controls['companyName'].hasError('required')">
-            Company name is <strong>required</strong>
-          </mat-error> -->
+          </div>
+          <div class="subsection">
+            <div class="section-header">
+              <h3 class="section-title">
+                <mat-icon>people</mat-icon>
+                Employee Statistics
+              </h3>
+              <button type="button" mat-raised-button color="primary" (click)="addEmpStats()" class="add-contact-btn">
+                <mat-icon>group_add</mat-icon>
+                Add Employee Statistic
+              </button>
+            </div>
+
+            <div formArrayName="emp_stats">
+              <mat-card *ngIf="emp_stats.controls.length === 0" class="empty-state-card">
+                <div class="empty-state">
+                  <mat-icon class="empty-state-icon">people</mat-icon>
+                  <p class="empty-state-text">No employee statistics records added yet.</p>
+                  <p class="empty-state-hint">Click the button above to add your first employee statistic record</p>
                 </div>
+              </mat-card>
+
+              <div class="dynamic-form-item" *ngFor="let stats of emp_stats.controls; let i = index;" [formGroupName]="i">
+                <div class="form-row four-columns">
+                  <mat-form-field appearance="outline" class="quarter-width">
+                    <mat-label>Full-time Employees</mat-label>
+                    <input matInput formControlName="full_time" placeholder="Number" type="number">
+                    <mat-icon matSuffix>people</mat-icon>
+                  </mat-form-field>
+
+                  <mat-form-field appearance="outline" class="quarter-width">
+                    <mat-label>Part-time Employees</mat-label>
+                    <input matInput formControlName="part_time" placeholder="Number" type="number">
+                    <mat-icon matSuffix>people_outline</mat-icon>
+                  </mat-form-field>
+
+                  <mat-form-field appearance="outline" class="quarter-width">
+                    <mat-label>Casual Employees</mat-label>
+                    <input matInput formControlName="casual" placeholder="Number" type="number">
+                    <mat-icon matSuffix>group</mat-icon>
+                  </mat-form-field>
+
+                  <mat-form-field appearance="outline" class="quarter-width">
+                    <mat-label>Date Recorded</mat-label>
+                    <input matInput [matDatepicker]="picker" formControlName="updated_date">
+                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                    <mat-datepicker #picker></mat-datepicker>
+                  </mat-form-field>
+                </div>
+
+                <div class="dynamic-actions">
+                  <button type="button" mat-icon-button color="warn" 
+                          matTooltip="Remove Employee Statistic" 
+                          (click)="removeEmpStats(i)">
+                    <mat-icon>remove</mat-icon>
+                  </button>
+                </div>
+              </div>
             </div>
+          </div>
         </div>
-        <h3>Banking Infomation</h3>
-        <div class="row">
-            <div class="col">
-                <mat-form-field class="full-width">
-                    <mat-select placeholder="Do you have Standard Bank account?" formControlName="is_primary_bank">
-                        <mat-option value="Y">Yes</mat-option>
-                        <mat-option value="N">No</mat-option>
-                    </mat-select>
-                </mat-form-field>
+
+        <!-- Business Ownership -->
+        <div class="form-section">
+          <h3 class="section-title">
+            <mat-icon>diversity_1</mat-icon>
+            Business Ownership
+          </h3>
+
+          <div class="form-row two-columns">
+            <div class="ownership-field half-width">
+              <h4 class="ownership-label">Black Owned</h4>
+              <mat-radio-group formControlName="black_owned" class="ownership-radio">
+                <mat-radio-button value="Yes">Yes</mat-radio-button>
+                <mat-radio-button value="No">No</mat-radio-button>
+              </mat-radio-group>
             </div>
-            <div class="col">
-                <mat-form-field class="full-width">
-                    <mat-select placeholder="What is your primary bank?" formControlName="primary_bank_name">
-                        <mat-option *ngFor="let option of banking_options"
-                            value="{{option.id}}">{{option.name}}</mat-option>
-                    </mat-select>
-                </mat-form-field>
+
+            <div class="ownership-field half-width">
+              <h4 class="ownership-label">Black Woman Owned</h4>
+              <mat-radio-group formControlName="woman_owned" class="ownership-radio">
+                <mat-radio-button value="Yes">Yes</mat-radio-button>
+                <mat-radio-button value="No">No</mat-radio-button>
+              </mat-radio-group>
             </div>
+          </div>
+
+          <div class="form-row two-columns">
+            <div class="ownership-field half-width">
+              <h4 class="ownership-label">Youth Owned</h4>
+              <mat-radio-group formControlName="youth_owned" class="ownership-radio">
+                <mat-radio-button value="Yes">Yes</mat-radio-button>
+                <mat-radio-button value="No">No</mat-radio-button>
+              </mat-radio-group>
+            </div>
+
+            <div class="ownership-field half-width">
+              <h4 class="ownership-label">Disabled Owned</h4>
+              <mat-radio-group formControlName="disabled_owned" class="ownership-radio">
+                <mat-radio-button value="Yes">Yes</mat-radio-button>
+                <mat-radio-button value="No">No</mat-radio-button>
+              </mat-radio-group>
+            </div>
+          </div>
         </div>
-    </mat-dialog-content>
-    <mat-dialog-actions align="end">
-        <button mat-button mat-dialog-close>Cancel</button>
-        <button type="submit" mat-button [disabled]="!form.valid">Submit</button>
-    </mat-dialog-actions>
-</form>
+
+        <!-- Banking Information -->
+        <div class="form-section">
+          <h3 class="section-title">
+            <mat-icon>account_balance</mat-icon>
+            Banking Information
+          </h3>
+
+          <div class="form-row two-columns">
+            <mat-form-field appearance="outline" class="half-width">
+              <mat-label>Do you have Standard Bank account?</mat-label>
+              <mat-select formControlName="is_primary_bank">
+                <mat-option value="Y">Yes</mat-option>
+                <mat-option value="N">No</mat-option>
+              </mat-select>
+              <mat-icon matSuffix>account_balance</mat-icon>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="half-width">
+              <mat-label>Primary Bank</mat-label>
+              <mat-select formControlName="primary_bank_name">
+                <mat-option *ngFor="let option of banking_options" [value]="option">{{option}}</mat-option>
+              </mat-select>
+              <mat-icon matSuffix>account_balance_wallet</mat-icon>
+            </mat-form-field>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <div class="action-button-set">
+          <button type="button" mat-stroked-button (click)="onCancel()" class="cancel-btn" [disabled]="isSubmitting">
+            <mat-icon>close</mat-icon>
+            Cancel
+          </button>
+          <button type="button" mat-stroked-button (click)="onReset()" class="reset-btn" [disabled]="isSubmitting">
+            <mat-icon>refresh</mat-icon>
+            Reset
+          </button>
+          <button type="submit" mat-raised-button [disabled]="!form.valid || isSubmitting" class="submit-btn">
+            <mat-spinner *ngIf="isSubmitting" diameter="20" style="margin-right: 8px;"></mat-spinner>
+            <mat-icon *ngIf="!isSubmitting">{{isEditMode ? 'update' : 'save'}}</mat-icon>
+            {{isSubmitting ? 'Saving...' : (isEditMode ? 'Update' : 'Save')}} Company
+          </button>
+        </div>
+      </div>
+    </form>
+  </mat-card>
+</div>

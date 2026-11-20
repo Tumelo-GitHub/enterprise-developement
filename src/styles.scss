@@ -58,6 +58,10 @@ $devWizard-theme-dark: mat.define-dark-theme((
 
 /* You can add global styles to this file, and also import other style files */
 
+// Import shared component styles
+@import 'app/shared/styles/shared-components';
+@import 'app/shared/styles/auth-shared';
+
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
@@ -88,8 +92,29 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   width: 50vw;
 }
 
-.tab-content {
-  margin: 30px;
+// Dialog opened as a full-height panel docked to the right (e.g. timesheet "Log time")
+.side-panel-dialog {
+  animation: side-panel-slide-in 0.22s cubic-bezier(0.2, 0, 0, 1);
+
+  .mat-dialog-container {
+    padding: 0;
+    border-radius: 0;
+    overflow: hidden;
+    box-shadow: -8px 0 24px rgba(15, 23, 42, 0.15);
+  }
+}
+
+.side-panel-backdrop {
+  background: rgba(15, 23, 42, 0.25);
+}
+
+@keyframes side-panel-slide-in {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .side-panel-dialog { animation: none; }
 }
 
 .row {
@@ -123,23 +148,15 @@ th.mat-header-cell, td.mat-cell, td.mat-footer-cell {
   font-size: 14px !important;
 }
 
-.email-link {
+.email-link,
+.website-link {
+  color: #667eea;
   text-decoration: none;
-  color: inherit;
-}
-
-.email-link:hover {
-  text-decoration: underline;
-}
-
-.selectable-row-table{
-  tr.mat-row {
-    cursor: pointer;
-  }
-
-  tr.mat-row:hover,
-  .selected-row {
-    background: whitesmoke;
+  transition: all 0.2s ease;
+  
+  &:hover {
+    text-decoration: underline;
+    color: #5568d3;
   }
 }
 

@@ -1,12 +1,13 @@
-import { Component, Input, OnInit, SimpleChanges, ViewChild } from '@angular/core';
-import { AppointedBeneficiaryFormComponent } from './appointed-beneficiary-form/appointed-beneficiary-form.component';
+import { Component, Input, OnInit, SimpleChanges, ViewChild, Output, EventEmitter } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
+import { Router } from '@angular/router';
 import { IProgramme } from 'src/app/shared';
 import { ProgrammeService } from '../../services/programme.service';
 import { ToastService } from 'src/app/shared/services/toast.service';
+import { NotificationUtil } from 'src/app/shared/utils/notificationUtil';
 
 @Component({
   selector: 'app-appointed-beneficiary',
@@ -15,10 +16,14 @@ import { ToastService } from 'src/app/shared/services/toast.service';
 })
 export class AppointedBeneficiaryComponent implements OnInit {
   @Input() programme: IProgramme | undefined;
+  @Output() showForm = new EventEmitter<any>();
+  @Output() editForm = new EventEmitter<any>();
+  
   displayedColumns: string[] = ['smme_name', 'status_name', 'appointment_date', 'documents', 'action'];
   columnsToDisplay: string[] = this.displayedColumns;
   dataSource!: MatTableDataSource<any>;
   records: any[] = [];
+  isLoading = false;
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
@@ -26,28 +31,47 @@ export class AppointedBeneficiaryComponent implements OnInit {
   constructor(
     public dialog: MatDialog,
     private service: ProgrammeService,
-    private toast: ToastService
+    private toast: ToastService,
+    private notificationUtil: NotificationUtil,
+    private router: Router
   ) { }
 
   ngOnInit(): void {
+    // Load data if programme is already available (from route resolver or parent)
+    if (this.programme) {
+      this.getAppointedBeneficiaries(this.programme);
+    }
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    // changes.prop contains the old and the new value...
-    this.getAppointedBeneficiaries(changes['programme'].currentValue);
+    // Only reload if programme actually changes (not just reference)
+    if (changes['programme'] && changes['programme'].currentValue && 
+        changes['programme'].currentValue !== changes['programme'].previousValue) {
+      const currentId = changes['programme'].currentValue?.id;
+      const previousId = changes['programme'].previousValue?.id;
+      
+      // Only reload if the programme ID actually changed
+      if (currentId !== previousId) {
+        this.getAppointedBeneficiaries(changes['programme'].currentValue);
+      }
+    }
   }
 
   getAppointedBeneficiaries(programme: IProgramme) {
     if (programme && programme.id) {
+      this.isLoading = true;
       this.service.getAppointedBeneficiaries(programme.id).subscribe({
         next: data => {
-          this.records = data.data;
+          this.records = data.data || [];
           this.dataSource = new MatTableDataSource(this.records);
           this.dataSource.sort = this.sort;
           this.dataSource.paginator = this.paginator;
+          this.isLoading = false;
         },
         error: err => {
-          console.error(err);
+          console.error('Error loading beneficiaries:', err);
+          this.notificationUtil.showError('Failed to load beneficiaries');
+          this.isLoading = false;
         }
       })
     }
@@ -62,26 +86,44 @@ export class AppointedBeneficiaryComponent implements OnInit {
     }
   }
 
-  openDialog(data: any = {}) {
-    var selectedIndex = this.records.indexOf(data);
-    data['programme_id'] = this.programme?.id;
+  getStatusClass(status: any): string {
+    switch (status?.toLowerCase()) {
+      case 'active':
+      case 'appointed':
+      case '1':
+        return 'active';
+      case 'inactive':
+      case 'terminated':
+      case '0':
+        return 'inactive';
+      case 'pending':
+        return 'pending';
+      default:
+        return 'unknown';
+    }
+  }
 
-    const dialogRef = this.dialog.open(AppointedBeneficiaryFormComponent, {
-      data: data,
-      panelClass: 'form-dialog'
-    });
-    dialogRef.afterClosed().subscribe((result: any[]) => {
-      if (result) {
-        if (selectedIndex >= 0) {
-          this.records[selectedIndex] = result[0];
-        } else {
-          result.forEach(element => {
-            this.records.push(element);
-          });
-        }
-        this.dataSource = new MatTableDataSource(this.records); 
-      }
-    });
+  formatDate(dateString: string): string {
+    if (!dateString) return 'N/A';
+    try {
+      return new Date(dateString).toLocaleDateString();
+    } catch {
+      return dateString;
+    }
+  }
+
+  openAddBeneficiaryForm() {
+    this.showForm.emit({ programme_id: this.programme?.id });
+  }
+
+  editBeneficiary(beneficiary: any) {
+    // Pass the full beneficiary data through router state
+    this.editForm.emit({ beneficiary, programme_id: this.programme?.id, appointmentData: beneficiary });
+  }
+
+  viewBeneficiaryDetails(beneficiary: any) {
+    // Navigate to the beneficiary details page in administration/beneficiaries using Angular Router
+    this.router.navigate(['/administration/beneficiaries', beneficiary.smme_id]);
   }
 
   deleteAppointment(data: any) {

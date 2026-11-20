@@ -1,0 +1,184 @@
+<div class="form-container">
+  <mat-card class="form-card">
+    <mat-card-header class="form-header">
+      <mat-card-title class="form-title">
+        {{ isEditMode ? 'Edit Mentorship Event' : 'Add New Mentorship Event' }}
+      </mat-card-title>
+      <mat-card-subtitle class="form-subtitle">
+        {{ isEditMode ? 'Update the mentorship event details below' : 'Fill in the details to schedule a new mentorship event' }}
+      </mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content class="form-content">
+      <form [formGroup]="mentorshipEventForm" (ngSubmit)="onSubmit()" class="mentorship-event-form">
+        
+        <!-- Programme Selection -->
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Programme</mat-label>
+            <mat-select formControlName="programme_id" required>
+              <mat-option value="" disabled>Select a programme</mat-option>
+              <mat-option *ngFor="let programme of programmes" [value]="programme.id">
+                {{ programme.programme_name }}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="programme_id?.invalid && programme_id?.touched">
+              {{ getErrorMessage('programme_id') }}
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <!-- Mentor Selection -->
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Mentor</mat-label>
+            <mat-select formControlName="mentor_id" required>
+              <mat-option value="" disabled>Select a mentor</mat-option>
+              <mat-option *ngFor="let mentor of mentors" [value]="mentor.id">
+                {{ mentor.name }} {{ mentor.surname }}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="mentor_id?.invalid && mentor_id?.touched">
+              {{ getErrorMessage('mentor_id') }}
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <!-- Event Address -->
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Event Address</mat-label>
+            <textarea 
+              matInput 
+              formControlName="address"
+              placeholder="Enter the physical address where the mentorship event will take place"
+              rows="3"
+              required>
+            </textarea>
+            <mat-error *ngIf="address?.invalid && address?.touched">
+              {{ getErrorMessage('address') }}
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <!-- Date and Time -->
+        <div class="form-row two-columns">
+          <mat-form-field appearance="outline" class="half-width">
+            <mat-label>Event Date</mat-label>
+            <input 
+              matInput 
+              [matDatepicker]="picker"
+              formControlName="event_date"
+              placeholder="MM/DD/YYYY"
+              required>
+            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+            <mat-error *ngIf="event_date?.invalid && event_date?.touched">
+              {{ getErrorMessage('event_date') }}
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="half-width">
+            <mat-label>Event Time</mat-label>
+            <input 
+              matInput 
+              type="time"
+              formControlName="event_time"
+              required>
+            <mat-error *ngIf="event_time?.invalid && event_time?.touched">
+              {{ getErrorMessage('event_time') }}
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <!-- Status -->
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Event Status</mat-label>
+            <mat-select formControlName="status" required>
+              <mat-option *ngFor="let status of eventStatusOptions" [value]="status.id">
+                {{ status.status_name }}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="status?.invalid && status?.touched">
+              {{ getErrorMessage('status') }}
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <!-- Beneficiaries Selection -->
+        <div class="form-row">
+          <div class="checkbox-group">
+            <h4 class="checkbox-title">Select Beneficiaries</h4>
+            <p class="checkbox-subtitle">Choose the beneficiaries who will attend this mentorship event</p>
+            
+            <div class="checkbox-container" *ngIf="!loading; else loadingTemplate">
+              <div class="checkbox-scroll-area" *ngIf="beneficiaries.length > 0; else noBeneficiariesTemplate">
+                <mat-checkbox 
+                  *ngFor="let beneficiary of beneficiaries; let i = index"
+                  class="checkbox-item"
+                  [checked]="beneficiaries_control.at(i)?.value"
+                  (change)="onBeneficiaryChange(i, $event)">
+                  {{ beneficiary.name || beneficiary.smme_name || 'Beneficiary ' + beneficiary.id }}
+                </mat-checkbox>
+              </div>
+              
+              <ng-template #noBeneficiariesTemplate>
+                <div class="no-data-message">
+                  <mat-icon>info</mat-icon>
+                  <p>No beneficiaries available. Please contact the administrator.</p>
+                </div>
+              </ng-template>
+            </div>
+
+            <ng-template #loadingTemplate>
+              <div class="loading-container">
+                <mat-spinner diameter="30"></mat-spinner>
+                <p>Loading beneficiaries...</p>
+              </div>
+            </ng-template>
+
+            <mat-error *ngIf="beneficiaries_control?.invalid && beneficiaries_control?.touched" class="checkbox-error">
+              {{ getErrorMessage('beneficiaries') }}
+            </mat-error>
+          </div>
+        </div>
+
+      </form>
+    </mat-card-content>
+
+    <mat-card-actions class="form-actions">
+      <div class="action-buttons">
+        <button 
+          mat-raised-button 
+          color="primary" 
+          type="submit"
+          (click)="onSubmit()"
+          [disabled]="mentorshipEventForm.invalid || loading"
+          class="submit-btn">
+          <mat-icon>save</mat-icon>
+          {{ isEditMode ? 'Update Event' : 'Create Event' }}
+        </button>
+
+        <button 
+          mat-stroked-button 
+          type="button"
+          (click)="onReset()"
+          [disabled]="loading"
+          class="reset-btn">
+          <mat-icon>refresh</mat-icon>
+          Reset
+        </button>
+
+        <button 
+          mat-button 
+          type="button"
+          (click)="onCancel()"
+          class="cancel-btn">
+          <mat-icon>close</mat-icon>
+          Cancel
+        </button>
+      </div>
+    </mat-card-actions>
+  </mat-card>
+</div>

@@ -1,0 +1,140 @@
+<div class="form-container">
+  <mat-card class="form-card">
+    <!-- Form Header -->
+    <div class="form-header">
+      <h2 class="form-title">
+        {{ isEditMode ? 'Edit Document' : 'Upload Document' }}
+      </h2>
+      <p class="form-subtitle">
+        {{ isEditMode ? 'Update document details' : 'Add a new document to the programme' }}
+      </p>
+    </div>
+
+    <!-- Form Content -->
+    <form [formGroup]="documentForm" (ngSubmit)="onSubmit()">
+      <div class="form-content">
+        <!-- Document Information Section -->
+        <div class="form-section">
+          <h3 class="section-title">
+            <mat-icon>description</mat-icon>
+            Document Information
+          </h3>
+
+          <div class="form-row">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Document Name</mat-label>
+              <input matInput 
+                     formControlName="document_name" 
+                     placeholder="Enter document name"
+                     required>
+              <mat-icon matPrefix>label</mat-icon>
+              <mat-error *ngIf="documentForm.get('document_name')?.hasError('required')">
+                Document name is required
+              </mat-error>
+            </mat-form-field>
+          </div>
+
+          <div class="form-row">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Category</mat-label>
+              <mat-select formControlName="category" required>
+                <mat-option *ngFor="let category of documentCategories" [value]="category.value">
+                  {{ category.label }}
+                </mat-option>
+              </mat-select>
+              <mat-icon matPrefix>category</mat-icon>
+              <mat-error *ngIf="documentForm.get('category')?.hasError('required')">
+                Category is required
+              </mat-error>
+            </mat-form-field>
+          </div>
+        </div>
+
+        <!-- File Upload Section -->
+        <div class="form-section">
+          <h3 class="section-title">
+            <mat-icon>upload_file</mat-icon>
+            File Upload
+          </h3>
+
+          <div class="form-row">
+            <div class="file-upload-area full-width">
+              <mat-card class="file-upload-card" 
+                        (drop)="onDrop($event)" 
+                        (dragover)="onDragOver($event)">
+                <mat-card-content>
+                  <div class="file-upload-content">
+                    <mat-icon class="upload-icon">cloud_upload</mat-icon>
+                    <h4>{{ isEditMode ? 'Replace Document File' : 'Upload Document File' }}</h4>
+                    <p>Drag & drop file here or click to browse</p>
+                    <p>Accepted formats: PDF, Word, Excel, PowerPoint, Images, Text</p>
+                    <p class="file-size-limit">Maximum file size: {{maxFileSize}}MB</p>
+                    <input type="file" 
+                           #fileInput
+                           name="file" 
+                           [accept]="acceptedFileTypes"
+                           (change)="onFileSelect($event)"
+                           class="file-input">
+                    <button type="button" 
+                            mat-raised-button 
+                            color="primary"
+                            (click)="fileInput.click()"
+                            class="upload-btn">
+                      <mat-icon>attach_file</mat-icon>
+                      Choose File
+                    </button>
+                    <div *ngIf="selectedFileName" class="selected-file">
+                      <mat-icon>description</mat-icon>
+                      <span>{{ selectedFileName }}</span>
+                      <span class="file-size" *ngIf="selectedFile">{{ formatFileSize(selectedFile.size) }}</span>
+                      <button type="button" 
+                              mat-icon-button 
+                              color="warn"
+                              (click)="removeFile()"
+                              matTooltip="Remove file">
+                        <mat-icon>close</mat-icon>
+                      </button>
+                    </div>
+                    <div *ngIf="filePreview" class="file-preview">
+                      <img [src]="filePreview" alt="File preview">
+                    </div>
+                  </div>
+                </mat-card-content>
+              </mat-card>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Form Actions -->
+      <div class="form-actions">
+        <div class="action-button-set">
+          <button type="button" 
+                  mat-stroked-button 
+                  (click)="onCancel()" 
+                  class="cancel-btn" 
+                  [disabled]="isSubmitting">
+            <mat-icon>close</mat-icon>
+            Cancel
+          </button>
+          <button type="button" 
+                  mat-stroked-button 
+                  (click)="onReset()" 
+                  class="reset-btn"
+                  [disabled]="isSubmitting">
+            <mat-icon>refresh</mat-icon>
+            Reset
+          </button>
+          <button type="submit" 
+                  mat-raised-button 
+                  color="primary" 
+                  class="submit-btn"
+                  [disabled]="!documentForm.valid || isSubmitting">
+            <mat-icon>{{ isEditMode ? 'save' : 'cloud_upload' }}</mat-icon>
+            {{ isEditMode ? 'Update' : 'Upload' }}
+          </button>
+        </div>
+      </div>
+    </form>
+  </mat-card>
+</div>

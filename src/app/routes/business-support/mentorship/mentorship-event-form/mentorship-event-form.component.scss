@@ -1,0 +1,313 @@
+// Card container 
+.form-container {
+  width: 100%;
+  background-color: transparent;
+  padding: 0;
+  margin: 0;
+}
+
+.form-card {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  overflow: hidden;
+  background: white;
+  margin: 0;
+}
+
+.form-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 24px;
+  margin: 0;
+  
+  .form-title {
+    font-size: 24px;
+    font-weight: 600;
+    margin: 0 0 8px 0;
+  }
+  
+  .form-subtitle {
+    font-size: 14px;
+    opacity: 0.9;
+    color: rgba(255, 255, 255, 0.8);
+    margin: 0;
+  }
+}
+
+.form-content {
+  padding: 24px;
+}
+
+.mentorship-event-form {
+  .form-row {
+    margin-bottom: 20px;
+    
+    &.two-columns {
+      display: flex;
+      gap: 16px;
+      
+      @media (max-width: 768px) {
+        flex-direction: column;
+        gap: 20px;
+      }
+    }
+  }
+
+  .full-width {
+    width: 100%;
+  }
+
+  .half-width {
+    flex: 1;
+  }
+
+  mat-form-field {
+    &.mat-form-field-appearance-outline {
+      .mat-form-field-outline {
+        border-radius: 8px;
+      }
+      
+      &.mat-focused .mat-form-field-outline-thick {
+        border-color: #667eea;
+      }
+      
+      .mat-form-field-label {
+        color: #666;
+        font-weight: 500;
+      }
+      
+      &.mat-focused .mat-form-field-label {
+        color: #667eea;
+      }
+    }
+  }
+
+  textarea {
+    resize: vertical;
+    min-height: 80px;
+  }
+}
+
+// Checkbox styling
+.checkbox-group {
+  .checkbox-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+    margin: 0 0 8px 0;
+  }
+
+  .checkbox-subtitle {
+    font-size: 14px;
+    color: #666;
+    margin: 0 0 16px 0;
+  }
+
+  .checkbox-container {
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    background-color: #fafafa;
+  }
+
+  .checkbox-scroll-area {
+    max-height: 200px;
+    overflow-y: auto;
+    padding: 16px;
+    
+    &::-webkit-scrollbar {
+      width: 6px;
+    }
+    
+    &::-webkit-scrollbar-track {
+      background: #f1f1f1;
+      border-radius: 3px;
+    }
+    
+    &::-webkit-scrollbar-thumb {
+      background: #c1c1c1;
+      border-radius: 3px;
+      
+      &:hover {
+        background: #a8a8a8;
+      }
+    }
+  }
+
+  .checkbox-item {
+    display: block;
+    margin-bottom: 12px;
+    
+    &:last-child {
+      margin-bottom: 0;
+    }
+    
+    ::ng-deep .mat-checkbox-layout {
+      margin-bottom: 0;
+      
+      .mat-checkbox-label {
+        font-size: 14px;
+        font-weight: 400;
+        color: #444;
+        line-height: 1.4;
+      }
+    }
+    
+    ::ng-deep .mat-checkbox-checked {
+      .mat-checkbox-background {
+        background-color: #667eea;
+        border-color: #667eea;
+      }
+    }
+    
+    &:hover {
+      background-color: rgba(102, 126, 234, 0.04);
+      border-radius: 4px;
+      padding: 4px;
+      margin: 8px -4px;
+    }
+  }
+
+  .checkbox-error {
+    margin-top: 8px;
+    font-size: 12px;
+    color: #f44336;
+  }
+}
+
+.no-data-message {
+  text-align: center;
+  padding: 40px 20px;
+  color: #666;
+  
+  mat-icon {
+    font-size: 48px;
+    width: 48px;
+    height: 48px;
+    margin-bottom: 16px;
+    color: #999;
+  }
+  
+  p {
+    margin: 0;
+    font-size: 14px;
+  }
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 40px 20px;
+  color: #666;
+  
+  p {
+    margin-top: 16px;
+    font-size: 14px;
+  }
+}
+
+// Form actions
+.form-actions {
+  background-color: #f8f9fa;
+  padding: 20px 24px;
+  border-top: 1px solid #e0e0e0;
+  margin: 0;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  
+  @media (max-width: 768px) {
+    flex-direction: column;
+    
+    button {
+      width: 100%;
+    }
+  }
+}
+
+.submit-btn {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+  color: white;
+  font-weight: 600;
+  padding: 0 24px;
+  height: 44px;
+  
+  mat-icon {
+    margin-right: 8px;
+  }
+  
+  &:disabled {
+    background: #ccc !important;
+    color: #666 !important;
+  }
+}
+
+.reset-btn {
+  border-color: #667eea;
+  color: #667eea;
+  font-weight: 500;
+  padding: 0 20px;
+  height: 44px;
+  
+  mat-icon {
+    margin-right: 8px;
+  }
+  
+  &:hover {
+    background-color: rgba(102, 126, 234, 0.04);
+  }
+}
+
+.cancel-btn {
+  color: #666;
+  font-weight: 500;
+  padding: 0 20px;
+  height: 44px;
+  
+  mat-icon {
+    margin-right: 8px;
+  }
+  
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.04);
+  }
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .form-header {
+    padding: 20px;
+    
+    .form-title {
+      font-size: 20px;
+    }
+  }
+  
+  .form-content {
+    padding: 20px;
+  }
+  
+  .form-actions {
+    padding: 16px 20px;
+  }
+}
+
+// Animation for form
+.mentorship-event-form {
+  animation: fadeInUp 0.5s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

@@ -1,0 +1,97 @@
+<div class="page-container">
+  <!-- Loading State -->
+  <div class="loading-container" *ngIf="isLoading">
+    <mat-spinner diameter="50"></mat-spinner>
+    <p>Loading event details...</p>
+  </div>
+
+  <!-- Content -->
+  <div *ngIf="!isLoading">
+    <!-- Header Section (shown only when viewing list) -->
+    <div class="header-section" *ngIf="!showInvitationForm">
+      <!-- Navigation Breadcrumb -->
+      <div class="breadcrumb-nav">
+        <button mat-button (click)="backToEvents()" class="back-button">
+          <mat-icon>arrow_back</mat-icon>
+          Back to Training Events
+        </button>
+        <span class="breadcrumb-separator">/</span>
+        <span class="current-location">{{ trainingEvent?.course_name || 'Event' }} Invitations</span>
+      </div>
+
+      <!-- Page Title and Description -->
+      <h1 class="page-title">
+        <mat-icon>people_outline</mat-icon>
+        Event Invitations - {{ trainingEvent?.course_name }}
+      </h1>
+      <p class="page-description">
+        Manage beneficiary invitations for {{ trainingEvent?.programme_name }} - {{ trainingEvent?.course_name }}
+        <span *ngIf="trainingEvent?.event_date"> • {{ trainingEvent.event_date | date:'medium' }}</span>
+      </p>
+    </div>
+
+    <!-- Form Navigation (shown only when form is visible) -->
+    <div class="form-navigation" *ngIf="showInvitationForm">
+      <nav class="breadcrumb-nav">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item">
+            <button mat-button (click)="backToEvents()">
+              <mat-icon>school</mat-icon>
+              Training Events
+            </button>
+          </li>
+          <li class="breadcrumb-separator">
+            <mat-icon>chevron_right</mat-icon>
+          </li>
+          <li class="breadcrumb-item">
+            <button mat-button (click)="handleFormClose()">
+              <mat-icon>people_outline</mat-icon>
+              Invitations
+            </button>
+          </li>
+          <li class="breadcrumb-separator">
+            <mat-icon>chevron_right</mat-icon>
+          </li>
+          <li class="breadcrumb-item active">
+            {{ formData?.mode === 'reminder' ? 'Send Reminders' : 
+               (formData?.invitation ? 'Edit Invitation' : 'Invite Beneficiaries') }}
+          </li>
+        </ol>
+      </nav>
+    </div>
+
+    <!-- Content Section -->
+    <div class="content-section">
+      <!-- Invitation Form -->
+      <div *ngIf="showInvitationForm" class="form-section">
+        <app-training-event-invitation-form
+          [invitation]="formData?.invitation"
+          [trainingEventId]="eventId"
+          [trainingEvent]="trainingEvent"
+          [mode]="formData?.mode || 'create'"
+          (closeModal)="handleFormClose()">
+        </app-training-event-invitation-form>
+      </div>
+
+      <!-- Invitations Table -->
+      <div *ngIf="!showInvitationForm && trainingEvent">
+        <app-training-event-invitations
+          [trainingEvent]="trainingEvent"
+          (showForm)="handleShowForm($event)"
+          (editForm)="handleEditForm($event)">
+        </app-training-event-invitations>
+      </div>
+
+      <!-- No Event Found -->
+      <div *ngIf="!showInvitationForm && !trainingEvent && !isLoading" class="no-data-container">
+        <mat-icon>error_outline</mat-icon>
+        <h3>Event Not Found</h3>
+        <p>The training event with ID {{ eventId }} could not be found.</p>
+        <button mat-raised-button color="primary" (click)="backToEvents()">
+          <mat-icon>arrow_back</mat-icon>
+          Back to Training Events
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

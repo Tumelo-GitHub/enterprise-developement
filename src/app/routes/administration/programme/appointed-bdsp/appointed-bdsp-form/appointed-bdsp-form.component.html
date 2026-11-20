@@ -1,72 +1,137 @@
-<form [formGroup]="form" novalidate (ngSubmit)="onSubmit()">
-    <h2 mat-dialog-title>Appoint Beneficiaries</h2>
-    <mat-dialog-content class="mat-typography">
-        <div class="row">
-            <div class="col">
-                <mat-form-field class="full-width">
-                    <mat-select *ngIf="!data.id" cdkFocusInitial formControlName="bdsp_id" placeholder="Company" multiple>
-                        <mat-option *ngFor="let company of companyList" [value]="company.id">{{ company.bdsp_name }}</mat-option>
-                    </mat-select>
-                    <mat-select *ngIf="data.id" cdkFocusInitial formControlName="bdsp_id" placeholder="Company">
-                        <mat-option *ngFor="let company of companyList" [value]="company.id">{{ company.bdsp_name }}</mat-option>
-                    </mat-select>
-                </mat-form-field>
+<div class="form-container">
+    <div class="form-header">
+        <h2 class="form-title">
+            <mat-icon>{{data?.id ? 'edit' : 'add'}}</mat-icon>
+            {{data?.id ? 'Edit' : 'Appoint'}} BDSP
+        </h2>
+        <button mat-icon-button (click)="onCancel()" class="close-button" matTooltip="Close Form">
+            <mat-icon>close</mat-icon>
+        </button>
+    </div>
+
+    <form [formGroup]="form" novalidate (ngSubmit)="onSubmit()" class="bdsp-form">
+        
+        <!-- BDSP Selection Section -->
+        <div class="form-section">
+            <div class="section-header">
+                <mat-icon>support_agent</mat-icon>
+                <h3>BDSP Information</h3>
             </div>
-            <div class="col">
-                <mat-form-field class="full-width">
-                    <mat-label>Appointment date</mat-label>
-                    <input matInput [matDatepicker]="picker1" formControlName="appointment_date">
-                    <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
-                    <mat-datepicker #picker1></mat-datepicker>
-                </mat-form-field>
+            
+            <div class="form-row">
+                <div class="form-field">
+                    <mat-form-field appearance="outline" class="full-width">
+                        <mat-label>Select BDSP</mat-label>
+                        <mat-select *ngIf="!data?.id" cdkFocusInitial formControlName="bdsp_id" multiple [disabled]="isLoading">
+                            <mat-option *ngFor="let company of companyList" [value]="company.id">
+                                {{ company.bdsp_name }}
+                            </mat-option>
+                        </mat-select>
+                        <mat-select *ngIf="data?.id" cdkFocusInitial formControlName="bdsp_id" [disabled]="isLoading">
+                            <mat-option *ngFor="let company of companyList" [value]="company.id">
+                                {{ company.bdsp_name }}
+                            </mat-option>
+                        </mat-select>
+                        <mat-icon matSuffix>business</mat-icon>
+                        <mat-error *ngIf="form.get('bdsp_id')?.hasError('required')">
+                            BDSP selection is required
+                        </mat-error>
+                    </mat-form-field>
+                </div>
             </div>
-        </div>
-        <div class="row">
-            <div class="col">
-                <mat-form-field class="full-width">
-                    <mat-label>Contract start date</mat-label>
-                    <input matInput [matDatepicker]="picker2" formControlName="contract_start_date">
-                    <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
-                    <mat-datepicker #picker2></mat-datepicker>
-                </mat-form-field>
-            </div>
-            <div class="col">
-                <mat-form-field class="full-width">
-                    <mat-label>Contract end date</mat-label>
-                    <input matInput [matDatepicker]="picker3" formControlName="contract_end_date">
-                    <mat-datepicker-toggle matSuffix [for]="picker3"></mat-datepicker-toggle>
-                    <mat-datepicker #picker3></mat-datepicker>
-                </mat-form-field>
-            </div>
-        </div>
-        <!-- <div class="row">
-            <div class="col">
-                <mat-form-field class="full-width">
-                    <mat-label>Service request start date</mat-label>
-                    <input matInput [matDatepicker]="picker4" formControlName="service_request_start_date">
-                    <mat-datepicker-toggle matSuffix [for]="picker4"></mat-datepicker-toggle>
-                    <mat-datepicker #picker4></mat-datepicker>
-                </mat-form-field>
-            </div>
-            <div class="col">
-                <mat-form-field class="full-width">
-                    <mat-label>Service request end date</mat-label>
-                    <input matInput [matDatepicker]="picker5" formControlName="service_request_end_date">
-                    <mat-datepicker-toggle matSuffix [for]="picker5"></mat-datepicker-toggle>
-                    <mat-datepicker #picker5></mat-datepicker>
-                </mat-form-field>
-            </div>
-        </div> -->
-        <div class="row">
-            <div class="col">
-                <mat-form-field class="full-width">
-                    <textarea matInput placeholder="Engagement Description" formControlName="description"></textarea>
-                </mat-form-field>
+
+            <div class="form-row">
+                <div class="form-field">
+                    <mat-form-field appearance="outline" class="full-width">
+                        <mat-label>Appointment Date</mat-label>
+                        <input matInput [matDatepicker]="picker1" formControlName="appointment_date" [disabled]="isLoading">
+                        <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+                        <mat-datepicker #picker1></mat-datepicker>
+                        <mat-error *ngIf="form.get('appointment_date')?.hasError('required')">
+                            Appointment date is required
+                        </mat-error>
+                    </mat-form-field>
+                </div>
             </div>
         </div>
-    </mat-dialog-content>
-    <mat-dialog-actions align="end">
-        <button mat-button mat-dialog-close>Cancel</button>
-        <button type="submit" mat-button [disabled]="!form.valid">Submit</button>
-    </mat-dialog-actions>
-</form>
+
+        <!-- Contract Dates Section -->
+        <div class="form-section">
+            <div class="section-header">
+                <mat-icon>description</mat-icon>
+                <h3>Contract Period</h3>
+            </div>
+            
+            <div class="form-row two-columns">
+                <div class="form-field">
+                    <mat-form-field appearance="outline" class="full-width">
+                        <mat-label>Contract Start Date</mat-label>
+                        <input matInput [matDatepicker]="picker2" formControlName="contract_start_date" [disabled]="isLoading">
+                        <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
+                        <mat-datepicker #picker2></mat-datepicker>
+                        <mat-error *ngIf="form.get('contract_start_date')?.hasError('required')">
+                            Start date is required
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+
+                <div class="form-field">
+                    <mat-form-field appearance="outline" class="full-width">
+                        <mat-label>Contract End Date</mat-label>
+                        <input matInput [matDatepicker]="picker3" formControlName="contract_end_date" [disabled]="isLoading">
+                        <mat-datepicker-toggle matSuffix [for]="picker3"></mat-datepicker-toggle>
+                        <mat-datepicker #picker3></mat-datepicker>
+                        <mat-error *ngIf="form.get('contract_end_date')?.hasError('required')">
+                            End date is required
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+            </div>
+        </div>
+
+        <!-- Description Section -->
+        <div class="form-section">
+            <div class="section-header">
+                <mat-icon>notes</mat-icon>
+                <h3>Engagement Details</h3>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-field">
+                    <mat-form-field appearance="outline" class="full-width">
+                        <mat-label>Engagement Description</mat-label>
+                        <textarea matInput 
+                                  formControlName="description" 
+                                  rows="4"
+                                  placeholder="Enter details about the BDSP engagement"
+                                  [disabled]="isLoading"></textarea>
+                        <mat-icon matSuffix>description</mat-icon>
+                    </mat-form-field>
+                </div>
+            </div>
+        </div>
+
+        <!-- Form Actions -->
+        <div class="form-actions">
+            <button type="button" 
+                    mat-button 
+                    (click)="onCancel()" 
+                    [disabled]="isLoading"
+                    class="cancel-button">
+                <mat-icon>cancel</mat-icon>
+                Cancel
+            </button>
+            
+            <button type="submit" 
+                    mat-raised-button 
+                    color="primary" 
+                    [disabled]="!form.valid || isLoading"
+                    class="submit-button">
+                <mat-icon *ngIf="!isLoading">{{data?.id ? 'save' : 'add'}}</mat-icon>
+                <mat-spinner *ngIf="isLoading" diameter="20"></mat-spinner>
+                {{isLoading ? 'Processing...' : (data?.id ? 'Update BDSP' : 'Appoint BDSP')}}
+            </button>
+        </div>
+
+    </form>
+</div>

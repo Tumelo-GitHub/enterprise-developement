@@ -1,34 +1,47 @@
-.mat-mdc-table {
-    max-height: 500px !important;
-    overflow: auto;
+// Import shared component styles
+@import '../../../../shared/styles/shared-components';
+
+// Component-specific styles
+.control-section {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+
+  .column-selector {
+    min-width: 200px;
   }
 
-.mat-mdc-row .mat-mdc-cell {
-  border-bottom: 1px solid transparent;
-  border-top: 1px solid transparent;
-  cursor: pointer;
+  .export-btn {
+    color: #667eea;
+    
+    &:hover {
+      background-color: rgba(102, 126, 234, 0.1);
+    }
+  }
 }
 
-.mat-mdc-row:hover .mat-mdc-cell {
-  border-color: currentColor;
+// Action buttons styling
+.employees-btn {
+  color: #667eea;
+  margin-right: 8px;
+  
+  &:hover {
+    background-color: rgba(102, 126, 234, 0.1);
+  }
 }
 
-tr.mat-row:hover {
-  background-color: #f6f6f6;
-}
-
-tr.mat-row {
-  cursor: pointer;
-}
-
-.selected-row {
-  background-color: #f6f6f6;
-}
-
-.btn-export {
-  margin: 0 5px;
-}
-
-#searchInput {
-  width: 30%;
+// Hide actions on mobile
+@media (max-width: 768px) {
+  .action-buttons {
+    .edit-btn, .delete-btn, .employees-btn {
+      padding: 8px;
+      min-width: 40px;
+      
+      mat-icon {
+        font-size: 18px;
+        width: 18px;
+        height: 18px;
+      }
+    }
+  }
 }

@@ -1,19 +1,10 @@
-import { Component, OnInit } from '@angular/core';
-import { IProgramme } from 'src/app/shared';
+import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-programme',
   templateUrl: './programme.component.html',
   styleUrls: ['./programme.component.scss']
 })
-export class ProgrammeComponent implements OnInit {
-  programme: IProgramme | undefined;
-
-  constructor() { }
-
-  /**
-   * TODO:
-   */
-  ngOnInit(): void {}
-
+export class ProgrammeComponent {
+  // This component now serves as a simple container for child routes
 }

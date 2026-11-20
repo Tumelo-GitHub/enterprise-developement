@@ -1,0 +1,166 @@
+<div class="form-container">
+  <mat-card class="form-card">
+    <!-- Form Header -->
+    <div class="form-header">
+      <h2 class="form-title">
+        <mat-icon>{{ formConfig.eventIcon }}</mat-icon>
+        {{ isEditMode ? 'Edit' : 'Create New' }} {{ formConfig.eventType | titlecase }} Event
+      </h2>
+      <p class="form-subtitle">
+        {{ isEditMode ? 'Update the event details below' : 'Fill in the details to schedule a new ' + formConfig.eventType + ' event' }}
+      </p>
+    </div>
+
+    <!-- Form Content -->
+    <div class="form-content">
+      <form [formGroup]="eventForm" (ngSubmit)="onSubmit()" class="unified-event-form">
+        
+        <!-- Programme and Provider Selection -->
+        <div class="form-row two-columns">
+          <mat-form-field appearance="outline" class="half-width">
+            <mat-label>Programme</mat-label>
+            <mat-select formControlName="programme_id" [disabled]="isLoading">
+              <mat-option *ngFor="let programme of programmes" [value]="programme.id">
+                {{ programme.programme_name }}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="isFieldInvalid('programme_id')">
+              {{ getFieldError('programme_id') }}
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="half-width">
+            <mat-label>{{ formConfig.providerLabel }}</mat-label>
+            <mat-select formControlName="provider_id" [disabled]="isLoading">
+              <mat-option *ngFor="let provider of providers" [value]="provider.id">
+                {{ provider.name }} {{ provider.surname }}
+                <span *ngIf="provider.specialization"> - {{ provider.specialization }}</span>
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="isFieldInvalid('provider_id')">
+              {{ getFieldError('provider_id') }}
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <!-- Address -->
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Venue Address</mat-label>
+            <textarea matInput formControlName="address" rows="3" 
+                     [placeholder]="'Enter the full address where the ' + formConfig.eventType + ' event will take place'"></textarea>
+            <mat-error *ngIf="isFieldInvalid('address')">
+              {{ getFieldError('address') }}
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <!-- Date, Time and Status -->
+        <div class="form-row two-columns">
+          <mat-form-field appearance="outline" class="half-width">
+            <mat-label>Event Date</mat-label>
+            <input matInput [matDatepicker]="picker" formControlName="event_date">
+            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+            <mat-error *ngIf="isFieldInvalid('event_date')">
+              {{ getFieldError('event_date') }}
+            </mat-error>
+          </mat-form-field>
+
+          <div class="half-width" style="display: flex; gap: 16px;">
+            <mat-form-field appearance="outline" style="flex: 1;">
+              <mat-label>Event Time</mat-label>
+              <input matInput type="time" formControlName="event_time">
+              <mat-error *ngIf="isFieldInvalid('event_time')">
+                {{ getFieldError('event_time') }}
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" style="flex: 1;">
+              <mat-label>Status</mat-label>
+              <mat-select formControlName="status">
+                <mat-option *ngFor="let status of statusOptions" [value]="status.value">
+                  {{ status.label }}
+                </mat-option>
+              </mat-select>
+              <mat-error *ngIf="isFieldInvalid('status')">
+                {{ getFieldError('status') }}
+              </mat-error>
+            </mat-form-field>
+          </div>
+        </div>
+
+        <!-- Participants Selection -->
+        <div class="form-row">
+          <div class="checkbox-group">
+            <h3 class="checkbox-title">
+              <mat-icon>{{ formConfig.participantIcon }}</mat-icon>
+              Select {{ formConfig.participantLabel }}
+            </h3>
+            <p class="checkbox-subtitle">
+              Choose the {{ formConfig.participantLabel.toLowerCase() }} that will participate in this {{ formConfig.eventType }} event
+            </p>
+            
+            <div *ngIf="isLoading" class="loading-container">
+              <mat-spinner diameter="40"></mat-spinner>
+              <p>Loading {{ formConfig.participantLabel.toLowerCase() }}...</p>
+            </div>
+
+            <div *ngIf="!isLoading && participants.length === 0" class="no-data-message">
+              <mat-icon>{{ formConfig.participantIcon }}</mat-icon>
+              <p>No {{ formConfig.participantLabel.toLowerCase() }} available for selection</p>
+            </div>
+
+            <div *ngIf="!isLoading && participants.length > 0" class="checkbox-container">
+              <div class="checkbox-scroll-area">
+                <div formArrayName="participants">
+                  <mat-checkbox 
+                    *ngFor="let participant of participants; let i = index"
+                    [formControlName]="i"
+                    class="checkbox-item">
+                    <div class="participant-info">
+                      <div class="participant-name">{{ getParticipantDisplayName(participant) }}</div>
+                      <div class="participant-details">{{ getParticipantDetails(participant) }}</div>
+                    </div>
+                  </mat-checkbox>
+                </div>
+              </div>
+            </div>
+
+            <div *ngIf="!validateParticipantSelection() && participants_control.touched" class="checkbox-error">
+              <mat-icon>error</mat-icon>
+              Please select at least one {{ formConfig.participantLabel.toLowerCase().slice(0, -1) }}
+            </div>
+          </div>
+        </div>
+
+      </form>
+    </div>
+
+    <!-- Form Actions -->
+    <div class="form-actions">
+      <div class="action-button-set">
+        <button mat-button type="button" (click)="onCancel()" class="cancel-btn">
+          <mat-icon>close</mat-icon>
+          Cancel
+        </button>
+        
+        <button mat-button type="button" (click)="onReset()" class="reset-btn" [disabled]="isSubmitting">
+          <mat-icon>refresh</mat-icon>
+          Reset
+        </button>
+        
+        <button 
+          mat-raised-button 
+          type="submit" 
+          (click)="onSubmit()"
+          class="submit-btn"
+          [disabled]="eventForm.invalid || !validateParticipantSelection() || isSubmitting">
+          <mat-icon>{{ isEditMode ? 'save' : 'add' }}</mat-icon>
+          {{ isEditMode ? 'Update Event' : 'Create Event' }}
+          <mat-spinner *ngIf="isSubmitting" diameter="20" style="margin-left: 8px;"></mat-spinner>
+        </button>
+      </div>
+    </div>
+  </mat-card>
+</div>

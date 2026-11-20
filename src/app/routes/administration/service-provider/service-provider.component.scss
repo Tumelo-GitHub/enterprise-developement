@@ -1,0 +1,37 @@
+// Service provider specific styles
+@import '../../../shared/styles/shared-components';
+
+// Service type badges
+.service-types-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+
+  .service-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    font-size: 11px;
+    font-weight: 500;
+    border-radius: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+
+    &.coach {
+      background-color: #e3f2fd;
+      color: #1976d2;
+      border: 1px solid #bbdefb;
+    }
+
+    &.mentor {
+      background-color: #f3e5f5;
+      color: #7b1fa2;
+      border: 1px solid #e1bee7;
+    }
+
+    &.trainer {
+      background-color: #e8f5e8;
+      color: #388e3c;
+      border: 1px solid #c8e6c9;
+    }
+  }
+}

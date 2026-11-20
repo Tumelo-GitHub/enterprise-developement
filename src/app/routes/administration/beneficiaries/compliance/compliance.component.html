@@ -1,88 +1,173 @@
-<div class="tab-content">
-    <mat-form-field>
-        <mat-label>Filter</mat-label>
-        <input matInput (keyup)="applyFilter($event)" placeholder="Ex. Mia" #input>
-    </mat-form-field>
+<!-- Action Bar -->
+<app-table-action-bar
+  [isLoading]="isLoading"
+  [filterLabel]="'Filter compliance records'"
+  [filterPlaceholder]="'Search compliance records'"
+  [columnLabel]="'Display Columns'"
+  [addButtonText]="'Add Compliance'"
+  [addButtonTooltip]="'Add a new compliance'"
+  [addButtonIcon]="'person_add'"
+  (openDialog)="openComplianceForm()"
+  (applyFilter)="applyFilter($event)">
+</app-table-action-bar>
 
-    <div class="mat-elevation-z8">
-        <table mat-table [dataSource]="dataSource" matSort class="full-width-table">
+<!-- Data Table Section -->
+<div class="table-section">
+  <!-- Table Card -->
+  <mat-card class="table-card">
+    <div class="table-wrapper">
+      <table id="ComplianceTable" mat-table [dataSource]="dataSource" matSort class="data-table">
 
-            <ng-container matColumnDef="type_id">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header> Type Name </th>
-                <td mat-cell *matCellDef="let row"> {{ getTypeNameById(row.type_id) }} </td>
-            </ng-container>
+        <ng-container matColumnDef="type_id">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header class="header-cell">
+            <mat-icon>category</mat-icon>
+            Compliance Type
+          </th>
+          <td mat-cell *matCellDef="let row" class="data-cell">
+            <div class="type-info">
+              <span class="type-badge">{{ getTypeNameById(row.type_id) }}</span>
+            </div>
+          </td>
+        </ng-container>
 
-            <!-- Progress Column -->
-            <ng-container matColumnDef="registration_num">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header> Registration Number </th>
-                <td mat-cell *matCellDef="let row"> {{row.registration_num}} </td>
-            </ng-container>
+        <ng-container matColumnDef="registration_num">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header class="header-cell">
+            <mat-icon>assignment</mat-icon>
+            Registration Number
+          </th>
+          <td mat-cell *matCellDef="let row" class="data-cell">
+            <span class="registration-number">{{row.registration_num}}</span>
+          </td>
+        </ng-container>
 
-            <!-- Name Column -->
-            <ng-container matColumnDef="issued_date">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header> Issued Date </th>
-                <td mat-cell *matCellDef="let row"> {{row.issued_date}} </td>
-            </ng-container>
+        <ng-container matColumnDef="issued_date">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header class="header-cell">
+            <mat-icon>event</mat-icon>
+            Issued Date
+          </th>
+          <td mat-cell *matCellDef="let row" class="data-cell">
+            <span class="date-info">{{formatDate(row.issued_date)}}</span>
+          </td>
+        </ng-container>
 
-            <ng-container matColumnDef="expiry_date">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header> Expiry Date </th>
-                <td mat-cell *matCellDef="let row"> {{row.expiry_date}} </td>
-            </ng-container>
+        <ng-container matColumnDef="expiry_date">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header class="header-cell">
+            <mat-icon>event_busy</mat-icon>
+            Expiry Date
+          </th>
+          <td mat-cell *matCellDef="let row" class="data-cell">
+            <span class="date-info" [class.expired]="isExpired(row.expiry_date)" [class.expiring-soon]="isExpiringSoon(row.expiry_date)">
+              {{formatDate(row.expiry_date)}}
+            </span>
+          </td>
+        </ng-container>
 
-            <!-- Fruit Column -->
-            <ng-container matColumnDef="status">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header> Status </th>
-                <td mat-cell *matCellDef="let row"> {{ getStatusNameById(row.status) }} </td>
-            </ng-container>
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header class="header-cell">
+            <mat-icon>info</mat-icon>
+            Status
+          </th>
+          <td mat-cell *matCellDef="let row" class="data-cell">
+            <span [class]="'status-badge ' + getStatusClass(row.status)">
+              {{ getStatusNameById(row.status) }}
+            </span>
+          </td>
+        </ng-container>
 
-            <ng-container matColumnDef="isVerified">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header> Verified </th>
-                <td mat-cell *matCellDef="let row"> {{row.isVerified}} </td>
-            </ng-container>
+        <ng-container matColumnDef="isVerified">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header class="header-cell">
+            <mat-icon>verified</mat-icon>
+            Verification
+          </th>
+          <td mat-cell *matCellDef="let row" class="data-cell">
+            <span [class]="'verification-badge ' + (row.isVerified === 'Yes' ? 'verified' : 'not-verified')">
+              <mat-icon>{{row.isVerified === 'Yes' ? 'verified_user' : 'pending'}}</mat-icon>
+              {{row.isVerified}}
+            </span>
+          </td>
+        </ng-container>
 
-            <ng-container matColumnDef="verified_person">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header> Verified By </th>
-                <td mat-cell *matCellDef="let row"> {{row.verified_person}} </td>
-            </ng-container>
+        <ng-container matColumnDef="verified_person">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header class="header-cell">
+            <mat-icon>person</mat-icon>
+            Verified By
+          </th>
+          <td mat-cell *matCellDef="let row" class="data-cell">
+            <span class="verifier-name">{{row.verified_person || 'N/A'}}</span>
+          </td>
+        </ng-container>
 
-            <ng-container matColumnDef="document">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header> Document </th>
-                <td mat-cell *matCellDef="let row">
-                    <button *ngIf="row.docid" mat-icon-button matTooltip="{{row.document_name}}"
-                        (click)="displayDocument(row.docid, row.document_name)">
-                        <mat-icon>file_download</mat-icon>
-                    </button>
-                </td>
-            </ng-container>
+        <ng-container matColumnDef="document">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header class="header-cell">
+            <mat-icon>attach_file</mat-icon>
+            Document
+          </th>
+          <td mat-cell *matCellDef="let row" class="data-cell">
+            <div class="document-actions">
+              <button *ngIf="row.docid" 
+                      mat-icon-button 
+                      matTooltip="Download: {{row.document_name}}"
+                      matTooltipPosition="above"
+                      (click)="displayDocument(row.docid, row.document_name)"
+                      class="download-btn">
+                <mat-icon>download</mat-icon>
+              </button>
+              <span *ngIf="!row.docid" class="no-document">No document</span>
+            </div>
+          </td>
+        </ng-container>
 
-            <!-- Action Column -->
-            <ng-container matColumnDef="action">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header> Action </th>
-                <td mat-cell *matCellDef="let row">
-                    <button mat-icon-button matTooltip="Edit Compliance" color="accern" (click)="openDialog(row)">
-                        <mat-icon>edit</mat-icon>
-                    </button>
-                    <button mat-icon-button matTooltip="Delete Compliance" color="warn" (click)="deleteCompliance(row)">
-                        <mat-icon>delete</mat-icon>
-                    </button>
-                </td>
-            </ng-container>
+        <!-- Action Column -->
+        <ng-container matColumnDef="action">
+          <th mat-header-cell *matHeaderCellDef class="header-cell actions-header">
+            <mat-icon>settings</mat-icon>
+            Actions
+          </th>
+          <td mat-cell *matCellDef="let row" class="data-cell actions-cell">
+            <div class="action-buttons">
+              <button mat-icon-button 
+                      matTooltip="Edit Compliance" 
+                      matTooltipPosition="above"
+                      (click)="openComplianceForm(row)" 
+                      class="edit-btn">
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button mat-icon-button 
+                      matTooltip="Delete Compliance" 
+                      matTooltipPosition="above"
+                      (click)="deleteCompliance(row)" 
+                      class="delete-btn">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </div>
+          </td>
+        </ng-container>
 
-            <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
-            <tr mat-row *matRowDef="let row; columns: columnsToDisplay;"></tr>
+        <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
+        <tr mat-row *matRowDef="let row; columns: columnsToDisplay;" class="table-row"></tr>
 
-            <!-- Row shown when there is no matching data. -->
-            <tr class="mat-row" *matNoDataRow>
-                <td class="mat-cell" colspan="8">No data matching the filter "{{input.value}}"</td>
-            </tr>
-        </table>
+        <!-- No Data Row -->
+        <tr class="mat-row" *matNoDataRow>
+          <td class="mat-cell" [attr.colspan]="columnsToDisplay.length">
+            <div class="no-data">
+              <div class="no-data-content">
+                <mat-icon class="no-data-icon">search_off</mat-icon>
+                <h3>No compliance records found</h3>
+                <p>No data matching the filter "{{searchTerm}}"</p>
+              </div>
+            </div>
+          </td>
+        </tr>
+      </table>
 
-        <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" aria-label="Select page of users"></mat-paginator>
+      <!-- Paginator -->
+      <mat-paginator 
+        [pageSizeOptions]="[5, 10, 25, 100]"
+        [pageSize]="10"
+        [showFirstLastButtons]="true"
+        class="table-paginator"
+        aria-label="Select page of compliance records">
+      </mat-paginator>
     </div>
-    <div class="add-btn-wrapper" color="primary">
-        <button mat-fab matTooltip="Add Compliance" aria-label="Add Company Compliance Button with icon" class="add-btn"
-            (click)="openDialog()">
-            <mat-icon>add</mat-icon>
-        </button>
-    </div>
+  </mat-card>
 </div>

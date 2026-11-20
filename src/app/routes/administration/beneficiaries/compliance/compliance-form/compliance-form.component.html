@@ -1,76 +1,179 @@
-<form [formGroup]="complianceForm" novalidate (ngSubmit)="onSubmit()">
-    <h2 mat-dialog-title>Compliance Information</h2>
-    <mat-dialog-content class="mat-typography">
-        <div class="row">
-            <div class="col">
-                <mat-form-field class="full-width">
-                    <mat-select cdkFocusInitial placeholder="Type" formControlName="type_id">
-                        <mat-option *ngFor="let type of types" value="{{type.id}}">{{type.type_name}}</mat-option>
-                    </mat-select>
-                </mat-form-field>
-            </div>
+<div class="form-container">
+  <mat-card class="form-card">
+    <div class="form-header">
+      <h2 class="form-title">
+        {{isEditMode ? 'Edit' : 'Add'}} Compliance Document
+      </h2>
+      <p class="form-subtitle">
+        {{isEditMode ? 'Update' : 'Enter'}} compliance and certification information
+      </p>
+    </div>
+
+    <form [formGroup]="complianceForm" novalidate (ngSubmit)="onSubmit()">
+      <div class="form-content">
+        <!-- Compliance Basic Information -->
+        <div class="form-section">
+          <h3 class="section-title">
+            <mat-icon>verified_user</mat-icon>
+            Compliance Information
+          </h3>
+          
+          <div class="form-row two-columns">
+            <mat-form-field appearance="outline" class="half-width">
+              <mat-label>Compliance Type</mat-label>
+              <mat-select formControlName="type_id">
+                <mat-option *ngFor="let type of types" [value]="type.id">{{type.type_name}}</mat-option>
+              </mat-select>
+              <mat-icon matSuffix>category</mat-icon>
+              <mat-error *ngIf="complianceForm.controls['type_id'].hasError('required')">
+                Compliance type is <strong>required</strong>
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="half-width">
+              <mat-label>Registration Number</mat-label>
+              <input matInput formControlName="registration_num" placeholder="Enter registration number">
+              <mat-icon matSuffix>assignment</mat-icon>
+              <mat-error *ngIf="complianceForm.controls['registration_num'].hasError('required')">
+                Registration number is <strong>required</strong>
+              </mat-error>
+            </mat-form-field>
+          </div>
+
+          <div class="form-row">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Status</mat-label>
+              <mat-select formControlName="status">
+                <mat-option *ngFor="let status of statuses" [value]="status.id">{{status.status_name}}</mat-option>
+              </mat-select>
+              <mat-icon matSuffix>flag</mat-icon>
+              <mat-error *ngIf="complianceForm.controls['status'].hasError('required')">
+                Status is <strong>required</strong>
+              </mat-error>
+            </mat-form-field>
+          </div>
         </div>
-        <div class="row">
-            <div class="col">
-                <mat-form-field class="full-width">
-                    <input matInput placeholder="Registration Number" formControlName="registration_num">
-                    <mat-error *ngIf="complianceForm.controls['registration_num'].hasError('required')">
-                        Registration Number is <strong>required</strong>
-                    </mat-error>
-                </mat-form-field>
-            </div>
-            <div class="col">
-                <mat-form-field class="full-width">
-                    <mat-select placeholder="Status" formControlName="status">
-                        <mat-option *ngFor="let status of statuses" value="{{status.id}}">{{status.status_name}}</mat-option>
-                    </mat-select>
-                </mat-form-field>
-            </div>
+
+        <!-- Date Information -->
+        <div class="form-section">
+          <h3 class="section-title">
+            <mat-icon>date_range</mat-icon>
+            Date Information
+          </h3>
+
+          <div class="form-row two-columns">
+            <mat-form-field appearance="outline" class="half-width">
+              <mat-label>Issued Date</mat-label>
+              <input matInput [matDatepicker]="issuedPicker" formControlName="issued_date">
+              <mat-datepicker-toggle matSuffix [for]="issuedPicker"></mat-datepicker-toggle>
+              <mat-datepicker #issuedPicker></mat-datepicker>
+              <mat-error *ngIf="complianceForm.controls['issued_date'].hasError('required')">
+                Issued date is <strong>required</strong>
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="half-width">
+              <mat-label>Expiry Date</mat-label>
+              <input matInput [matDatepicker]="expiryPicker" formControlName="expiry_date">
+              <mat-datepicker-toggle matSuffix [for]="expiryPicker"></mat-datepicker-toggle>
+              <mat-datepicker #expiryPicker></mat-datepicker>
+              <mat-error *ngIf="complianceForm.controls['expiry_date'].hasError('required')">
+                Expiry date is <strong>required</strong>
+              </mat-error>
+            </mat-form-field>
+          </div>
         </div>
-        <div class="row">
-            <div class="col">
-                <mat-form-field class="full-width">
-                    <mat-label>Issued date</mat-label>
-                    <input matInput [matDatepicker]="picker" formControlName="issued_date">
-                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-                    <mat-datepicker #picker></mat-datepicker>
-                </mat-form-field>
-            </div>
-            <div class="col">
-                <mat-form-field class="full-width">
-                    <mat-label>Expiry date</mat-label>
-                    <input matInput [matDatepicker]="picker1" formControlName="expiry_date">
-                    <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
-                    <mat-datepicker #picker1></mat-datepicker>
-                </mat-form-field>
-            </div>
+
+        <!-- Verification Information -->
+        <div class="form-section">
+          <h3 class="section-title">
+            <mat-icon>verified</mat-icon>
+            Verification Information
+          </h3>
+
+          <div class="form-row two-columns">
+            <mat-form-field appearance="outline" class="half-width">
+              <mat-label>Is Verified</mat-label>
+              <mat-select formControlName="isVerified">
+                <mat-option value="Yes">Yes</mat-option>
+                <mat-option value="No">No</mat-option>
+              </mat-select>
+              <mat-icon matSuffix>check_circle</mat-icon>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="half-width">
+              <mat-label>Verified By</mat-label>
+              <input matInput formControlName="verified_person" placeholder="Enter verifier name">
+              <mat-icon matSuffix>person</mat-icon>
+            </mat-form-field>
+          </div>
         </div>
-        <div class="row">
-            <div class="col">
-                <mat-form-field class="full-width">
-                    <mat-select placeholder="Is Verified" formControlName="isVerified">
-                        <mat-option value="Yes">Yes</mat-option>
-                        <mat-option value="No">No</mat-option>
-                    </mat-select>
-                </mat-form-field>
+
+        <!-- Document Upload -->
+        <div class="form-section">
+          <h3 class="section-title">
+            <mat-icon>upload_file</mat-icon>
+            Document Upload
+          </h3>
+
+          <div class="form-row">
+            <div class="file-upload-area full-width">
+              <mat-card class="file-upload-card">
+                <mat-card-content>
+                  <div class="file-upload-content">
+                    <mat-icon class="upload-icon">cloud_upload</mat-icon>
+                    <h4>Upload Compliance Document</h4>
+                    <p>Select a PDF file to upload</p>
+                    <input type="file" 
+                           #fileInput
+                           name="file" 
+                           accept="application/pdf" 
+                           (change)="onFileSelect($event)"
+                           class="file-input">
+                    <button type="button" 
+                            mat-raised-button 
+                            color="primary"
+                            (click)="fileInput.click()"
+                            class="upload-btn">
+                      <mat-icon>attach_file</mat-icon>
+                      Choose File
+                    </button>
+                    <div *ngIf="selectedFileName" class="selected-file">
+                      <mat-icon>description</mat-icon>
+                      <span>{{selectedFileName}}</span>
+                      <button type="button" 
+                              mat-icon-button 
+                              color="warn"
+                              (click)="removeFile()"
+                              matTooltip="Remove file">
+                        <mat-icon>close</mat-icon>
+                      </button>
+                    </div>
+                  </div>
+                </mat-card-content>
+              </mat-card>
             </div>
-            <div class="col">
-                <mat-form-field class="full-width">
-                    <input matInput placeholder="Veified Person" formControlName="verified_person">
-                </mat-form-field>
-            </div>
+          </div>
         </div>
-        <div class="row">
-            <div class="col">
-                <input type="file" name="file" accept="application/pdf" placeholder="Compliance Document" (change)="onFileSelect($event)">
-            </div>
-            <div class="col">
-                
-            </div>
+      </div>
+
+      <div class="form-actions">
+        <div class="action-button-set">
+          <button type="button" mat-stroked-button (click)="onCancel()" class="cancel-btn" [disabled]="isSubmitting">
+            <mat-icon>close</mat-icon>
+            Cancel
+          </button>
+          <button type="button" mat-stroked-button (click)="onReset()" class="reset-btn" [disabled]="isSubmitting">
+            <mat-icon>refresh</mat-icon>
+            Reset
+          </button>
+          <button type="submit" mat-raised-button [disabled]="!complianceForm.valid || isSubmitting" class="submit-btn">
+            <mat-spinner *ngIf="isSubmitting" diameter="20" style="margin-right: 8px;"></mat-spinner>
+            <mat-icon *ngIf="!isSubmitting">{{isEditMode ? 'update' : 'save'}}</mat-icon>
+            {{isSubmitting ? 'Saving...' : (isEditMode ? 'Update' : 'Save')}} Compliance
+          </button>
         </div>
-    </mat-dialog-content>
-    <mat-dialog-actions align="end">
-        <button mat-button mat-dialog-close>Cancel</button>
-        <button type="submit" mat-button [disabled]="!complianceForm.valid">Submit</button>
-    </mat-dialog-actions>
-</form>
+      </div>
+    </form>
+  </mat-card>
+</div>

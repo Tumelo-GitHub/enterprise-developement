@@ -1,24 +1,165 @@
-<div class="grid-container">
-  <h1 class="mat-h1">Dashboard</h1>
-  <mat-grid-list cols="2" rowHeight="350px">
-    <mat-grid-tile *ngFor="let card of cards | async" [colspan]="card.cols" [rowspan]="card.rows">
-      <mat-card class="dashboard-card">
-        <mat-card-header>
-          <mat-card-title>
-            {{card.title}}
-            <button mat-icon-button class="more-button" [matMenuTriggerFor]="menu" aria-label="Toggle menu">
-              <mat-icon>more_vert</mat-icon>
-            </button>
-            <mat-menu #menu="matMenu" xPosition="before">
-              <button mat-menu-item>Expand</button>
-              <button mat-menu-item>Remove</button>
-            </mat-menu>
-          </mat-card-title>
-        </mat-card-header>
-        <mat-card-content class="dashboard-card-content">
-          <div>Card Content Here</div>
-        </mat-card-content>
-      </mat-card>
-    </mat-grid-tile>
-  </mat-grid-list>
+<div class="dashboard-container">
+  <!-- Header Section -->
+  <div class="dashboard-header">
+    <div class="header-content">
+      <h1 class="dashboard-title">
+        <mat-icon class="title-icon">dashboard</mat-icon>
+        Enterprise Development Dashboard
+      </h1>
+      <p class="dashboard-subtitle">Welcome back! Here's what's happening with your development programs.</p>
+    </div>
+    <div class="header-actions">
+      <button mat-raised-button color="primary" class="action-button" (click)="router.navigate(['/administration/programme/new'])">
+        <mat-icon>add</mat-icon>
+        New Program
+      </button>
+      <button mat-stroked-button class="action-button">
+        <mat-icon>download</mat-icon>
+        Export Data
+      </button>
+    </div>
+  </div>
+
+  <!-- Main Dashboard Grid -->
+  <div class="dashboard-grid">
+    <mat-grid-list cols="4" rowHeight="120px" gutterSize="20px">
+      
+      <!-- Statistics Cards -->
+      <mat-grid-tile *ngFor="let stat of statistics" [colspan]="1" [rowspan]="1">
+        <mat-card class="stat-card">
+          <div class="stat-content">
+            <div class="stat-icon" [style.background-color]="stat.color">
+              <mat-icon>{{stat.icon}}</mat-icon>
+            </div>
+            <div class="stat-details">
+              <div class="stat-value">
+                {{stat.unit === 'R' ? 'R' : ''}}{{formatNumber(stat.value)}}{{stat.unit && stat.unit !== 'R' ? stat.unit : ''}}
+              </div>
+              <div class="stat-title">{{stat.title}}</div>
+              <div class="stat-change" [class]="stat.changeType">
+                <mat-icon>{{stat.changeType === 'positive' ? 'trending_up' : 'trending_down'}}</mat-icon>
+                {{stat.change}}
+              </div>
+            </div>
+          </div>
+        </mat-card>
+      </mat-grid-tile>
+
+      <!-- Program Progress Chart -->
+      <mat-grid-tile [colspan]="2" [rowspan]="3">
+        <mat-card class="dashboard-card">
+          <mat-card-header class="card-header">
+            <mat-card-title>
+              <mat-icon>trending_up</mat-icon>
+              Program Progress
+            </mat-card-title>
+            <div class="card-actions">
+              <button mat-icon-button [matMenuTriggerFor]="progressMenu">
+                <mat-icon>more_vert</mat-icon>
+              </button>
+              <mat-menu #progressMenu="matMenu">
+                <button mat-menu-item>
+                  <mat-icon>fullscreen</mat-icon>
+                  View Details
+                </button>
+                <button mat-menu-item>
+                  <mat-icon>download</mat-icon>
+                  Export
+                </button>
+              </mat-menu>
+            </div>
+          </mat-card-header>
+          <mat-card-content class="progress-content">
+            <div class="progress-item" *ngFor="let program of programProgress">
+              <div class="progress-header">
+                <span class="progress-name">{{program.name}}</span>
+                <span class="progress-numbers">{{program.completed}}/{{program.total}}</span>
+              </div>
+              <div class="progress-bar-container">
+                <div class="progress-bar" [style.background-color]="program.color + '20'">
+                  <div class="progress-fill" 
+                       [style.width.%]="getProgressPercentage(program.completed, program.total)"
+                       [style.background-color]="program.color">
+                  </div>
+                </div>
+                <span class="progress-percentage">{{getProgressPercentage(program.completed, program.total)}}%</span>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </mat-grid-tile>
+
+      <!-- Recent Activities -->
+      <mat-grid-tile [colspan]="2" [rowspan]="3">
+        <mat-card class="dashboard-card">
+          <mat-card-header class="card-header">
+            <mat-card-title>
+              <mat-icon>notifications</mat-icon>
+              Recent Activities
+            </mat-card-title>
+            <div class="card-actions">
+              <button mat-icon-button>
+                <mat-icon>refresh</mat-icon>
+              </button>
+              <button mat-icon-button [matMenuTriggerFor]="activityMenu">
+                <mat-icon>more_vert</mat-icon>
+              </button>
+              <mat-menu #activityMenu="matMenu">
+                <button mat-menu-item>
+                  <mat-icon>list</mat-icon>
+                  View All
+                </button>
+                <button mat-menu-item>
+                  <mat-icon>filter_list</mat-icon>
+                  Filter
+                </button>
+              </mat-menu>
+            </div>
+          </mat-card-header>
+          <mat-card-content class="activity-content">
+            <div class="activity-item" *ngFor="let activity of recentActivities">
+              <div class="activity-icon" [class]="getActivityTypeClass(activity.type)">
+                <mat-icon>{{activity.icon}}</mat-icon>
+              </div>
+              <div class="activity-details">
+                <div class="activity-action">{{activity.action}}</div>
+                <div class="activity-user">{{activity.user}}</div>
+                <div class="activity-time">{{activity.time}}</div>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </mat-grid-tile>
+
+      <!-- Quick Actions -->
+      <mat-grid-tile [colspan]="4" [rowspan]="1">
+        <mat-card class="dashboard-card quick-actions-card">
+          <mat-card-header class="card-header">
+            <mat-card-title>
+              <mat-icon>flash_on</mat-icon>
+              Quick Actions
+            </mat-card-title>
+          </mat-card-header>
+          <mat-card-content class="quick-actions-content">
+            <div class="actions-grid">
+              <button mat-raised-button 
+                      *ngFor="let action of quickActions"
+                      class="quick-action-button"
+                      [style.background-color]="action.color"
+                      (click)="navigateToAction(action)">
+                <div class="action-icon">
+                  <mat-icon>{{action.icon}}</mat-icon>
+                </div>
+                <div class="action-text">
+                  <div class="action-title">{{action.title}}</div>
+                  <div class="action-description">{{action.description}}</div>
+                </div>
+              </button>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </mat-grid-tile>
+
+    </mat-grid-list>
+  </div>
 </div>

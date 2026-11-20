@@ -1,19 +1,24 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, OnChanges, SimpleChanges } from '@angular/core';
 import { SmmeService } from '../../../services/smme.service';
 import { Validators, FormControl, FormBuilder } from '@angular/forms';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { ToastService } from 'src/app/shared/services/toast.service';
 import { ProgrammeService } from '../../../services/programme.service';
 import { beneficiaries, setBeneficiaries, APPOINTMENT_STATUS } from 'src/app/shared/common/devwizarrd.constants';
+import { NotificationUtil } from 'src/app/shared/utils/notificationUtil';
 
 @Component({
   selector: 'app-appointed-beneficiary-form',
   templateUrl: './appointed-beneficiary-form.component.html',
   styleUrls: ['./appointed-beneficiary-form.component.scss']
 })
-export class AppointedBeneficiaryFormComponent implements OnInit {
+export class AppointedBeneficiaryFormComponent implements OnInit, OnChanges {
+  @Input() data: any = {};
+  @Output() formSubmitted = new EventEmitter<any>();
+  @Output() formCancelled = new EventEmitter<void>();
+
   form = this.fb.group({
-    programme_id: [this.data.programme_id, Validators.required],
+    programme_id: ['', Validators.required],
     smme_id: ['', Validators.required],
     status: [null, Validators.required],
     appointment_date: ['', Validators.required]
@@ -21,20 +26,30 @@ export class AppointedBeneficiaryFormComponent implements OnInit {
 
   companyList: any[] = [];
   status = APPOINTMENT_STATUS;
+  isLoading = false;
 
   constructor(
     private smmeService: SmmeService,
     private fb: FormBuilder, 
     public dialog: MatDialog,
     private toast: ToastService,
-    private dialogRef: MatDialogRef<AppointedBeneficiaryFormComponent>,
     private service: ProgrammeService,
-    @Inject(MAT_DIALOG_DATA) public data: any
+    private notificationUtil: NotificationUtil
   ) { }
 
   ngOnInit(): void {
     this.getBeneficiaryList();
-    this.form.patchValue(this.data);
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['data'] && this.data) {
+      // Convert status to number to match dropdown option IDs
+      const formData = { ...this.data };
+      if (formData.status) {
+        formData.status = Number(formData.status);
+      }
+      this.form.patchValue(formData);
+    }
   }
 
   getBeneficiaryList() {
@@ -53,18 +68,33 @@ export class AppointedBeneficiaryFormComponent implements OnInit {
     }
   }
 
+  onCancel(): void {
+    this.formCancelled.emit();
+  }
+
   onSubmit(): void {
     if (this.form.valid) {
-      this.service.appointBeneficiaries(this.form.value).subscribe({
+      this.isLoading = true;
+      
+      const isEditMode = this.data && this.data.id;
+      const apiCall = isEditMode 
+        ? this.service.updateBeneficiaryAppointment(this.data.id, this.form.value)
+        : this.service.appointBeneficiaries(this.form.value);
+
+      apiCall.subscribe({
         next: (response) => {
-          this.toast.toastNotification('success', 'Success', response.message);
-          this.dialogRef.close(response.data);
+          this.notificationUtil.showSuccess(response.message);
+          this.isLoading = false;
+          this.formSubmitted.emit(response.data);
         },
         error: (err: any) => {
-          this.toast.toastNotification('danger', 'Failed', err.message);
-            console.error(err)
+          this.notificationUtil.showError(err.message || `Failed to ${isEditMode ? 'update' : 'appoint'} beneficiary`);
+          this.isLoading = false;
+          console.error(err)
         }
       })
+    } else {
+      this.notificationUtil.showError('Please fill in all required fields');
     }
   }
 

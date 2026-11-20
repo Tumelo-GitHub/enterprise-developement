@@ -1,0 +1,60 @@
+<section class="lookup-panel" [attr.aria-label]="title">
+  <header class="lookup-header">
+    <div>
+      <h2>
+        <mat-icon>{{ icon }}</mat-icon>
+        {{ title }}
+        <span class="count">{{ activeCount }}</span>
+      </h2>
+      <p *ngIf="description" class="lookup-sub">{{ description }}</p>
+    </div>
+    <button mat-raised-button class="add-button" (click)="openDialog()">
+      <mat-icon>add</mat-icon>
+      New
+    </button>
+  </header>
+
+  <div class="lookup-tools" *ngIf="archivedCount">
+    <mat-slide-toggle [(ngModel)]="showArchived" color="primary">
+      Show archived ({{ archivedCount }})
+    </mat-slide-toggle>
+  </div>
+
+  <mat-progress-bar *ngIf="loading" mode="indeterminate"></mat-progress-bar>
+
+  <ul class="lookup-list" *ngIf="visible.length; else empty">
+    <li *ngFor="let item of visible; trackBy: trackById" [class.archived]="!item.is_active">
+      <div class="item-main">
+        <span class="item-name">{{ item.name }}</span>
+        <span class="item-meta">
+          {{ item.usage_count ? item.usage_count + (item.usage_count === 1 ? ' entry' : ' entries') : 'Not used yet' }}
+        </span>
+      </div>
+      <span *ngIf="!item.is_active" class="badge">Archived</span>
+      <div class="item-actions">
+        <button mat-icon-button matTooltip="Rename" [attr.aria-label]="'Rename ' + item.name"
+                [disabled]="busyIds.has(item.id)" (click)="openDialog(item)">
+          <mat-icon>edit</mat-icon>
+        </button>
+        <button mat-icon-button
+                [matTooltip]="item.is_active ? 'Archive: hide from the capture form' : 'Restore to the capture form'"
+                [attr.aria-label]="(item.is_active ? 'Archive ' : 'Restore ') + item.name"
+                [disabled]="busyIds.has(item.id)" (click)="toggleArchived(item)">
+          <mat-icon>{{ item.is_active ? 'archive' : 'unarchive' }}</mat-icon>
+        </button>
+        <span [matTooltip]="item.usage_count ? 'In use, so it can only be archived' : 'Delete'">
+          <button mat-icon-button color="warn" [attr.aria-label]="'Delete ' + item.name"
+                  [disabled]="!!item.usage_count || busyIds.has(item.id)" (click)="remove(item)">
+            <mat-icon>delete_outline</mat-icon>
+          </button>
+        </span>
+      </div>
+    </li>
+  </ul>
+
+  <ng-template #empty>
+    <p *ngIf="!loading" class="lookup-empty">
+      {{ items.length ? 'All ' + title.toLowerCase() + ' are archived.' : 'No ' + title.toLowerCase() + ' yet.' }}
+    </p>
+  </ng-template>
+</section>

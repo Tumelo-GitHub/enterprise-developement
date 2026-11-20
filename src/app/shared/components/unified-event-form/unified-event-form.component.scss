@@ -1,0 +1,232 @@
+// Unified Event Form Component
+// Uses shared styles from _shared-components.scss
+
+.unified-event-form {
+  textarea {
+    resize: vertical;
+    min-height: 80px;
+  }
+}
+
+// Participant selection styling
+.checkbox-group {
+  .checkbox-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+    margin: 0 0 8px 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    
+    mat-icon {
+      color: #667eea;
+      font-size: 20px;
+      width: 20px;
+      height: 20px;
+    }
+  }
+
+  .checkbox-subtitle {
+    font-size: 14px;
+    color: #666;
+    margin: 0 0 16px 0;
+    line-height: 1.4;
+  }
+
+  .checkbox-container {
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    background-color: #fafafa;
+    transition: border-color 0.3s ease;
+    
+    &:hover {
+      border-color: #c0c0c0;
+    }
+  }
+
+  .checkbox-scroll-area {
+    max-height: 250px;
+    overflow-y: auto;
+    padding: 16px;
+    
+    &::-webkit-scrollbar {
+      width: 6px;
+    }
+    
+    &::-webkit-scrollbar-track {
+      background: #f1f1f1;
+      border-radius: 3px;
+    }
+    
+    &::-webkit-scrollbar-thumb {
+      background: #c1c1c1;
+      border-radius: 3px;
+      
+      &:hover {
+        background: #a8a8a8;
+      }
+    }
+  }
+
+  .checkbox-item {
+    display: block;
+    margin-bottom: 16px;
+    padding: 8px;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    
+    &:last-child {
+      margin-bottom: 0;
+    }
+    
+    &:hover {
+      background-color: rgba(102, 126, 234, 0.04);
+      transform: translateY(-1px);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
+    
+    ::ng-deep .mat-checkbox-layout {
+      margin-bottom: 0;
+      width: 100%;
+      
+      .mat-checkbox-label {
+        font-size: 14px;
+        font-weight: 400;
+        color: #444;
+        line-height: 1.4;
+        width: 100%;
+      }
+    }
+    
+    ::ng-deep .mat-checkbox-checked {
+      .mat-checkbox-background {
+        background-color: #667eea;
+        border-color: #667eea;
+      }
+    }
+
+    .participant-info {
+      width: 100%;
+      
+      .participant-name {
+        font-weight: 500;
+        color: #333;
+        margin-bottom: 4px;
+        font-size: 14px;
+      }
+      
+      .participant-details {
+        font-size: 12px;
+        color: #666;
+        opacity: 0.9;
+        line-height: 1.3;
+      }
+    }
+  }
+
+  .checkbox-error {
+    margin-top: 12px;
+    padding: 8px 12px;
+    font-size: 12px;
+    color: #f44336;
+    background-color: #ffebee;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    border-left: 3px solid #f44336;
+    
+    mat-icon {
+      font-size: 16px;
+      width: 16px;
+      height: 16px;
+    }
+  }
+}
+
+.no-data-message {
+  text-align: center;
+  padding: 40px 20px;
+  color: #666;
+  
+  mat-icon {
+    font-size: 48px;
+    width: 48px;
+    height: 48px;
+    margin-bottom: 16px;
+    color: #999;
+  }
+  
+  p {
+    margin: 0;
+    font-size: 14px;
+  }
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 40px 20px;
+  color: #666;
+  
+  p {
+    margin-top: 16px;
+    font-size: 14px;
+  }
+}
+
+// Animation for form - uses shared fadeInUp from _shared-components.scss
+.unified-event-form {
+  animation: fadeInUp 0.5s ease-out;
+}
+
+// Form validation states
+.ng-invalid.ng-touched {
+  .checkbox-container {
+    border-color: #f44336;
+  }
+}
+
+.ng-valid {
+  .checkbox-container {
+    border-color: #4caf50;
+  }
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .checkbox-group {
+    .checkbox-scroll-area {
+      max-height: 200px;
+      padding: 12px;
+    }
+    
+    .checkbox-item {
+      padding: 6px;
+      margin-bottom: 12px;
+      
+      .participant-info {
+        .participant-name {
+          font-size: 13px;
+        }
+        
+        .participant-details {
+          font-size: 11px;
+        }
+      }
+    }
+  }
+}
+
+// Success state animation
+.form-success {
+  animation: successPulse 0.6s ease-out;
+}
+
+@keyframes successPulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.02); }
+  100% { transform: scale(1); }
+}

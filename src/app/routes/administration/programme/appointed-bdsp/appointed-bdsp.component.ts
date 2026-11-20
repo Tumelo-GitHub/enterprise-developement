@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, SimpleChanges, ViewChild } from '@angular/core';
+import { Component, Input, OnInit, SimpleChanges, ViewChild, Output, EventEmitter } from '@angular/core';
 import { IProgramme } from 'src/app/shared';
 import { AppointedBdspFormComponent } from './appointed-bdsp-form/appointed-bdsp-form.component';
 import { MatDialog } from '@angular/material/dialog';
@@ -8,6 +8,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { BdspAppointmentService } from '../../services/bdsp-appointment.service';
 import { ToastService } from 'src/app/shared/services/toast.service';
 import { DELETE_TITLE, CONFIRM_DELETE_MESSAGE } from 'src/app/shared/common/devwizarrd.constants';
+import { NotificationUtil } from 'src/app/shared/utils/notificationUtil';
 
 @Component({
   selector: 'app-appointed-bdsp',
@@ -16,10 +17,14 @@ import { DELETE_TITLE, CONFIRM_DELETE_MESSAGE } from 'src/app/shared/common/devw
 })
 export class AppointedBdspComponent implements OnInit {
   @Input() programme: IProgramme | undefined;
+  @Output() showForm = new EventEmitter<any>();
+  @Output() editForm = new EventEmitter<any>();
+  
   displayedColumns: string[] = ['bdsp_name', 'appointment_date', 'contract_start_date', 'contract_end_date', 'service_request_start_date', 'service_request_end_date', 'description', 'documents', 'action'];
   columnsToDisplay: string[] = this.displayedColumns;
   records: any[] =[];
   dataSource!: MatTableDataSource<any>;
+  isLoading = false;
   columnsList = [
     [
       'bdsp_name',
@@ -65,28 +70,40 @@ export class AppointedBdspComponent implements OnInit {
   constructor(
     public dialog: MatDialog,
     private service: BdspAppointmentService,
-    private toast: ToastService
+    private toast: ToastService,
+    private notificationUtil: NotificationUtil
   ) { }
 
   ngOnInit(): void {
+    // Load data if programme is already available (from route resolver or parent)
+    if (this.programme) {
+      this.getAppointedBeneficiaries(this.programme);
+    }
   }
 
   ngOnChanges(changes: SimpleChanges) {
     // changes.prop contains the old and the new value...
-    this.getAppointedBeneficiaries(changes['programme'].currentValue);
+    if (changes['programme'] && changes['programme'].currentValue) {
+      this.getAppointedBeneficiaries(changes['programme'].currentValue);
+    }
   }
 
   getAppointedBeneficiaries(programme: IProgramme) {
     if (programme && programme.id) {
+      this.isLoading = true;
       this.service.getAppointedBSDP(programme.id).subscribe({
         next: response => {
-          this.records = response.data;
-          console.log(response)
+          this.records = response.data || [];
           this.dataSource = new MatTableDataSource(this.records);
-        this.dataSource.sort = this.sort;
-        this.dataSource.paginator = this.paginator;
+          this.dataSource.sort = this.sort;
+          this.dataSource.paginator = this.paginator;
+          this.isLoading = false;
         },
-        error: err => console.log(err)
+        error: err => {
+          console.error('Error loading BDSPs:', err);
+          this.notificationUtil.showError('Failed to load BDSPs');
+          this.isLoading = false;
+        }
       })
     }
   }
@@ -100,24 +117,31 @@ export class AppointedBdspComponent implements OnInit {
     }
   }
 
-  openDialog(data: any = {}) {
-    let index = this.records.indexOf(data);
-    data['programme_id'] = this.programme?.id;
+  formatDate(dateString: string): string {
+    if (!dateString) return 'N/A';
+    try {
+      return new Date(dateString).toLocaleDateString();
+    } catch {
+      return dateString;
+    }
+  }
 
-    const dialogRef = this.dialog.open(AppointedBdspFormComponent, {
-      data: data,
-      panelClass: 'form-dialog'
-    });
-    dialogRef.afterClosed().subscribe((result: any) => {
-      if (result) {
-        if (index >= 0) {
-          this.records[index] = result;
-        } else {
-          this.records.push(result);
-        }
-        this.dataSource = new MatTableDataSource(this.records); 
-      }
-    });
+  isContractExpired(endDate: string): boolean {
+    if (!endDate) return false;
+    try {
+      return new Date(endDate) < new Date();
+    } catch {
+      return false;
+    }
+  }
+
+  openAddBdspForm() {
+    this.showForm.emit({ programme_id: this.programme?.id });
+  }
+
+  editBdsp(bdsp: any) {
+    // Pass the full BDSP data through router state
+    this.editForm.emit({ bdsp, programme_id: this.programme?.id, appointmentData: bdsp });
   }
 
   deleteAppointment(data: any) {

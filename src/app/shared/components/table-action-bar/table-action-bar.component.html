@@ -1,0 +1,40 @@
+<div class="action-bar">
+    <div class="search-section">
+        <mat-form-field appearance="outline" class="search-field">
+            <mat-label>{{filterLabel}}</mat-label>
+            <input matInput (keyup)="applyFilter.emit($event)" [placeholder]="filterPlaceholder" #input
+                [disabled]="isLoading">
+            <mat-icon matSuffix>search</mat-icon>
+        </mat-form-field>
+    </div>
+
+    <div class="control-section">
+        <mat-form-field appearance="outline" class="column-selector" *ngIf="showColumnSelector">
+            <mat-label>{{columnLabel}}</mat-label>
+            <mat-select [formControl]="columns" [(ngModel)]="columnsToDisplay"
+                (selectionChange)="selectedToppings.emit($event)" multiple>
+                <mat-option *ngFor="let column of columnsList" [value]="column[1]">{{column[0]}}</mat-option>
+            </mat-select>
+            <mat-icon matSuffix>view_column</mat-icon>
+        </mat-form-field>
+
+        <button mat-icon-button matTooltip="Export Table To Excel" (click)="exportTable.emit()" class="export-btn"
+            [disabled]="isLoading" *ngIf="showExportExcel">
+            <mat-icon>file_download</mat-icon>
+        </button>
+
+        <button mat-icon-button matTooltip="Export Table To PDF" (click)="exportTableToPDF.emit()" class="export-btn"
+            [disabled]="isLoading" *ngIf="showExportPDF">
+            <mat-icon>picture_as_pdf</mat-icon>
+        </button>
+
+        <button mat-raised-button (click)="openDialog.emit()" class="add-button" [disabled]="isLoading"
+            [matTooltip]="addButtonTooltip">
+            <mat-icon>{{addButtonIcon}}</mat-icon>
+            {{addButtonText}}
+        </button>
+
+        <!-- Additional buttons via content projection -->
+        <ng-content></ng-content>
+    </div>
+</div>

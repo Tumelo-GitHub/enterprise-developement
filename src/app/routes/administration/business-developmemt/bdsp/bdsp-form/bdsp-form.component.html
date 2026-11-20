@@ -1,83 +1,135 @@
-<form [formGroup]="bdspForm" novalidate (ngSubmit)="onSubmit()">
-    <h2 mat-dialog-title>BDSP Information</h2>
-    <mat-dialog-content class="mat-typography">
-  
-        <div class="row">
-            <div class="col">
-            <mat-form-field class="full-width">
-                <input matInput cdkFocusInitial placeholder="Company Name" formControlName="bdsp_name">
-                <mat-error *ngIf="bdspForm.controls['bdsp_name'].hasError('required')">
-                Company name is <strong>required</strong>
-                </mat-error>
-            </mat-form-field>
-            </div>
+<div class="form-container">
+  <mat-card class="form-card">
+    <div class="form-header">
+      <h2 class="form-title">
+        {{isEditMode ? 'Edit' : 'Add'}} Business Development Service Provider
+      </h2>
+      <p class="form-subtitle">
+        {{isEditMode ? 'Update' : 'Enter'}} company information and services details
+      </p>
+    </div>
+
+    <form [formGroup]="bdspForm" novalidate (ngSubmit)="onSubmit()">
+      <div class="form-content">
+        <!-- Company Basic Information -->
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Company Name</mat-label>
+            <input matInput formControlName="bdsp_name" placeholder="Enter company name">
+            <mat-icon matSuffix>business</mat-icon>
+            <mat-error *ngIf="bdspForm.controls['bdsp_name'].hasError('required')">
+              Company name is <strong>required</strong>
+            </mat-error>
+          </mat-form-field>
         </div>
-        <div class="row">
-            <div class="col">
-                <mat-form-field class="full-width">
-                <input matInput placeholder="Company Name" formControlName="physical_address">
-                <mat-error *ngIf="bdspForm.controls['physical_address'].hasError('required')">
-                    Company name is <strong>required</strong>
-                </mat-error>
-                </mat-form-field>
-            </div>
-            <div class="col">
-            <mat-form-field class="full-width">
-                <input matInput placeholder="Postal Address" formControlName="postal_address">
-            </mat-form-field>
-            </div>
+
+        <!-- Address Information -->
+        <div class="form-row two-columns">
+          <mat-form-field appearance="outline" class="half-width">
+            <mat-label>Physical Address</mat-label>
+            <textarea matInput formControlName="physical_address" placeholder="Enter physical address" rows="3"></textarea>
+            <mat-icon matSuffix>location_on</mat-icon>
+            <mat-error *ngIf="bdspForm.controls['physical_address'].hasError('required')">
+              Physical address is <strong>required</strong>
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="half-width">
+            <mat-label>Postal Address</mat-label>
+            <textarea matInput formControlName="postal_address" placeholder="Enter postal address" rows="3"></textarea>
+            <mat-icon matSuffix>mail_outline</mat-icon>
+            <mat-error *ngIf="bdspForm.controls['postal_address'].hasError('required')">
+              Postal address is <strong>required</strong>
+            </mat-error>
+          </mat-form-field>
         </div>
-        <div class="row">
-            <div class="col">
-            <mat-form-field class="full-width">
-                <input matInput placeholder="Tel Number" formControlName="tell_number">
-            </mat-form-field>
-            </div>
-            <div class="col">
-            <mat-form-field class="full-width">
-                <input matInput placeholder="Cell Number" formControlName="cell_number">
-            </mat-form-field>
-            </div>
+
+        <!-- Contact Information -->
+        <div class="form-row two-columns">
+          <mat-form-field appearance="outline" class="half-width">
+            <mat-label>Telephone Number</mat-label>
+            <input matInput formControlName="tell_number" placeholder="Enter telephone number">
+            <mat-icon matSuffix>phone</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="half-width">
+            <mat-label>Cell Number</mat-label>
+            <input matInput formControlName="cell_number" placeholder="Enter cell number">
+            <mat-icon matSuffix>smartphone</mat-icon>
+          </mat-form-field>
         </div>
-        <div class="row">
-            <div class="col">
-            <mat-form-field class="full-width">
-                <input matInput placeholder="Email" formControlName="email">
-            </mat-form-field>
-            </div>
-            <div class="col">
-            <mat-form-field class="full-width">
-                <input matInput placeholder="Tax Number" formControlName="tax_number">
-            </mat-form-field>
-            </div>
+
+        <div class="form-row two-columns">
+          <mat-form-field appearance="outline" class="half-width">
+            <mat-label>Email Address</mat-label>
+            <input matInput formControlName="email" placeholder="Enter email address" type="email">
+            <mat-icon matSuffix>email</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="half-width">
+            <mat-label>Tax Number</mat-label>
+            <input matInput formControlName="tax_number" placeholder="Enter tax number">
+            <mat-icon matSuffix>receipt_long</mat-icon>
+            <mat-error *ngIf="bdspForm.controls['tax_number'].hasError('required')">
+              Tax number is <strong>required</strong>
+            </mat-error>
+          </mat-form-field>
         </div>
-        <div class="row">
-            <div class="col">
-            <mat-form-field class="full-width">
-                <input matInput placeholder="Registration" formControlName="registration">
-            </mat-form-field>
-            </div>
-            <div class="col">
-            <mat-form-field class="full-width">
-                <input matInput placeholder="BBBEE" formControlName="bbbee_level">
-            </mat-form-field>
-            </div>
+
+        <!-- Company Details -->
+        <div class="form-row two-columns">
+          <mat-form-field appearance="outline" class="half-width">
+            <mat-label>Registration Number</mat-label>
+            <input matInput formControlName="registration" placeholder="Enter registration number">
+            <mat-icon matSuffix>how_to_reg</mat-icon>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="half-width">
+            <mat-label>BBBEE Level</mat-label>
+            <input matInput formControlName="bbbee_level" placeholder="Enter BBBEE level">
+            <mat-icon matSuffix>stars</mat-icon>
+            <mat-error *ngIf="bdspForm.controls['bbbee_level'].hasError('required')">
+              BBBEE level is <strong>required</strong>
+            </mat-error>
+          </mat-form-field>
         </div>
-        <div class="row">
-            <div class="col">
-            <mat-form-field class="full-width">
-                <textarea matInput placeholder="Business Description" formControlName="description"></textarea>
-            </mat-form-field>
-            </div>
-            <div class="col">
-            <mat-form-field class="full-width">
-                <textarea matInput placeholder="Products and Services" formControlName="products"></textarea>
-            </mat-form-field>
-            </div>
+
+        <!-- Business Description and Products -->
+        <div class="form-row two-columns">
+          <mat-form-field appearance="outline" class="half-width">
+            <mat-label>Business Description</mat-label>
+            <textarea matInput formControlName="description" placeholder="Describe the business activities" rows="4"></textarea>
+            <mat-icon matSuffix>description</mat-icon>
+            <mat-error *ngIf="bdspForm.controls['description'].hasError('required')">
+              Business description is <strong>required</strong>
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="half-width">
+            <mat-label>Products and Services</mat-label>
+            <textarea matInput formControlName="products" placeholder="List products and services offered" rows="4"></textarea>
+            <mat-icon matSuffix>inventory_2</mat-icon>
+          </mat-form-field>
         </div>
-    </mat-dialog-content>
-    <mat-dialog-actions align="end">
-        <button mat-button mat-dialog-close>Cancel</button>
-        <button type="submit" mat-button>Submit</button>
-    </mat-dialog-actions>
-</form>
+      </div>
+
+      <div class="form-actions">
+        <div class="action-button-set">
+          <button type="button" mat-stroked-button (click)="onCancel()" class="cancel-btn" [disabled]="isSubmitting">
+            <mat-icon>close</mat-icon>
+            Cancel
+          </button>
+          <button type="button" mat-stroked-button (click)="onReset()" class="reset-btn" [disabled]="isSubmitting">
+            <mat-icon>refresh</mat-icon>
+            Reset
+          </button>
+          <button type="submit" mat-raised-button [disabled]="!bdspForm.valid || isSubmitting" class="submit-btn">
+            <mat-spinner *ngIf="isSubmitting" diameter="20" style="margin-right: 8px;"></mat-spinner>
+            <mat-icon *ngIf="!isSubmitting">{{isEditMode ? 'update' : 'save'}}</mat-icon>
+            {{isSubmitting ? 'Saving...' : (isEditMode ? 'Update' : 'Save')}} Company
+          </button>
+        </div>
+      </div>
+    </form>
+  </mat-card>
+</div>

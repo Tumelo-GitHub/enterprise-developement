@@ -1,0 +1,157 @@
+<div class="form-container">
+  <mat-card class="form-card">
+    <div class="form-header">
+      <h2 class="form-title">
+        {{ isReminderMode ? 'Send Reminders' : (isEditMode ? 'Edit Invitation' : 'Invite Beneficiaries') }}
+      </h2>
+      <p class="form-subtitle">
+        {{ isReminderMode ? 'Send reminder notifications to beneficiaries about the training event' : 
+           (isEditMode ? 'Update invitation details and status' : 'Send training event invitations to beneficiaries') }}
+      </p>
+    </div>
+
+    <form [formGroup]="invitationForm" (ngSubmit)="onSubmit()">
+      <div class="form-content">
+        
+        <!-- Beneficiary Selection -->
+        <div class="form-section">
+          <h3 class="section-title">
+            <mat-icon>group</mat-icon>
+            Select Beneficiaries
+          </h3>
+          <div class="form-row one-column">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Choose Beneficiaries to Invite</mat-label>
+              <mat-select formControlName="smme_ids" multiple [disabled]="isEditMode">
+                <mat-option *ngFor="let beneficiary of beneficiaries" [value]="beneficiary.smme_id || beneficiary.id">
+                  {{ beneficiary.smme_name || beneficiary.trading_name }}
+                  <span class="beneficiary-reg" *ngIf="beneficiary.registration_number">
+                    ({{ beneficiary.registration_number }})
+                  </span>
+                </mat-option>
+              </mat-select>
+              <mat-icon matSuffix>business</mat-icon>
+              <mat-hint>
+                {{ getSelectedBeneficiariesCount() }} beneficiaries selected
+                <span *ngIf="!isEditMode && !isReminderMode && beneficiaries.length === 0" class="text-warning">
+                  • All beneficiaries already invited
+                </span>
+              </mat-hint>
+              <mat-error *ngIf="invitationForm.get('smme_ids')?.hasError('required')">
+                Please select at least one beneficiary
+              </mat-error>
+            </mat-form-field>
+          </div>
+        </div>
+
+        <!-- Reminder Settings (only show in reminder mode) -->
+        <div class="form-section" *ngIf="isReminderMode">
+          <h3 class="section-title">
+            <mat-icon>notifications</mat-icon>
+            Reminder Settings
+          </h3>
+
+          <div class="form-row two-columns">
+            <!-- Reminder Type -->
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Reminder Type</mat-label>
+              <mat-select formControlName="reminder_type">
+                <mat-option *ngFor="let type of reminderTypes" [value]="type.value">
+                  {{ type.label }}
+                </mat-option>
+              </mat-select>
+              <mat-icon matSuffix>send</mat-icon>
+              <mat-error *ngIf="invitationForm.get('reminder_type')?.hasError('required')">
+                Please select reminder type
+              </mat-error>
+            </mat-form-field>
+
+            <!-- Status Filter -->
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Send to Status</mat-label>
+              <mat-select formControlName="status_filter" multiple>
+                <mat-option *ngFor="let filter of reminderStatusFilter" [value]="filter.value">
+                  {{ filter.label }}
+                </mat-option>
+              </mat-select>
+              <mat-icon matSuffix>filter_list</mat-icon>
+              <mat-hint>Select which invitation statuses to include</mat-hint>
+            </mat-form-field>
+          </div>
+
+          <div class="form-row one-column">
+            <!-- Custom Message -->
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Custom Message (Optional)</mat-label>
+              <textarea matInput 
+                        formControlName="message" 
+                        rows="3"
+                        placeholder="Add a custom message to the reminder..."></textarea>
+              <mat-icon matSuffix>message</mat-icon>
+            </mat-form-field>
+          </div>
+        </div>
+
+        <!-- Invitation Details (hide in reminder mode) -->
+        <div class="form-section" *ngIf="!isReminderMode">
+          <h3 class="section-title">
+            <mat-icon>settings</mat-icon>
+            Invitation Details
+          </h3>
+
+          <div class="form-row one-column">
+            <!-- Status Field -->
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Invitation Status</mat-label>
+              <mat-select formControlName="invitation_status">
+                <mat-option *ngFor="let status of statusOptions" [value]="status">
+                  {{ status | titlecase }}
+                </mat-option>
+              </mat-select>
+              <mat-icon matSuffix>flag</mat-icon>
+              <mat-error *ngIf="invitationForm.get('invitation_status')?.hasError('required')">
+                Please select a status
+              </mat-error>
+            </mat-form-field>
+          </div>
+
+          <div class="form-row one-column">
+            <!-- Notes Field -->
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Notes (Optional)</mat-label>
+              <textarea matInput 
+                        formControlName="notes" 
+                        rows="4"
+                        placeholder="Add any additional notes about this invitation..."></textarea>
+              <mat-icon matSuffix>notes</mat-icon>
+            </mat-form-field>
+          </div>
+        </div>
+
+        <!-- Loading Spinner -->
+        <div class="loading-section" *ngIf="isLoading">
+          <mat-spinner diameter="40"></mat-spinner>
+          <p>Processing...</p>
+        </div>
+      </div>
+
+      <!-- Form Actions -->
+      <div class="form-actions">
+        <button type="button" 
+                mat-stroked-button 
+                (click)="cancel()" 
+                [disabled]="isLoading">
+          <mat-icon>cancel</mat-icon>
+          Cancel
+        </button>
+        <button type="submit" 
+                mat-raised-button 
+                color="primary" 
+                [disabled]="isLoading">
+          <mat-icon>{{ isReminderMode ? 'notifications' : (isEditMode ? 'save' : 'send') }}</mat-icon>
+          {{ isReminderMode ? 'Send Reminders' : (isEditMode ? 'Update Invitation' : 'Send Invitations') }}
+        </button>
+      </div>
+    </form>
+  </mat-card>
+</div>

@@ -1,90 +1,132 @@
-<form [formGroup]="companyForm" novalidate (ngSubmit)="onSubmit()">
-  <h2 mat-dialog-title>Company Information</h2>
-  <mat-dialog-content>
-    <div class="row">
-      <div class="col">
-        <mat-form-field class="full-width">
-          <input matInput placeholder="Company" formControlName="company_name">
-          <mat-error *ngIf="companyForm.controls['company_name'].hasError('required')">
-            Company name is <strong>required</strong>
-          </mat-error>
-        </mat-form-field>
+<div class="form-container">
+  <mat-card class="form-card">
+    <div class="form-header">
+      <h2 class="form-title">{{isEditMode ? 'Edit Company' : 'Add New Company'}}</h2>
+      <p class="form-subtitle">{{isEditMode ? 'Update company information and contact details' : 'Enter company information and contact details'}}</p>
+    </div>
+
+    <div class="form-content">
+      <form [formGroup]="companyForm" novalidate (ngSubmit)="onSubmit()">
+        <div class="form-section">
+          <h3 class="section-title">Company Information</h3>
+          
+          <div class="form-row">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Company Name</mat-label>
+              <input matInput formControlName="company_name" placeholder="Enter company name">
+              <mat-icon matSuffix>business</mat-icon>
+              <mat-error *ngIf="companyForm.controls['company_name'].hasError('required')">
+                Company name is <strong>required</strong>
+              </mat-error>
+            </mat-form-field>
+          </div>
+
+          <div class="form-row">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Physical Address</mat-label>
+              <textarea matInput formControlName="physical_address" placeholder="Enter physical address" rows="3"></textarea>
+              <mat-icon matSuffix>location_on</mat-icon>
+              <mat-error *ngIf="companyForm.controls['physical_address'].hasError('required')">
+                Physical address is <strong>required</strong>
+              </mat-error>
+            </mat-form-field>
+          </div>
+
+          <div class="form-row">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Postal Address</mat-label>
+              <textarea matInput formControlName="postal_address" placeholder="Enter postal address" rows="3"></textarea>
+              <mat-icon matSuffix>mail</mat-icon>
+            </mat-form-field>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <h3 class="section-title">Department Information</h3>
+          
+          <div class="form-row two-columns">
+            <mat-form-field appearance="outline" class="half-width">
+              <mat-label>Department Name</mat-label>
+              <input matInput formControlName="dept_name" placeholder="Enter department name">
+              <mat-icon matSuffix>apartment</mat-icon>
+              <mat-error *ngIf="companyForm.controls['dept_name'].hasError('required')">
+                Department name is <strong>required</strong>
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="half-width">
+              <mat-label>Department Address</mat-label>
+              <input matInput formControlName="dept_address" placeholder="Enter department address">
+              <mat-icon matSuffix>place</mat-icon>
+              <mat-error *ngIf="companyForm.controls['dept_address'].hasError('required')">
+                Department address is <strong>required</strong>
+              </mat-error>
+            </mat-form-field>
+          </div>
+        </div>
+
+        <div class="form-section">
+          <h3 class="section-title">Contact Information</h3>
+          
+          <div class="form-row two-columns">
+            <mat-form-field appearance="outline" class="half-width">
+              <mat-label>Contact First Name</mat-label>
+              <input matInput formControlName="contact_name" placeholder="Enter first name">
+              <mat-icon matSuffix>person</mat-icon>
+              <mat-error *ngIf="companyForm.controls['contact_name'].hasError('required')">
+                First name is <strong>required</strong>
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="half-width">
+              <mat-label>Contact Last Name</mat-label>
+              <input matInput formControlName="contact_surname" placeholder="Enter last name">
+              <mat-icon matSuffix>person</mat-icon>
+              <mat-error *ngIf="companyForm.controls['contact_surname'].hasError('required')">
+                Last name is <strong>required</strong>
+              </mat-error>
+            </mat-form-field>
+          </div>
+
+          <div class="form-row two-columns">
+            <mat-form-field appearance="outline" class="half-width">
+              <mat-label>Contact Email</mat-label>
+              <input matInput type="email" formControlName="contact_email" placeholder="Enter email address">
+              <mat-icon matSuffix>email</mat-icon>
+              <mat-error *ngIf="companyForm.controls['contact_email'].hasError('required')">
+                Email is <strong>required</strong>
+              </mat-error>
+              <mat-error *ngIf="companyForm.controls['contact_email'].hasError('email')">
+                Please enter a valid email
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="half-width">
+              <mat-label>Contact Number</mat-label>
+              <input matInput type="tel" formControlName="contact_cell" placeholder="Enter contact number">
+              <mat-icon matSuffix>phone</mat-icon>
+              <mat-error *ngIf="companyForm.controls['contact_cell'].hasError('required')">
+                Contact number is <strong>required</strong>
+              </mat-error>
+            </mat-form-field>
+          </div>
+        </div>
+
+      </form>
+    </div>
+
+    <div class="form-actions">
+      <div class="action-button-set">
+        <button type="button" mat-stroked-button (click)="onCancel()" class="cancel-btn">
+          <mat-icon>close</mat-icon>
+          Cancel
+        </button>
+        
+        <button type="submit" mat-raised-button [disabled]="!companyForm.valid || loading" class="submit-btn" (click)="onSubmit()">
+          <mat-icon>{{isEditMode ? 'save' : 'add'}}</mat-icon>
+          {{isEditMode ? 'Update Company' : 'Add Company'}}
+        </button>
       </div>
     </div>
-    <div class="row">
-      <div class="col">
-        <mat-form-field class="full-width">
-          <textarea matInput placeholder="Physical Address" formControlName="physical_address"></textarea>
-          <mat-error *ngIf="companyForm.controls['physical_address'].hasError('required')">
-            Physical Address is <strong>required</strong>
-          </mat-error>
-        </mat-form-field>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col">
-        <mat-form-field class="full-width">
-          <textarea matInput placeholder="Postal Address" formControlName="postal_address"></textarea>
-        </mat-form-field>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col">
-        <mat-form-field class="full-width">
-          <input matInput placeholder="Department name" formControlName="dept_name">
-          <mat-error *ngIf="companyForm.controls['dept_name'].hasError('required')">
-            Department name is <strong>required</strong>
-          </mat-error>
-        </mat-form-field>
-      </div>
-      <div class="col">
-        <mat-form-field class="full-width">
-          <input matInput placeholder="Department Address" formControlName="dept_address">
-          <mat-error *ngIf="companyForm.controls['dept_address'].hasError('required')">
-            Department Address is <strong>required</strong>
-          </mat-error>
-        </mat-form-field>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col">
-        <mat-form-field class="full-width">
-          <input matInput placeholder="Contact first name" formControlName="contact_name">
-          <mat-error *ngIf="companyForm.controls['contact_name'].hasError('required')">
-            First name is <strong>required</strong>
-          </mat-error>
-        </mat-form-field>
-      </div>
-      <div class="col">
-        <mat-form-field class="full-width">
-          <input matInput placeholder="Last name" formControlName="contact_surname">
-          <mat-error *ngIf="companyForm.controls['contact_surname'].hasError('required')">
-            Last name is <strong>required</strong>
-          </mat-error>
-        </mat-form-field>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col">
-        <mat-form-field class="full-width">
-          <input matInput type="email" placeholder="Email" formControlName="contact_email">
-          <mat-error *ngIf="companyForm.controls['contact_email'].hasError('required')">
-            Email is <strong>required</strong>
-          </mat-error>
-        </mat-form-field>
-      </div>
-      <div class="col">
-        <mat-form-field class="full-width">
-          <input matInput type="tel" placeholder="Contact number" formControlName="contact_cell">
-          <mat-error *ngIf="companyForm.controls['contact_cell'].hasError('required')">
-            Contact number is <strong>required</strong>
-          </mat-error>
-        </mat-form-field>
-      </div>
-    </div>
-  </mat-dialog-content>
-  <mat-dialog-actions align="end">
-    <button mat-button mat-dialog-close>Cancel</button>
-    <button mat-button type="submit" [disabled]="!companyForm.valid">{{data ? 'Update' : 'Submit'}}</button>
-  </mat-dialog-actions>
-</form>
+  </mat-card>
+</div>

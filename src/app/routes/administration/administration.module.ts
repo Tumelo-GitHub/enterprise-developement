@@ -4,28 +4,37 @@ import { AdministrationRoutingModule } from './administration-routing.module';
 
 import { CourseComponent } from './course/course.component';
 import { ProgrammeComponent } from './programme/programme.component';
+import { ProgrammeListComponent } from './programme/programme-list/programme-list.component';
+import { ProgrammeFormWrapperComponent } from './programme/programme-form-wrapper/programme-form-wrapper.component';
+import { ProgrammeCoursesComponent } from './programme/programme-courses/programme-courses.component';
+import { ProgrammeCourseFormWrapperComponent } from './programme/programme-course-form-wrapper/programme-course-form-wrapper.component';
+import { ProgrammeBeneficiariesComponent } from './programme/programme-beneficiaries/programme-beneficiaries.component';
+import { ProgrammeBeneficiaryFormWrapperComponent } from './programme/programme-beneficiary-form-wrapper/programme-beneficiary-form-wrapper.component';
+import { ProgrammeBdspComponent } from './programme/programme-bdsp/programme-bdsp.component';
+import { ProgrammeBdspFormWrapperComponent } from './programme/programme-bdsp-form-wrapper/programme-bdsp-form-wrapper.component';
+import { ProgrammeDocumentsComponent } from './programme/programme-documents/programme-documents.component';
+import { ProgrammeDocumentFormComponent } from './programme/programme-documents/programme-document-form/programme-document-form.component';
+import { ProgrammeDocumentTableComponent } from './programme/programme-documents/programme-document-table/programme-document-table.component';
 import { BeneficiariesComponent } from './beneficiaries/beneficiaries.component';
+import { BeneficiariesListComponent } from './beneficiaries/beneficiaries-list/beneficiaries-list.component';
+import { BeneficiariesPersonsComponent } from './beneficiaries/beneficiaries-persons/beneficiaries-persons.component';
+import { BeneficiariesDetailComponent } from './beneficiaries/beneficiaries-detail/beneficiaries-detail.component';
+import { BeneficiariesEmployeesComponent } from './beneficiaries/beneficiaries-employees/beneficiaries-employees.component';
+import { BeneficiariesEmployeeFormComponent } from './beneficiaries/beneficiaries-employees/beneficiaries-employee-form/beneficiaries-employee-form.component';
+import { BeneficiariesComplianceComponent } from './beneficiaries/beneficiaries-compliance/beneficiaries-compliance.component';
+import { BeneficiariesComplianceFormComponent } from './beneficiaries/beneficiaries-compliance/beneficiaries-compliance-form/beneficiaries-compliance-form.component';
 import { SmmeComponent } from './beneficiaries/smme/smme.component';
 import { ComplianceComponent } from './beneficiaries/compliance/compliance.component';
-import { EmployeeComponent } from './beneficiaries/employee/employee.component';
 import { GenericCompanyComponent } from './generic-company/generic-company.component';
 import { GenericCompanyFormComponent } from './generic-company/generic-company-form/generic-company-form.component';
 import { BusinessDevelopmemtComponent } from './business-developmemt/business-developmemt.component';
 import { ServiceProviderComponent } from './service-provider/service-provider.component';
 import { SmmeFormComponent } from './beneficiaries/smme/smme-form/smme-form.component';
 import { BdspComponent } from './business-developmemt/bdsp/bdsp.component';
-import { BdspEmployeeComponent } from './business-developmemt/bdsp-employee/bdsp-employee.component';
 import { BdspFormComponent } from './business-developmemt/bdsp/bdsp-form/bdsp-form.component';
-import { EmployeeFormComponent } from './beneficiaries/employee/employee-form/employee-form.component';
 import { ComplianceFormComponent } from './beneficiaries/compliance/compliance-form/compliance-form.component';
-import { BdspEmployeeFormComponent } from './business-developmemt/bdsp-employee/bdsp-employee-form/bdsp-employee-form.component';
 import { ProgrammeTableComponent } from './programme/programme-table/programme-table.component';
 import { ProgrammeFormComponent } from './programme/programme-table/programme-form/programme-form.component';
-import { ServiceProviderDetailsComponent } from './service-provider/service-provider-details/service-provider-details.component';
-import { TechnicalServiceProviderComponent } from './service-provider/technical-service-provider/technical-service-provider.component';
-import { GeneralServiceProviderComponent } from './service-provider/general-service-provider/general-service-provider.component';
-import { ServiceProviderDetailsFormComponent } from './service-provider/service-provider-details/service-provider-details-form/service-provider-details-form.component';
-import { TechnicalServiceProviderFormComponent } from './service-provider/technical-service-provider/technical-service-provider-form/technical-service-provider-form.component';
 import { AppointedBeneficiaryComponent } from './programme/appointed-beneficiary/appointed-beneficiary.component';
 import { AppointedBeneficiaryFormComponent } from './programme/appointed-beneficiary/appointed-beneficiary-form/appointed-beneficiary-form.component';
 import { AppointedBdspComponent } from './programme/appointed-bdsp/appointed-bdsp.component';
@@ -41,34 +50,50 @@ import { TimesheetInvoiceComponent } from './timesheet/timesheet-invoice/timeshe
 import { ClaimDisbursementComponent } from './claim-disbursement/claim-disbursement.component';
 import { ClaimDisbursementFormComponent } from './claim-disbursement/claim-disbursement-form/claim-disbursement-form.component';
 import { TimesheetManagerComponent } from './timesheet-manager/timesheet-manager.component';
+import { TimesheetNameDialogComponent } from './timesheet-manager/name-dialog/timesheet-name-dialog.component';
+import { TimesheetAddCompaniesDialogComponent } from './timesheet-manager/add-companies-dialog/timesheet-add-companies-dialog.component';
+import { TimesheetLookupPanelComponent } from './timesheet-manager/lookup-panel/timesheet-lookup-panel.component';
+import { ServiceProviderFormComponent } from './service-provider/service-provider-form/service-provider-form.component';
+import { ServiceProviderMoreComponent } from './service-provider-more/service-provider-more.component';
+import { ServiceProviderMoreFormComponent } from './service-provider-more/service-provider-more-form/service-provider-more-form.component';
+import { ServiceProviderRatingDialogComponent } from './service-provider-more/service-provider-rating-dialog/service-provider-rating-dialog.component';
 
 
 @NgModule({
   declarations: [
     CourseComponent,
     ProgrammeComponent,
+    ProgrammeListComponent,
+    ProgrammeFormWrapperComponent,
+    ProgrammeCoursesComponent,
+    ProgrammeCourseFormWrapperComponent,
+    ProgrammeBeneficiariesComponent,
+    ProgrammeBeneficiaryFormWrapperComponent,
+    ProgrammeBdspComponent,
+    ProgrammeBdspFormWrapperComponent,
+    ProgrammeDocumentsComponent,
+    ProgrammeDocumentFormComponent,
+    ProgrammeDocumentTableComponent,
     BeneficiariesComponent,
+    BeneficiariesListComponent,
+    BeneficiariesPersonsComponent,
+    BeneficiariesDetailComponent,
+    BeneficiariesEmployeesComponent,
+    BeneficiariesEmployeeFormComponent,
+    BeneficiariesComplianceComponent,
+    BeneficiariesComplianceFormComponent,
     SmmeComponent,
     ComplianceComponent,
-    EmployeeComponent,
     GenericCompanyComponent,
     GenericCompanyFormComponent,
     BusinessDevelopmemtComponent,
     ServiceProviderComponent,
     SmmeFormComponent,
     BdspComponent,
-    BdspEmployeeComponent,
     BdspFormComponent,
-    EmployeeFormComponent,
     ComplianceFormComponent,
-    BdspEmployeeFormComponent,
     ProgrammeTableComponent,
     ProgrammeFormComponent,
-    ServiceProviderDetailsComponent,
-    TechnicalServiceProviderComponent,
-    GeneralServiceProviderComponent,
-    ServiceProviderDetailsFormComponent,
-    TechnicalServiceProviderFormComponent,
     AppointedBeneficiaryComponent,
     AppointedBeneficiaryFormComponent,
     AppointedBdspComponent,
@@ -83,7 +108,14 @@ import { TimesheetManagerComponent } from './timesheet-manager/timesheet-manager
     TimesheetInvoiceComponent,
     ClaimDisbursementComponent,
     ClaimDisbursementFormComponent,
-    TimesheetManagerComponent
+    TimesheetManagerComponent,
+    TimesheetNameDialogComponent,
+    TimesheetAddCompaniesDialogComponent,
+    TimesheetLookupPanelComponent,
+    ServiceProviderFormComponent,
+    ServiceProviderMoreComponent,
+    ServiceProviderMoreFormComponent,
+    ServiceProviderRatingDialogComponent
   ],
   imports: [
     SharedModule,

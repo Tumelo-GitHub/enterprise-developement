@@ -1,39 +1,106 @@
-<form [formGroup]="form" novalidate (ngSubmit)="onSubmit()">
-    <h2 mat-dialog-title>Course</h2>
-    <mat-dialog-content class="mat-typography">
-        <div class="row">
-            <div class="col">
-                <mat-form-field class="full-width">
-                    <mat-select cdkFocusInitial placeholder="Course" formControlName="course_id">
-                        <mat-option *ngFor="let course of courseList" [value]="course.id">{{ course.course_name }}</mat-option>
-                    </mat-select>
-                </mat-form-field>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col">
-                <mat-form-field class="full-width">
-                    <mat-select placeholder="Status" formControlName="status">
-                        <mat-option *ngFor="let status of statusOptions" [value]="status.id">{{ status.status_name }}</mat-option>
-                    </mat-select>
-                </mat-form-field>
-            </div>
-        </div>
+<div class="form-container">
+    <div class="form-header">
+        <h2 class="form-title">
+            <mat-icon>{{isEditMode ? 'edit' : 'add'}}</mat-icon>
+            {{isEditMode ? 'Edit' : 'Add'}} Programme Course
+        </h2>
+        <button mat-icon-button (click)="cancelForm()" class="close-button" matTooltip="Close Form">
+            <mat-icon>close</mat-icon>
+        </button>
+    </div>
+
+    <form [formGroup]="form" novalidate (ngSubmit)="onSubmit()" class="course-form">
         
-        <div class="row">
-            <div class="col">
-                <mat-form-field class="full-width">
-                    <input matInput placeholder="Budget" formControlName="budget">
-                    <mat-error *ngIf="form.controls['budget'].hasError('required')">
-                        Budget is <strong>required</strong>
-                    </mat-error>
-                </mat-form-field>
+        <!-- Course Selection Section -->
+        <div class="form-section">
+            <div class="section-header">
+                <mat-icon>school</mat-icon>
+                <h3>Course Information</h3>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-field">
+                    <mat-form-field appearance="outline" class="full-width">
+                        <mat-label>Select Course</mat-label>
+                        <mat-select cdkFocusInitial formControlName="course_id" [disabled]="isLoading">
+                            <mat-option *ngFor="let course of courseList" [value]="course.id">
+                                {{course.course_name}}
+                            </mat-option>
+                        </mat-select>
+                        <mat-icon matSuffix>school</mat-icon>
+                        <mat-error *ngIf="form.get('course_id')?.hasError('required')">
+                            Course selection is required
+                        </mat-error>
+                    </mat-form-field>
+                </div>
             </div>
         </div>
-        
-    </mat-dialog-content>
-    <mat-dialog-actions align="end">
-        <button mat-button mat-dialog-close>Cancel</button>
-        <button type="submit" mat-button [disabled]="!form.valid">Submit</button>
-    </mat-dialog-actions>
-</form>
+
+        <!-- Status & Budget Section -->
+        <div class="form-section">
+            <div class="section-header">
+                <mat-icon>settings</mat-icon>
+                <h3>Course Settings</h3>
+            </div>
+            
+            <div class="form-row two-columns">
+                <div class="form-field">
+                    <mat-form-field appearance="outline" class="full-width">
+                        <mat-label>Status</mat-label>
+                        <mat-select formControlName="status" [disabled]="isLoading">
+                            <mat-option *ngFor="let status of statusOptions" [value]="status.id">
+                                {{status.status_name}}
+                            </mat-option>
+                        </mat-select>
+                        <mat-icon matSuffix>info</mat-icon>
+                        <mat-error *ngIf="form.get('status')?.hasError('required')">
+                            Status is required
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+
+                <div class="form-field">
+                    <mat-form-field appearance="outline" class="full-width">
+                        <mat-label>Budget Amount</mat-label>
+                        <input matInput 
+                               type="number" 
+                               formControlName="budget" 
+                               placeholder="Enter budget amount"
+                               [disabled]="isLoading">
+                        <span matPrefix>R&nbsp;</span>
+                        <mat-icon matSuffix>monetization_on</mat-icon>
+                        <mat-error *ngIf="form.get('budget')?.hasError('required')">
+                            Budget amount is required
+                        </mat-error>
+                        <mat-error *ngIf="form.get('budget')?.hasError('min')">
+                            Budget must be greater than 0
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+            </div>
+        </div>
+
+        <!-- Form Actions -->
+        <div class="form-actions">
+            <button type="button" 
+                    mat-button 
+                    (click)="cancelForm()" 
+                    [disabled]="isLoading"
+                    class="cancel-button">
+                <mat-icon>cancel</mat-icon>
+                Cancel
+            </button>
+            
+            <button type="submit" 
+                    mat-raised-button 
+                    color="primary" 
+                    [disabled]="!form.valid || isLoading"
+                    class="submit-button">
+                <mat-icon *ngIf="!isLoading">{{isEditMode ? 'save' : 'add'}}</mat-icon>
+                <mat-spinner *ngIf="isLoading" diameter="20"></mat-spinner>
+                {{isLoading ? 'Processing...' : (isEditMode ? 'Update Course' : 'Add Course')}}
+            </button>
+        </div>
+
+    </form>
+</div>

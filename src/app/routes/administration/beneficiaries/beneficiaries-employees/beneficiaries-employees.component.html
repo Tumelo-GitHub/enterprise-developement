@@ -1,0 +1,34 @@
+<div class="page-container">
+  <div class="header-section">
+    <div class="breadcrumb-nav">
+      <button mat-button (click)="goBack()" class="back-button">
+        <mat-icon>arrow_back</mat-icon>
+        Back to Companies
+      </button>
+      <span class="breadcrumb-separator">/</span>
+      <span class="current-location">{{ company?.smme_name }} Employees</span>
+    </div>
+
+    <h1 class="page-title">
+      <mat-icon>people</mat-icon>
+      Employees - {{ company?.smme_name }}
+    </h1>
+
+    <p class="page-description">
+      Manage employees for {{ company?.smme_name }}
+    </p>
+  </div>
+
+  <div class="loading-container" *ngIf="isLoading">
+    <mat-spinner></mat-spinner>
+  </div>
+
+  <div class="content-section" *ngIf="!isLoading && company">
+    <app-company-employee 
+      [companyId]="companyId" 
+      [employeeService]="employeeService"
+      (showForm)="onShowForm($event)"
+      (editForm)="onEditForm($event)">
+    </app-company-employee>
+  </div>
+</div>

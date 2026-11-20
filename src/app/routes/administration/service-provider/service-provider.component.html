@@ -1,22 +1,233 @@
-<!-- 
-    NOTE:
-    WE gonna have one form and one table that will cater for Coach, Mentor, Trainer
-    Have a service provider type dropdown with options [Coach, Mentor, Trainer]
- -->
-
-<div class="container">
-    <div class="page-title">
-        <h2>Service Providers</h2>
-    </div>
-    <mat-tab-group animationDuration="0ms">
-        <mat-tab label="Service Provider">
-            <app-service-provider-details></app-service-provider-details>
-        </mat-tab>
-        <mat-tab label="Technical">
-          <app-technical-service-provider></app-technical-service-provider>
-        </mat-tab>
-        <mat-tab label="Other">
-          <app-general-service-provider></app-general-service-provider>
-        </mat-tab>
-    </mat-tab-group>
+<div class="page-container">
+  <!-- Header Section -->
+  <div class="header-section">
+    <h1 class="page-title">
+      <mat-icon>people</mat-icon>
+      Service Provider Management
+    </h1>
+    <p class="page-description">
+      Manage coaches, mentors, and trainers with their areas of specialization
+    </p>
   </div>
+
+  <!-- Form Section -->
+  <div class="form-section" *ngIf="showForm">
+    <app-service-provider-form
+      [serviceProvider]="editingMentorship"
+      [isEditMode]="isEditMode"
+      (save)="onSaveMentorship($event)"
+      (cancel)="hideForm()">
+    </app-service-provider-form>
+  </div>
+
+  <!-- Content Section -->
+  <div class="content-section" *ngIf="!showForm">
+    <!-- Action Bar -->
+    <div class="action-bar">
+      <div class="search-section">
+        <mat-form-field appearance="outline" class="search-field">
+          <mat-label>Search service providers</mat-label>
+          <input matInput 
+                 [(ngModel)]="searchTerm" 
+                 (input)="onSearch()" 
+                 placeholder="Search by name, email, qualification...">
+          <mat-icon matSuffix>search</mat-icon>
+        </mat-form-field>
+        <button mat-icon-button 
+                *ngIf="searchTerm" 
+                (click)="clearSearch()" 
+                class="clear-search-btn"
+                matTooltip="Clear search">
+          <mat-icon>clear</mat-icon>
+        </button>
+      </div>
+
+      <button mat-raised-button 
+          (click)="openMoreServiceProvidersPage()"
+          class="add-button">
+        <mat-icon>open_in_new</mat-icon>
+        More Service Providers
+      </button>
+
+      <button mat-raised-button 
+              color="primary" 
+              (click)="showAddForm()"
+              class="add-button">
+        <mat-icon>add</mat-icon>
+        Add Service Provider
+      </button>
+    </div>
+
+    <!-- Loading Spinner -->
+    <div *ngIf="loading" class="loading-section">
+      <mat-spinner diameter="50"></mat-spinner>
+      <p>Loading service providers...</p>
+    </div>
+
+    <!-- Data Table Section -->
+    <div *ngIf="!loading" class="table-section">
+      <mat-card class="table-card">
+        <div class="table-wrapper">
+          <!-- Results Summary -->
+          <div class="results-summary">
+            <p *ngIf="searchTerm">
+              <mat-icon>search</mat-icon>
+              Found {{ dataSource.filteredData.length }} of {{ totalItems }} service providers
+              <span class="search-term">"{{ searchTerm }}"</span>
+            </p>
+            <p *ngIf="!searchTerm && totalItems > 0">
+              <mat-icon>info</mat-icon>
+              Showing {{ totalItems }} service providers total
+            </p>
+          </div>
+
+          <!-- No Data Message -->
+          <div *ngIf="dataSource.data.length === 0 && !loading" class="no-data">
+            <div class="no-data-content">
+              <mat-icon class="no-data-icon">people_outline</mat-icon>
+              <h3>{{ searchTerm ? 'No service providers found' : 'No service providers available' }}</h3>
+              <p>
+                {{ searchTerm ? 'Try adjusting your search criteria' : 'Add your first service provider to get started' }}
+              </p>
+              <button mat-raised-button 
+                      (click)="showAddForm()"
+                      *ngIf="!searchTerm">
+                <mat-icon>add</mat-icon>
+                Add First Service Provider
+              </button>
+            </div>
+          </div>
+
+          <!-- Data Table -->
+          <table mat-table 
+                 [dataSource]="dataSource" 
+                 class="data-table"
+                 *ngIf="dataSource.data.length > 0">
+
+            <!-- Name Column -->
+            <ng-container matColumnDef="name">
+              <th mat-header-cell *matHeaderCellDef class="header-cell">
+                <mat-icon>person</mat-icon>
+                Name
+              </th>
+              <td mat-cell *matCellDef="let element" class="data-cell">
+                <div class="entity-info">
+                  <span class="entity-name">{{ getFullName(element) }}</span>
+                </div>
+              </td>
+            </ng-container>
+
+            <!-- Email Column -->
+            <ng-container matColumnDef="email">
+              <th mat-header-cell *matHeaderCellDef class="header-cell">
+                <mat-icon>email</mat-icon>
+                Email
+              </th>
+              <td mat-cell *matCellDef="let element" class="data-cell">
+                <a href="mailto:{{ element.email }}" class="email-link">
+                  {{ element.email }}
+                </a>
+              </td>
+            </ng-container>
+
+            <!-- Tel Number Column -->
+            <ng-container matColumnDef="tel_number">
+              <th mat-header-cell *matHeaderCellDef class="header-cell">
+                <mat-icon>phone</mat-icon>
+                Phone Number
+              </th>
+              <td mat-cell *matCellDef="let element" class="data-cell">
+                <span>{{ element.tel_number }}</span>
+              </td>
+            </ng-container>
+
+            <!-- Qualification Column -->
+            <ng-container matColumnDef="qualification">
+              <th mat-header-cell *matHeaderCellDef class="header-cell">
+                <mat-icon>school</mat-icon>
+                Qualification
+              </th>
+              <td mat-cell *matCellDef="let element" class="data-cell">
+                <span [matTooltip]="element.qualification">
+                  {{ truncateText(element.qualification, 30) }}
+                </span>
+              </td>
+            </ng-container>
+
+            <!-- Specialization Column -->
+            <ng-container matColumnDef="specialization">
+              <th mat-header-cell *matHeaderCellDef class="header-cell">
+                <mat-icon>lightbulb</mat-icon>
+                Specialization
+              </th>
+              <td mat-cell *matCellDef="let element" class="data-cell">
+                <span [matTooltip]="element.specialization">
+                  {{ truncateText(element.specialization, 35) }}
+                </span>
+              </td>
+            </ng-container>
+
+            <!-- Service Types Column -->
+            <ng-container matColumnDef="service_types">
+              <th mat-header-cell *matHeaderCellDef class="header-cell">
+                <mat-icon>category</mat-icon>
+                Services
+              </th>
+              <td mat-cell *matCellDef="let element" class="data-cell">
+                <div class="service-types-badges">
+                  <span class="service-badge coach" 
+                        *ngIf="hasServiceType(element, 1)"
+                        matTooltip="Coach">
+                    Coach
+                  </span>
+                  <span class="service-badge mentor" 
+                        *ngIf="hasServiceType(element, 2)"
+                        matTooltip="Mentor">
+                    Mentor
+                  </span>
+                  <span class="service-badge trainer" 
+                        *ngIf="hasServiceType(element, 3)"
+                        matTooltip="Trainer">
+                    Trainer
+                  </span>
+                </div>
+              </td>
+            </ng-container>
+
+            <!-- Actions Column -->
+            <ng-container matColumnDef="actions">
+              <th mat-header-cell *matHeaderCellDef class="header-cell actions-header">Actions</th>
+              <td mat-cell *matCellDef="let element" class="data-cell actions-cell">
+                <div class="action-buttons">
+                  <button mat-icon-button 
+                          (click)="showEditForm(element)"
+                          class="edit-btn"
+                          matTooltip="Edit service provider">
+                    <mat-icon>edit</mat-icon>
+                  </button>
+                  <button mat-icon-button 
+                          (click)="deleteMentorship(element)"
+                          class="delete-btn"
+                          matTooltip="Delete service provider">
+                    <mat-icon>delete</mat-icon>
+                  </button>
+                </div>
+              </td>
+            </ng-container>              <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+              <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="table-row"></tr>
+            </table>
+
+            <!-- Paginator -->
+            <mat-paginator
+              *ngIf="dataSource.data.length > 0"
+              [pageSizeOptions]="pageSizeOptions"
+              [pageSize]="pageSize"
+              showFirstLastButtons
+              class="table-paginator"
+              aria-label="Select page of service providers">
+            </mat-paginator>
+        </div>
+      </mat-card>
+    </div>
+  </div>
+</div>

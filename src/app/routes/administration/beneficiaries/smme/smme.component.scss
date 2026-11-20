@@ -1,29 +1,117 @@
-.mat-mdc-table {
-    max-height: 500px !important;
-    overflow: auto;
+// Import shared component styles
+@import '../../../../shared/styles/shared-components';
+
+// SMME specific badges and styling
+.business-type-badge, .programme-badge {
+  display: inline-block;
+  padding: 4px 8px;
+  font-size: 12px;
+  font-weight: 500;
+  border-radius: 12px;
+  background-color: #e3f2fd;
+  color: #1976d2;
+  border: 1px solid #bbdefb;
+}
+
+.programme-badge {
+  background-color: #f3e5f5;
+  color: #7b1fa2;
+  border: 1px solid #e1bee7;
+}
+
+.ownership-badge {
+  padding: 2px 6px;
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 500;
+  
+  &.yes {
+    background-color: #e8f5e8;
+    color: #2e7d32;
+    border: 1px solid #c8e6c9;
   }
-
-.mat-mdc-row .mat-mdc-cell {
-  border-bottom: 1px solid transparent;
-  border-top: 1px solid transparent;
-  cursor: pointer;
+  
+  &.no {
+    background-color: #ffebee;
+    color: #c62828;
+    border: 1px solid #ffcdd2;
+  }
 }
 
-.mat-mdc-row:hover .mat-mdc-cell {
-  border-color: currentColor;
+.registration-badge {
+  padding: 2px 6px;
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 500;
+  
+  &.registered {
+    background-color: #e8f5e8;
+    color: #2e7d32;
+    border: 1px solid #c8e6c9;
+  }
+  
+  &.not-registered {
+    background-color: #fff3e0;
+    color: #f57c00;
+    border: 1px solid #ffcc02;
+  }
 }
 
-.btn-export {
-  margin: 0 5px;
+.entity-info {
+  display: flex;
+  flex-direction: column;
+  
+  .entity-name {
+    font-weight: 500;
+    color: #1f2937;
+  }
+  
+  .entity-subtitle {
+    font-size: 12px;
+    color: #6b7280;
+    margin-top: 2px;
+  }
 }
 
-#searchInput {
-  width: 30%;
+.contact-info {
+  display: flex;
+  flex-direction: column;
+  
+  .contact-name {
+    font-weight: 500;
+    color: #1f2937;
+  }
+  
+  .contact-position {
+    font-size: 12px;
+    color: #6b7280;
+    margin-top: 2px;
+  }
 }
 
-// .table-container {
-//     position: relative;
-//     min-height: 200px;
-//     max-height: 356px;
-//     overflow: auto;
-// }
+.address {
+  color: #4b5563;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.website-link {
+  font-size: 13px;
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .entity-info .entity-name,
+  .contact-info .contact-name {
+    font-size: 13px;
+  }
+  
+  .entity-info .entity-subtitle,
+  .contact-info .contact-position {
+    font-size: 11px;
+  }
+}
+
+@media (max-width: 480px) {
+  // Component specific responsive styles
+}

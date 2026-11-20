@@ -1,129 +1,214 @@
-<div class="tab-content">
-  <div class="table-controls">
-    <mat-form-field>
-      <mat-label for="">Table columns</mat-label>
-      <mat-select [formControl]="columns" [(ngModel)]="columnsToDisplay" (selectionChange)="selectedColumns($event)" multiple>
-        <mat-option *ngFor="let column of columnsList" [value]="column[0]">{{column[1]}}</mat-option>
-      </mat-select>
-    </mat-form-field>
-    
-    <mat-form-field style="float: right;" id="searchInput">
-        <mat-label>Search</mat-label>
-        <input matInput (keyup)="applyFilter($event)" placeholder="Ex. Mia" #input>
-    </mat-form-field>
-    <button mat-icon-button matTooltip="Export Table To Excel" (click)="exportTable()">
-      <i class="fa-regular fa-file-excel fa-xl"></i>
-    </button>
-    <button mat-icon-button matTooltip="Export Table To PDF" (click)="exportTableToPDF()">
-      <i class="fa-regular fa-file-pdf fa-xl"></i>
-    </button>
+<!-- Action Bar -->
+<!-- Action Bar -->
+<app-table-action-bar
+  [columnsList]="columnsList"
+  [columns]="columns"
+  [columnsToDisplay]="columnsToDisplay"
+  [isLoading]="isLoading"
+  [filterLabel]="'Filter companies'"
+  [filterPlaceholder]="'Search by company name, address, or email'"
+  [columnLabel]="'Display Columns'"
+  [addButtonText]="'Add Company'"
+  [addButtonTooltip]="'Add a new company'"
+  (selectedToppings)="selectedColumns($event)"
+  (exportTable)="exportTable()"
+  (exportTableToPDF)="exportTableToPDF()"
+  (openDialog)="addCompany()"
+  (applyFilter)="applyFilter($event)">
+</app-table-action-bar>
+
+<!-- Data Table Section -->
+<div class="table-section">
+  <!-- Loading Section -->
+  <div class="loading-section" *ngIf="isLoading">
+    <mat-spinner></mat-spinner>
+    <p>Loading companies...</p>
   </div>
-      
-    <div class="mat-elevation-z8">
-        <div class="table-container">
-          <table id="bdsp" mat-table [dataSource]="dataSource" matSort class="full-width-table">
-      
-            <ng-container matColumnDef="bdsp_name">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header> Company </th>
-              <td mat-cell *matCellDef="let row"> {{row.bdsp_name}} </td>
-            </ng-container>
-  
-            <ng-container matColumnDef="physical_address">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header> Physical_address </th>
-              <td mat-cell *matCellDef="let row"> {{row.physical_address}} </td>
-            </ng-container>
-  
-            <ng-container matColumnDef="postal_address">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header> Postal Address </th>
-              <td mat-cell *matCellDef="let row"> {{row.postal_address}} </td>
-            </ng-container>
-  
-            <ng-container matColumnDef="tell_number">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header> Tell Number </th>
-              <td mat-cell *matCellDef="let row"> {{row.tell_number}} </td>
-            </ng-container>
-  
-            <ng-container matColumnDef="cell_number">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header> Cell Number </th>
-              <td mat-cell *matCellDef="let row"> {{row.cell_number}} </td>
-            </ng-container>
-  
-            <ng-container matColumnDef="email">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header> Email </th>
-              <td mat-cell *matCellDef="let row"> <a href = "mailto: {{row.email}}" class="email-link">{{row.email}}</a> </td>
-            </ng-container>
-        
-            <ng-container matColumnDef="description">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header> Description </th>
-              <td mat-cell *matCellDef="let row"> {{row.description}} </td>
-            </ng-container>
-  
-            <ng-container matColumnDef="registration">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header> Registration </th>
-              <td mat-cell *matCellDef="let row"> {{row.registration}} </td>
-            </ng-container>
-  
-            <ng-container matColumnDef="contact_person_position">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header> Contact Person Position </th>
-              <td mat-cell *matCellDef="let row"> {{row.contact_person_position }} </td>
-            </ng-container>
-  
-            <ng-container matColumnDef="tel_number">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header> Tell Number </th>
-              <td mat-cell *matCellDef="let row"> {{row.tel_number}} </td>
-            </ng-container>
-  
-            <ng-container matColumnDef="cel_number">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header> Cell Number </th>
-              <td mat-cell *matCellDef="let row"> {{row.cel_number}} </td>
-            </ng-container>
-  
-            <ng-container matColumnDef="tax_number">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header> Tax Number </th>
-              <td mat-cell *matCellDef="let row"> {{row.tax_number}} </td>
-            </ng-container>
-  
-            <ng-container matColumnDef="bbbee_level">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header> BBBEE </th>
-              <td mat-cell *matCellDef="let row"> {{row.bbbee_level}} </td>
-            </ng-container>
-  
-            <ng-container matColumnDef="products">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header> Products </th>
-              <td mat-cell *matCellDef="let row"> {{row.products}} </td>
-            </ng-container>
-      
-            <!-- Action Column -->
-            <ng-container matColumnDef="action">
-              <th mat-header-cell *matHeaderCellDef> Action </th>
-              <td mat-cell *matCellDef="let row">
-                  <button mat-icon-button color="accern" (click)="openEditForm(row); $event.stopPropagation();">
-                      <mat-icon>edit</mat-icon>
-                  </button>
-                  <button mat-icon-button color="warn" (click)="deleteCompany(row.id); $event.stopPropagation();">
-                      <mat-icon>delete</mat-icon>
-                  </button>
-              </td>
-            </ng-container>
-        
-            <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
-            <tr 
-              mat-row 
-              *matRowDef="let row; columns: columnsToDisplay;" 
-              (click)="getClickedRow(row);"
-              [class.selected-row]="clickedRow == row"></tr>
-        
-            <!-- Row shown when there is no matching data. -->
-            <tr class="mat-row" *matNoDataRow>
-              <td class="mat-cell" colspan="4">No data matching the filter "{{input.value}}"</td>
-            </tr>
-          </table>
-        </div>
-        <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" [showFirstLastButtons]="true" aria-label="Select page of users"></mat-paginator>
-      </div>    
-      <div class="add-btn-wrapper" color="primary">
-        <button mat-fab matTooltip="Add Company" aria-label="Add BDSP Button with icon" class="add-btn" (click)="openDialog()">
-          <mat-icon>add</mat-icon>
-        </button>
-      </div>
+
+  <!-- Table Card -->
+  <mat-card class="table-card" *ngIf="!isLoading">
+    <div class="table-wrapper">
+      <table mat-table [dataSource]="dataSource" matSort class="data-table">
+    
+        <ng-container matColumnDef="bdsp_name">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header class="header-cell">
+            <mat-icon>business</mat-icon>
+            Company Name
+          </th>
+          <td mat-cell *matCellDef="let row" class="data-cell">
+            <div class="entity-info">
+              <span class="entity-name">{{row.bdsp_name}}</span>
+            </div>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="physical_address">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header class="header-cell">
+            <mat-icon>location_on</mat-icon>
+            Physical Address
+          </th>
+          <td mat-cell *matCellDef="let row" class="data-cell">
+            <span class="address">{{row.physical_address}}</span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="postal_address">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header class="header-cell">
+            <mat-icon>mail_outline</mat-icon>
+            Postal Address
+          </th>
+          <td mat-cell *matCellDef="let row" class="data-cell">
+            <span class="address">{{row.postal_address}}</span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="tell_number">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header class="header-cell">
+            <mat-icon>phone</mat-icon>
+            Tel Number
+          </th>
+          <td mat-cell *matCellDef="let row" class="data-cell">{{row.tell_number}}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="cell_number">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header class="header-cell">
+            <mat-icon>smartphone</mat-icon>
+            Cell Number
+          </th>
+          <td mat-cell *matCellDef="let row" class="data-cell">{{row.cell_number}}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="email">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header class="header-cell">
+            <mat-icon>email</mat-icon>
+            Email
+          </th>
+          <td mat-cell *matCellDef="let row" class="data-cell">
+            <a href="mailto:{{row.email}}" class="email-link">{{row.email}}</a>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="description">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header class="header-cell">
+            <mat-icon>description</mat-icon>
+            Description
+          </th>
+          <td mat-cell *matCellDef="let row" class="data-cell">
+            <span [matTooltip]="row.description">
+              {{truncateText(row.description, 50)}}
+            </span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="registration">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header class="header-cell">
+            <mat-icon>how_to_reg</mat-icon>
+            Registration
+          </th>
+          <td mat-cell *matCellDef="let row" class="data-cell">{{row.registration}}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="contact_person_position">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header class="header-cell">
+            <mat-icon>person</mat-icon>
+            Contact Person
+          </th>
+          <td mat-cell *matCellDef="let row" class="data-cell">{{row.contact_person_position}}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="tel_number">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header class="header-cell">
+            <mat-icon>phone</mat-icon>
+            Tel Number
+          </th>
+          <td mat-cell *matCellDef="let row" class="data-cell">{{row.tel_number}}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="cel_number">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header class="header-cell">
+            <mat-icon>smartphone</mat-icon>
+            Cell Number
+          </th>
+          <td mat-cell *matCellDef="let row" class="data-cell">{{row.cel_number}}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="tax_number">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header class="header-cell">
+            <mat-icon>receipt_long</mat-icon>
+            Tax Number
+          </th>
+          <td mat-cell *matCellDef="let row" class="data-cell">{{row.tax_number}}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="bbbee_level">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header class="header-cell">
+            <mat-icon>stars</mat-icon>
+            BBBEE Level
+          </th>
+          <td mat-cell *matCellDef="let row" class="data-cell">
+            <span class="status-badge status-scheduled">Level {{row.bbbee_level}}</span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="products">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header class="header-cell">
+            <mat-icon>inventory_2</mat-icon>
+            Products
+          </th>
+          <td mat-cell *matCellDef="let row" class="data-cell">
+            <span [matTooltip]="row.products">
+              {{truncateText(row.products, 40)}}
+            </span>
+          </td>
+        </ng-container>
+    
+        <!-- Action Column -->
+        <ng-container matColumnDef="action">
+          <th mat-header-cell *matHeaderCellDef class="header-cell actions-header">Actions</th>
+          <td mat-cell *matCellDef="let row" class="data-cell actions-cell">
+            <div class="action-buttons">
+              <button mat-icon-button 
+                      (click)="navigateToEmployees(row)" 
+                      class="employees-btn" 
+                      matTooltip="Manage employees">
+                <mat-icon>people</mat-icon>
+              </button>
+              <button mat-icon-button (click)="editRow(row)" class="edit-btn" matTooltip="Edit company">
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button mat-icon-button (click)="deleteCompany(row.id)" class="delete-btn" matTooltip="Delete company">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </div>
+          </td>
+        </ng-container>
+
+        <!-- Main company row -->
+        <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
+        <tr mat-row *matRowDef="let row; columns: columnsToDisplay;" class="table-row"></tr>
+
+        <!-- No Data Row -->
+        <tr class="mat-row" *matNoDataRow>
+          <td class="mat-cell" [attr.colspan]="columnsToDisplay.length">
+            <div class="no-data">
+              <div class="no-data-content">
+                <mat-icon class="no-data-icon">search_off</mat-icon>
+                <h3>No companies found</h3>
+                <p>No data matching the filter "{{searchTerm}}"</p>
+              </div>
+            </div>
+          </td>
+        </tr>
+      </table>
+
+      <!-- Paginator -->
+      <mat-paginator 
+        [pageSizeOptions]="[5, 10, 25, 100]"
+        [pageSize]="10"
+        [showFirstLastButtons]="true"
+        class="table-paginator"
+        aria-label="Select page of companies">
+      </mat-paginator>
+    </div>
+  </mat-card>
 </div>

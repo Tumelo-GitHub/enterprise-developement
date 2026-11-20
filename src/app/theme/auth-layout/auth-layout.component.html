@@ -1,17 +1,47 @@
-<div *ngIf="loaderService.isLoginLoading$ | async" class="loader-container">
-    <mat-spinner style="top: 50%; left: 50%;"></mat-spinner>
-</div>
-<div class="container">
-    <div>
-        <mat-card class="login-card">
-            <mat-card-content class="content">
-                <div class="logo" style="background-image: url(../../../assets/images/logo-no-bg-2.png); background-repeat: no-repeat; background-size: contain;">
-                    
+<div class="auth-layout-container">
+    <!-- Loader -->
+    <div *ngIf="loaderService.isLoginLoading$ | async" class="loader-overlay">
+        <div class="loader-content">
+            <mat-spinner diameter="60"></mat-spinner>
+            <p>Loading...</p>
+        </div>
+    </div>
+
+    <!-- Split Layout -->
+    <div class="auth-split-layout">
+        <!-- Left Side - Branding -->
+        <div class="auth-branding-side">
+            <div class="branding-content">
+                <div class="logo-container">
+                    <img src="../../../assets/images/logo-no-bg-2.png" alt="Company Logo" class="brand-logo">
                 </div>
-                <div class="form">
-                    <router-outlet></router-outlet>
+                <h1 class="brand-title">Naswenda Business Consultants</h1>
+                <p class="brand-subtitle">Enterprise Development & Support Platform</p>
+                <div class="brand-features">
+                    <div class="feature-item">
+                        <mat-icon>business_center</mat-icon>
+                        <span>Business Development</span>
+                    </div>
+                    <div class="feature-item">
+                        <mat-icon>school</mat-icon>
+                        <span>Training & Coaching</span>
+                    </div>
+                    <div class="feature-item">
+                        <mat-icon>analytics</mat-icon>
+                        <span>Analytics & Reports</span>
+                    </div>
                 </div>
-            </mat-card-content>
-        </mat-card>
+            </div>
+            <div class="branding-footer">
+                <p>&copy; 2025 Naswenda. All rights reserved.</p>
+            </div>
+        </div>
+
+        <!-- Right Side - Form -->
+        <div class="auth-form-side">
+            <div class="form-container">
+                <router-outlet></router-outlet>
+            </div>
+        </div>
     </div>
 </div>

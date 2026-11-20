@@ -1,0 +1,39 @@
+<div class="page-container">
+  <!-- Form Navigation -->
+  <div class="form-navigation">
+    <nav class="breadcrumb-nav">
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+          <button mat-button (click)="goBackToProgrammes()">
+            <mat-icon>business_center</mat-icon>
+            Programmes
+          </button>
+        </li>
+        <li class="breadcrumb-separator">
+          <mat-icon>chevron_right</mat-icon>
+        </li>
+        <li class="breadcrumb-item">
+          <button mat-button (click)="goBackToCourses()">
+            <mat-icon>school</mat-icon>
+            Courses
+          </button>
+        </li>
+        <li class="breadcrumb-separator">
+          <mat-icon>chevron_right</mat-icon>
+        </li>
+        <li class="breadcrumb-item active">{{isEditMode ? 'Edit Course' : 'Add New Course'}}</li>
+      </ol>
+    </nav>
+  </div>
+
+  <!-- Form Section -->
+  <div class="content-section">
+    <app-programme-course-form
+      [programmeCourse]="course"
+      [isEditMode]="isEditMode"
+      [programmeId]="programmeId || undefined"
+      (formSubmitted)="onFormSubmitted($event)"
+      (formCancelled)="onFormCancelled()">
+    </app-programme-course-form>
+  </div>
+</div>

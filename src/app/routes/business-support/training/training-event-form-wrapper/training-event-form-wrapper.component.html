@@ -1,0 +1,40 @@
+<div class="page-container">
+  <!-- Loading State -->
+  <div class="loading-container" *ngIf="isLoading">
+    <mat-spinner diameter="50"></mat-spinner>
+    <p>Loading event details...</p>
+  </div>
+
+  <!-- Content -->
+  <div *ngIf="!isLoading">
+    <!-- Form Navigation -->
+    <div class="form-navigation">
+      <nav class="breadcrumb-nav">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item">
+            <button mat-button (click)="onFormCancelled()">
+              <mat-icon>school</mat-icon>
+              Training Events
+            </button>
+          </li>
+          <li class="breadcrumb-separator">
+            <mat-icon>chevron_right</mat-icon>
+          </li>
+          <li class="breadcrumb-item active">{{ isEditMode ? 'Edit Training Event' : 'Add New Training Event' }}</li>
+        </ol>
+      </nav>
+    </div>
+
+    <!-- Content Section -->
+    <div class="content-section">
+      <div class="form-section">
+        <app-training-event-form
+          [eventData]="eventData"
+          [isEditMode]="isEditMode"
+          (saved)="onFormSaved()"
+          (cancelled)="onFormCancelled()">
+        </app-training-event-form>
+      </div>
+    </div>
+  </div>
+</div>

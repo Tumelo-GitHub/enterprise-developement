@@ -1,0 +1,33 @@
+<div class="page-container">
+  <div class="header-section">
+    <div class="breadcrumb-nav">
+      <button mat-button (click)="goBack()" class="back-button">
+        <mat-icon>arrow_back</mat-icon>
+        Back to Companies
+      </button>
+      <span class="breadcrumb-separator">/</span>
+      <span class="current-location">{{ company?.smme_name }} Compliance</span>
+    </div>
+
+    <h1 class="page-title">
+      <mat-icon>verified_user</mat-icon>
+      Compliance - {{ company?.smme_name }}
+    </h1>
+
+    <p class="page-description">
+      Manage compliance information for {{ company?.smme_name }}
+    </p>
+  </div>
+
+  <div class="loading-container" *ngIf="isLoading">
+    <mat-spinner></mat-spinner>
+  </div>
+
+  <div class="content-section" *ngIf="!isLoading && company">
+    <app-compliance 
+      [company_id]="companyId" 
+      (showForm)="onShowForm($event)"
+      (editForm)="onEditForm($event)">
+    </app-compliance>
+  </div>
+</div>

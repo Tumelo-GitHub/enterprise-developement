@@ -1,0 +1,161 @@
+<div class="form-container">
+  <mat-card class="form-card">
+    <div class="form-header">
+      <h2 class="form-title">
+        {{ isEditMode ? 'Edit Service Provider' : 'Add New Service Provider' }}
+      </h2>
+      <p class="form-subtitle">
+        {{ isEditMode ? 'Update service provider information and service types' : 'Enter details for the new service provider' }}
+      </p>
+    </div>
+
+    <div class="form-content">
+      <form [formGroup]="serviceProviderForm" (ngSubmit)="onSubmit()" novalidate>
+        <div class="form-row two-columns">
+          <!-- First Name -->
+          <mat-form-field appearance="outline" class="half-width">
+            <mat-label>First Name</mat-label>
+            <input matInput formControlName="name" placeholder="Enter first name">
+            <mat-error *ngIf="name?.touched && name?.errors">
+              {{ getErrorMessage('name') }}
+            </mat-error>
+          </mat-form-field>
+
+          <!-- Last Name -->
+          <mat-form-field appearance="outline" class="half-width">
+            <mat-label>Last Name</mat-label>
+            <input matInput formControlName="surname" placeholder="Enter last name">
+            <mat-error *ngIf="surname?.touched && surname?.errors">
+              {{ getErrorMessage('surname') }}
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="form-row two-columns">
+          <!-- Email -->
+          <mat-form-field appearance="outline" class="half-width">
+            <mat-label>Email</mat-label>
+            <input matInput type="email" formControlName="email" placeholder="Enter email address">
+            <mat-icon matSuffix>email</mat-icon>
+            <mat-error *ngIf="email?.touched && email?.errors">
+              {{ getErrorMessage('email') }}
+            </mat-error>
+          </mat-form-field>
+
+          <!-- Cell Number -->
+          <mat-form-field appearance="outline" class="half-width">
+            <mat-label>Cell Number</mat-label>
+            <input matInput formControlName="cell_number" placeholder="Enter cell number">
+            <mat-icon matSuffix>phone</mat-icon>
+            <mat-error *ngIf="cell_number?.touched && cell_number?.errors">
+              {{ getErrorMessage('cell_number') }}
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="form-row two-columns">
+          <!-- Telephone Number -->
+          <mat-form-field appearance="outline" class="half-width">
+            <mat-label>Telephone Number</mat-label>
+            <input matInput formControlName="tel_number" placeholder="Enter telephone number (optional)">
+            <mat-icon matSuffix>phone_in_talk</mat-icon>
+            <mat-error *ngIf="tel_number?.touched && tel_number?.errors">
+              {{ getErrorMessage('tel_number') }}
+            </mat-error>
+          </mat-form-field>
+
+          <!-- Qualification -->
+          <mat-form-field appearance="outline" class="half-width">
+            <mat-label>Qualification</mat-label>
+            <input matInput formControlName="qualification" placeholder="Enter qualification">
+            <mat-icon matSuffix>school</mat-icon>
+            <mat-error *ngIf="qualification?.touched && qualification?.errors">
+              {{ getErrorMessage('qualification') }}
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="form-row">
+          <!-- Specialization -->
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Area of Specialization</mat-label>
+            <textarea matInput 
+                      formControlName="specialization" 
+                      placeholder="Enter area of specialization"
+                      rows="3">
+            </textarea>
+            <mat-icon matSuffix>lightbulb</mat-icon>
+            <mat-error *ngIf="specialization?.touched && specialization?.errors">
+              {{ getErrorMessage('specialization') }}
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <!-- Service Types Section -->
+        <div class="form-row">
+          <div class="service-types-section">
+            <h3 class="section-title">
+              <mat-icon>work</mat-icon>
+              Service Types
+            </h3>
+            <p class="section-description">
+              Select one or more service types that this provider offers
+            </p>
+            
+            <div class="service-types-grid" formArrayName="service_type">
+              <div *ngFor="let serviceType of serviceTypes; let i = index" class="service-type-item">
+                <mat-checkbox 
+                  [formControl]="$any(service_type.at(i))"
+                  color="primary"
+                  class="service-type-checkbox">
+                  <div class="service-type-content">
+                    <span class="service-type-name">{{ serviceType.type_name }}</span>
+                    <mat-icon class="service-type-icon">
+                      {{ serviceType.type_name === 'Coach' ? 'sports' : 
+                         serviceType.type_name === 'Mentor' ? 'supervisor_account' : 
+                         'school' }}
+                    </mat-icon>
+                  </div>
+                </mat-checkbox>
+              </div>
+            </div>
+
+            <mat-error *ngIf="service_type?.touched && service_type?.errors?.['minSelected']" class="service-type-error">
+              {{ getErrorMessage('service_type') }}
+            </mat-error>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="form-actions">
+      <div class="action-button-set">
+        <button type="button" 
+                mat-stroked-button 
+                (click)="onReset()"
+                class="reset-btn">
+          <mat-icon>refresh</mat-icon>
+          Reset
+        </button>
+
+        <button type="button" 
+                mat-stroked-button 
+                (click)="onCancel()"
+                class="cancel-btn">
+          <mat-icon>close</mat-icon>
+          Cancel
+        </button>
+
+        <button type="submit" 
+                mat-raised-button 
+                [disabled]="!serviceProviderForm.valid"
+                class="submit-btn"
+                (click)="onSubmit()">
+          <mat-icon>{{ isEditMode ? 'save' : 'add' }}</mat-icon>
+          {{ isEditMode ? 'Update' : 'Save' }}
+        </button>
+      </div>
+    </div>
+  </mat-card>
+</div>

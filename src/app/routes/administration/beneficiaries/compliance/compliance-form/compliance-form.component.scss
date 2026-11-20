@@ -1,3 +1,17 @@
-// ::ng-deep mat-datepicker-toggle.mat-datepicker-toggle button.mat-focus-indicator.mat-icon-button.mat-button-base {
-//     display: inherit;
-//   }
+// Import shared component styles
+@import '../../../../../shared/styles/shared-components';
+
+// Form validation styling
+.mat-form-field {
+  .mat-error {
+    font-size: 12px;
+    margin-top: 4px;
+  }
+}
+
+// Loading state
+.mat-spinner {
+  display: inline-block !important;
+}
+
+// Component-specific overrides can be added here if needed

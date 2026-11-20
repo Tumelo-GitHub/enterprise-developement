@@ -1,40 +1,104 @@
-<form [formGroup]="form" novalidate (ngSubmit)="onSubmit()">
-    <h2 mat-dialog-title>Appoint Beneficiaries</h2>
-    <mat-dialog-content class="mat-typography">
-        <div class="row">
-            <div class="col">
-                <mat-form-field class="full-width">
-                    <mat-select cdkFocusInitial *ngIf="!data.id" formControlName="smme_id" placeholder="Beneficiaries" multiple>
-                        <mat-option *ngFor="let company of companyList" [value]="company.id">{{ company.smme_name }}</mat-option>
-                    </mat-select>
-                    <mat-select cdkFocusInitial *ngIf="data.id" formControlName="smme_id" placeholder="Beneficiaries">
-                        <mat-option *ngFor="let company of companyList" [value]="company.id">{{ company.smme_name }}</mat-option>
-                    </mat-select>
-                </mat-form-field>
+<div class="form-container">
+    <div class="form-header">
+        <h2 class="form-title">
+            <mat-icon>{{data?.id ? 'edit' : 'add'}}</mat-icon>
+            {{data?.id ? 'Edit' : 'Appoint'}} Beneficiary
+        </h2>
+        <button mat-icon-button (click)="onCancel()" class="close-button" matTooltip="Close Form">
+            <mat-icon>close</mat-icon>
+        </button>
+    </div>
+
+    <form [formGroup]="form" novalidate (ngSubmit)="onSubmit()" class="beneficiary-form">
+        
+        <!-- Beneficiary Selection Section -->
+        <div class="form-section">
+            <div class="section-header">
+                <mat-icon>people</mat-icon>
+                <h3>Beneficiary Information</h3>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-field">
+                    <mat-form-field appearance="outline" class="full-width">
+                        <mat-label>Select Beneficiary</mat-label>
+                        <mat-select cdkFocusInitial *ngIf="!data?.id" formControlName="smme_id" multiple [disabled]="isLoading">
+                            <mat-option *ngFor="let company of companyList" [value]="company.id">
+                                {{ company.smme_name }}
+                            </mat-option>
+                        </mat-select>
+                        <mat-select cdkFocusInitial *ngIf="data?.id" formControlName="smme_id" [disabled]="isLoading">
+                            <mat-option *ngFor="let company of companyList" [value]="company.id">
+                                {{ company.smme_name }}
+                            </mat-option>
+                        </mat-select>
+                        <mat-icon matSuffix>business</mat-icon>
+                        <mat-error *ngIf="form.get('smme_id')?.hasError('required')">
+                            Beneficiary selection is required
+                        </mat-error>
+                    </mat-form-field>
+                </div>
             </div>
         </div>
-        <div class="row">
-            <div class="col">
-                <mat-form-field class="full-width">
-                    <mat-select placeholder="Status" formControlName="status">
-                        <mat-option *ngFor="let status of status" value="{{ status.id }}">{{ status.status_name }}</mat-option>
-                    </mat-select>
-                </mat-form-field>
+
+        <!-- Status & Date Section -->
+        <div class="form-section">
+            <div class="section-header">
+                <mat-icon>settings</mat-icon>
+                <h3>Appointment Details</h3>
+            </div>
+            
+            <div class="form-row two-columns">
+                <div class="form-field">
+                    <mat-form-field appearance="outline" class="full-width">
+                        <mat-label>Status</mat-label>
+                        <mat-select formControlName="status" [disabled]="isLoading">
+                            <mat-option *ngFor="let status of status" [value]="status.id">
+                                {{ status.status_name }}
+                            </mat-option>
+                        </mat-select>
+                        <mat-icon matSuffix>info</mat-icon>
+                        <mat-error *ngIf="form.get('status')?.hasError('required')">
+                            Status is required
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+
+                <div class="form-field">
+                    <mat-form-field appearance="outline" class="full-width">
+                        <mat-label>Appointment Date</mat-label>
+                        <input matInput [matDatepicker]="picker1" formControlName="appointment_date" [disabled]="isLoading">
+                        <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+                        <mat-datepicker #picker1></mat-datepicker>
+                        <mat-error *ngIf="form.get('appointment_date')?.hasError('required')">
+                            Appointment date is required
+                        </mat-error>
+                    </mat-form-field>
+                </div>
             </div>
         </div>
-        <div class="row">
-            <div class="col">
-                <mat-form-field class="full-width">
-                    <mat-label>Appointment date</mat-label>
-                    <input matInput [matDatepicker]="picker1" formControlName="appointment_date">
-                    <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
-                    <mat-datepicker #picker1></mat-datepicker>
-                </mat-form-field>
-            </div>
+
+        <!-- Form Actions -->
+        <div class="form-actions">
+            <button type="button" 
+                    mat-button 
+                    (click)="onCancel()" 
+                    [disabled]="isLoading"
+                    class="cancel-button">
+                <mat-icon>cancel</mat-icon>
+                Cancel
+            </button>
+            
+            <button type="submit" 
+                    mat-raised-button 
+                    color="primary" 
+                    [disabled]="!form.valid || isLoading"
+                    class="submit-button">
+                <mat-icon *ngIf="!isLoading">{{data?.id ? 'save' : 'add'}}</mat-icon>
+                <mat-spinner *ngIf="isLoading" diameter="20"></mat-spinner>
+                {{isLoading ? 'Processing...' : (data?.id ? 'Update Beneficiary' : 'Appoint Beneficiary')}}
+            </button>
         </div>
-    </mat-dialog-content>
-    <mat-dialog-actions align="end">
-        <button mat-button mat-dialog-close>Cancel</button>
-        <button type="submit" mat-button [disabled]="!form.valid">Submit</button>
-    </mat-dialog-actions>
-</form>
+
+    </form>
+</div>

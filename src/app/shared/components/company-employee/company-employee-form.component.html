@@ -1,0 +1,115 @@
+<div class="form-container">
+  <mat-card class="form-card">
+    <div class="form-header">
+      <h2 class="form-title">
+        {{isEditMode ? 'Edit' : 'Add'}} Employee
+      </h2>
+      <p class="form-subtitle">
+        {{isEditMode ? 'Update' : 'Enter'}} employee information and contact details
+      </p>
+    </div>
+
+    <form [formGroup]="employeeForm" novalidate (ngSubmit)="onSubmit()">
+      <div class="form-content">
+        <!-- Personal Information -->
+        <div class="form-section">
+          <h3 class="section-title">
+            <mat-icon>person</mat-icon>
+            Personal Information
+          </h3>
+          
+          <div class="form-row two-columns">
+            <mat-form-field appearance="outline" class="half-width">
+              <mat-label>First Name</mat-label>
+              <input matInput formControlName="name" placeholder="Enter first name">
+              <mat-icon matSuffix>person</mat-icon>
+              <mat-error *ngIf="employeeForm.controls['name'].hasError('required')">
+                First name is <strong>required</strong>
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="half-width">
+              <mat-label>Last Name</mat-label>
+              <input matInput formControlName="surname" placeholder="Enter last name">
+              <mat-icon matSuffix>person_outline</mat-icon>
+              <mat-error *ngIf="employeeForm.controls['surname'].hasError('required')">
+                Last name is <strong>required</strong>
+              </mat-error>
+            </mat-form-field>
+          </div>
+        </div>
+
+        <!-- Professional Information -->
+        <div class="form-section">
+          <h3 class="section-title">
+            <mat-icon>work</mat-icon>
+            Professional Information
+          </h3>
+
+          <div class="form-row two-columns">
+            <mat-form-field appearance="outline" class="half-width">
+              <mat-label>Position</mat-label>
+              <input matInput formControlName="position" placeholder="Enter job position">
+              <mat-icon matSuffix>badge</mat-icon>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="half-width">
+              <mat-label>Role</mat-label>
+              <input matInput formControlName="role" placeholder="Enter role/department">
+              <mat-icon matSuffix>groups</mat-icon>
+            </mat-form-field>
+          </div>
+        </div>
+
+        <!-- Contact Information -->
+        <div class="form-section">
+          <h3 class="section-title">
+            <mat-icon>contact_phone</mat-icon>
+            Contact Information
+          </h3>
+
+          <div class="form-row two-columns">
+            <mat-form-field appearance="outline" class="half-width">
+              <mat-label>Cell Number</mat-label>
+              <input matInput formControlName="cell_number" placeholder="Enter cell number" type="tel">
+              <mat-icon matSuffix>smartphone</mat-icon>
+              <mat-error *ngIf="employeeForm.controls['cell_number'].hasError('required')">
+                Cell number is <strong>required</strong>
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="half-width">
+              <mat-label>Email Address</mat-label>
+              <input matInput formControlName="email" placeholder="Enter email address" type="email">
+              <mat-icon matSuffix>email</mat-icon>
+              <mat-error *ngIf="employeeForm.controls['email'].hasError('required')">
+                Email is <strong>required</strong>
+              </mat-error>
+              <mat-error *ngIf="employeeForm.controls['email'].hasError('email')">
+                Please enter a valid email address
+              </mat-error>
+            </mat-form-field>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <div class="action-button-set">
+          <button type="button" mat-stroked-button (click)="onCancel()" class="cancel-btn" [disabled]="isSubmitting">
+            <mat-icon>close</mat-icon>
+            Cancel
+          </button>
+          <button type="button" mat-stroked-button (click)="onReset()" class="reset-btn" [disabled]="isSubmitting">
+            <mat-icon>refresh</mat-icon>
+            Reset
+          </button>
+          <button type="submit" mat-raised-button [disabled]="!employeeForm.valid || isSubmitting" class="submit-btn">
+            <mat-spinner *ngIf="isSubmitting" diameter="20" style="margin-right: 8px;"></mat-spinner>
+            <mat-icon *ngIf="!isSubmitting">{{isEditMode ? 'update' : 'save'}}</mat-icon>
+            {{isSubmitting ? 'Saving...' : (isEditMode ? 'Update' : 'Save')}} Employee
+          </button>
+        </div>
+      </div>
+    </form>
+  </mat-card>
+</div>

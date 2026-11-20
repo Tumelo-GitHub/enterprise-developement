@@ -1,25 +1,162 @@
-.mat-radio-button {
-    display: block;
-    margin: 5px 0;
-}
+// Import shared component styles
+@import '../../../../../shared/styles/shared-components';
 
-.contact-header, .contact-inner-header {
+// SMME form specific styles
+.contact-card {
+  background: #f8f9fa;
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 16px;
+  border: 1px solid #e9ecef;
+  
+  .contact-header {
     display: flex;
     justify-content: space-between;
-}
-
-.contact {
-    border: 2px solid #ccc;
-    border-radius: 20px;
-    padding: 8px 10px;
-    margin-bottom: 5px;
-}
-
-.turnover-range {
-    display: flex;
-
-    .row {
-        width: 95%;
+    align-items: center;
+    margin-bottom: 20px;
+    
+    .contact-title {
+      margin: 0;
+      font-size: 16px;
+      font-weight: 500;
+      color: #495057;
     }
+  }
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  
+  .add-contact-btn {
+    height: 40px;
+    border-radius: 20px;
+  }
+}
+
+.dynamic-form-item {
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 16px;
+  border: 1px solid #e9ecef;
+  position: relative;
+  
+  .dynamic-actions {
+    display: flex;
+    justify-content: center;
+    margin-top: 16px;
+  }
+}
+
+.subsection {
+  margin-bottom: 32px;
+  
+  .subsection-header {
+    margin-bottom: 20px;
+    
+    .subsection-title {
+      margin: 0;
+      font-size: 16px;
+      font-weight: 500;
+      color: #6c757d;
+      padding-left: 8px;
+      border-left: 4px solid #007bff;
+    }
+  }
+}
+
+.ownership-field {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  
+  .ownership-label {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 500;
+    color: #495057;
+  }
+  
+  .ownership-radio {
+    display: flex;
+    gap: 16px;
+    
+    mat-radio-button {
+      margin-right: 16px;
+    }
+  }
+}
+
+// Responsive design for form columns
+.quarter-width {
+  flex: 0 0 22%;
+  
+  @media (max-width: 992px) {
+    flex: 0 0 48%;
+  }
+  
+  @media (max-width: 768px) {
+    flex: 0 0 100%;
+  }
+}
+
+.four-columns {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  
+  @media (max-width: 768px) {
+    flex-direction: column;
+  }
+}
+
+// Empty state styling
+.empty-state-card {
+  margin: 20px 0;
+  padding: 0px 20px;
+  border: 2px dashed #dee2e6;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  background: #fafbfc;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 200px;
+  
+  .empty-state {
+    text-align: center;
+    max-width: 400px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    
+    .empty-state-icon {
+      font-size: 64px;
+      width: 64px;
+      height: 64px;
+      color: #b0bac9;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .empty-state-text {
+      margin: 12px 0;
+      font-size: 16px;
+      font-weight: 500;
+      color: #495057;
+    }
+    
+    .empty-state-hint {
+      margin: 8px 0 0 0;
+      font-size: 14px;
+      color: #6c757d;
+      line-height: 1.5;
+    }
+  }
 }
 

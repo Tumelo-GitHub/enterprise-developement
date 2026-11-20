@@ -14,6 +14,10 @@ export class TrainingEventService {
     return this.http.get<IResponseModelBase<any>>('api/training/event');
   }
 
+  getTrainingEvent(id: number) : Observable<IResponseModelBase<any>> {
+    return this.http.get<IResponseModelBase<any>>(`api/training/event/${id}`);
+  }
+
   create(data: any) : Observable<IResponseModelBase<any>> {
     return this.http.post<IResponseModelBase<any>>('api/training/event', data);
   }
@@ -28,9 +32,5 @@ export class TrainingEventService {
 
   getTrainingVenue () : Observable<IResponseModelBase<any>> {
     return this.http.get<IResponseModelBase<any>>('api/training/venue');
-  }
-
-  getInvitedSmme (event_id: number) : Observable<IResponseModelBase<any>> {
-    return this.http.get<IResponseModelBase<any>>(`api/training/smme/${event_id}`);
   }
 }

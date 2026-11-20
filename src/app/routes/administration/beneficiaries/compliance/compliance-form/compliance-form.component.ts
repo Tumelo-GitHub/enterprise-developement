@@ -1,8 +1,7 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { ComplianceService } from '../../../services/compliance.service';
-import { ToastService } from 'src/app/shared/services/toast.service';
+import { NotificationUtil } from 'src/app/shared/utils/notificationUtil';
 import * as _moment from 'moment';
 import { IComplianceStatus, IComplianceType } from 'src/app/shared';
 
@@ -14,12 +13,21 @@ const moment = _moment;
   styleUrls: ['./compliance-form.component.scss']
 })
 export class ComplianceFormComponent implements OnInit {
-  statuses: IComplianceStatus[] = [];
-  types: IComplianceType[] = [];
+  @Input() complianceData: any = null;
+  @Input() companyId: any = null;
+  @Input() statuses: IComplianceStatus[] = [];
+  @Input() types: IComplianceType[] = [];
+  @Output() formSubmitted = new EventEmitter<any>();
+  @Output() formCancelled = new EventEmitter<void>();
+
+  isEditMode = false;
+  isSubmitting = false;
+  selectedFileName: string = '';
+
   complianceForm = this.fb.group({
     type_id: ['', Validators.required],
     registration_num: ['', Validators.required],
-    smme_id: [this.data.compliance.company, Validators.required],
+    smme_id: [null, Validators.required],
     issued_date: ['', Validators.required],
     expiry_date: ['', Validators.required],
     status: ['', Validators.required],
@@ -30,70 +38,121 @@ export class ComplianceFormComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder, 
-    public dialog: MatDialog, 
     private complianceService: ComplianceService,
-    private toast: ToastService,
-    private dialogRef: MatDialogRef<ComplianceFormComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: any
+    private notification: NotificationUtil
   ) { }
 
   ngOnInit(): void {
-    this.statuses = this.data.statuses;
-    this.types = this.data.types;
-    this.complianceForm.patchValue(this.data.compliance);
-  }
+    // Set company ID
+    if (this.companyId) {
+      this.complianceForm.patchValue({ smme_id: this.companyId });
+    }
 
-  onFileSelect(event: any) {
-    if (event.target.files.length > 0) {
-      const file = event.target.files[0];
-      this.complianceForm.controls.file.setValue(file)
+    // Check if we're editing existing compliance data
+    if (this.complianceData && this.complianceData.id) {
+      this.isEditMode = true;
+      this.populateForm();
     }
   }
 
+  populateForm(): void {
+    if (this.complianceData) {
+      this.complianceForm.patchValue({
+        type_id: this.complianceData.type_id,
+        registration_num: this.complianceData.registration_num,
+        smme_id: this.complianceData.smme_id || this.companyId,
+        issued_date: this.complianceData.issued_date,
+        expiry_date: this.complianceData.expiry_date,
+        status: this.complianceData.status,
+        isVerified: this.complianceData.isVerified,
+        verified_person: this.complianceData.verified_person
+      });
+    }
+  }
+
+  onFileSelect(event: any): void {
+    if (event.target.files.length > 0) {
+      const file = event.target.files[0];
+      this.selectedFileName = file.name;
+      this.complianceForm.controls.file.setValue(file);
+    }
+  }
+
+  removeFile(): void {
+    this.selectedFileName = '';
+    this.complianceForm.controls.file.setValue('');
+  }
+
+  onReset(): void {
+    this.complianceForm.reset();
+    this.selectedFileName = '';
+    if (this.companyId) {
+      this.complianceForm.patchValue({ smme_id: this.companyId });
+    }
+    if (this.isEditMode) {
+      this.populateForm();
+    }
+  }
+
+  onCancel(): void {
+    this.formCancelled.emit();
+  }
+
   onSubmit(): void {
-    // add company id
     if (this.complianceForm.valid) {
-      this.complianceForm.controls.issued_date.setValue(moment(this.complianceForm.value.issued_date).format('YYYY-MM-DD'));
-      this.complianceForm.controls.expiry_date.setValue(moment(this.complianceForm.value.expiry_date).format('YYYY-MM-DD'));
-      // new formdata
+      this.isSubmitting = true;
+      
+      // Format dates
+      const formValue = { ...this.complianceForm.value };
+      formValue.issued_date = moment(formValue.issued_date).format('YYYY-MM-DD');
+      formValue.expiry_date = moment(formValue.expiry_date).format('YYYY-MM-DD');
+
+      // Create FormData for file upload
       const formData: any = new FormData();
-      formData.append('file', this.complianceForm.controls.file.value);
-      formData.append('type_id', this.complianceForm.controls.type_id.value);
-      formData.append('registration_num', this.complianceForm.controls.registration_num.value);
-      formData.append('smme_id', this.complianceForm.controls.smme_id.value);
-      formData.append('issued_date', this.complianceForm.controls.issued_date.value);
-      formData.append('expiry_date', this.complianceForm.controls.expiry_date.value);
-      formData.append('status', this.complianceForm.controls.status.value);
-      formData.append('isVerified', this.complianceForm.controls.isVerified.value);
-      formData.append('verified_person', this.complianceForm.controls.verified_person.value);
-      // change date format
-      if (this.data.compliance.id) {
-        // add file id to formdata
-        formData.append('docid', this.data.compliance.docid);
-        // update existing record
-        this.complianceService.update(this.data.compliance.id, formData).subscribe({
-          next: (val) => {
-            this.toast.toastNotification('success', 'Success', val.message);
-            this.dialogRef.close(val.data);
+      formData.append('type_id', formValue.type_id);
+      formData.append('registration_num', formValue.registration_num);
+      formData.append('smme_id', formValue.smme_id);
+      formData.append('issued_date', formValue.issued_date);
+      formData.append('expiry_date', formValue.expiry_date);
+      formData.append('status', formValue.status);
+      formData.append('isVerified', formValue.isVerified || '');
+      formData.append('verified_person', formValue.verified_person || '');
+      
+      if (formValue.file) {
+        formData.append('file', formValue.file);
+      }
+
+      if (this.isEditMode && this.complianceData.id) {
+        // Add document ID if exists
+        if (this.complianceData.docid) {
+          formData.append('docid', this.complianceData.docid);
+        }
+        
+        // Update existing record
+        this.complianceService.update(this.complianceData.id, formData).subscribe({
+          next: (response) => {
+            this.notification.showSuccess(response.message || 'Compliance updated successfully');
+            this.isSubmitting = false;
+            this.formSubmitted.emit(response.data);
           },
-          error: (err: any) => {
-            this.toast.toastNotification('danger', 'Failed', err.message);
-            console.error(err)
+          error: (error) => {
+            this.notification.showError(error.message || 'Failed to update compliance');
+            this.isSubmitting = false;
           }
-        })
+        });
       } else {
-        // add new record
+        // Add new record
         this.complianceService.create(formData).subscribe({
-          next: (val) => {
-            this.toast.toastNotification('success', 'Success', val.message);
-            console.log(val.data);
-            this.dialogRef.close(val.data);
+          next: (response) => {
+            this.notification.showSuccess(response.message || 'Compliance created successfully');
+            this.isSubmitting = false;
+            this.formSubmitted.emit(response.data);
           },
-          error: (err: any) => {
-            this.toast.toastNotification('danger', 'Failed', err.message);
-            console.error(err)
+          error: (error) => {
+            this.notification.showError(error.message || 'Failed to create compliance');
+            this.isSubmitting = false;
           }
-        })
+        });
       }
     }
   }

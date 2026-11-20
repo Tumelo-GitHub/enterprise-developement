@@ -1,82 +1,166 @@
 <mat-sidenav-container class="sidenav-container mat-app-background" [ngClass]="{'dark-theme-mode': isDarkTheme}">
     <mat-sidenav #drawer class="sidenav" fixedInViewport [attr.role]="(isHandset$ | async) ? 'dialog' : 'navigation'"
         [mode]="(isHandset$ | async) ? 'over' : 'side'" [opened]="(isHandset$ | async) === false">
-        <mat-toolbar>Menu</mat-toolbar>
-        <!-- TODO: Create separate component -->
-        <div class="user-panel">
-            <img src="../../../assets/images/logo-no-bg-3.png" alt="profile">
-            <h4 class="user-panel-name">{{ user.first_name + ' ' + user.last_name}}</h4>
-            <h5 class="user-panel-email">{{ user.email}}</h5>
-            <div class="user-panel-icons">
-                <button mat-icon-button aria-label="Example icon button with a vertical three dot icon"
-                    matTooltip="Profile">
-                    <mat-icon>account_circle</mat-icon>
-                </button>
-                <button mat-icon-button aria-label="Example icon button with a vertical three dot icon"
-                    matTooltip="Edit Profile">
-                    <mat-icon>edit</mat-icon>
-                </button>
-                <button mat-icon-button aria-label="User logout icon button" matTooltip="Logout" (click)="logout()">
-                    <mat-icon>exit_to_app</mat-icon>
-                </button>
+        
+        <!-- Modern Header -->
+        <div class="sidenav-header">
+            <div class="sidenav-brand">
+                <mat-icon class="brand-icon">business</mat-icon>
+                <span class="brand-text">Menu</span>
             </div>
         </div>
-        <mat-nav-list class="linkMenu">
-            <mat-list-item role="listitem">
-                <a class="listMenuItem" routerLink="">
-                    <mat-icon>dashboard</mat-icon>
-                    <span class="menu-name">Dashboard</span>
-                </a>
-            </mat-list-item>
-        </mat-nav-list>
-        <mat-accordion>
-            <mat-expansion-panel *ngFor="let menuItem of dashMenu">
-                <mat-expansion-panel-header>
-                    <mat-icon class="menu-item-icon">{{ menuItem.icon }}</mat-icon>
-                    <span class="menu-name">{{ menuItem.name }}</span>
-                </mat-expansion-panel-header>
-                <mat-nav-list>
-                    <div *ngFor="let subItem of menuItem.children; let i = index">
-                        <a mat-list-item routerLinkActive="active" [routerLink]="menuItem.route + '/' + subItem.route">{{ subItem.name }}</a>
-                        <mat-divider *ngIf="menuItem.children && menuItem.children.length - 1 != i"></mat-divider>
+
+        <!-- Modern User Panel -->
+        <div class="user-panel">
+            <mat-card class="user-card">
+                <mat-card-content class="user-card-content">
+                    <div class="user-avatar">
+                        <img src="../../../assets/images/logo-no-bg-3.png" alt="profile">
                     </div>
-                </mat-nav-list>
-            </mat-expansion-panel>
-        </mat-accordion>
+                    <div class="user-info">
+                        <h4 class="user-name">{{ user.first_name + ' ' + user.last_name}}</h4>
+                        <p class="user-email">{{ user.email}}</p>
+                    </div>
+                    <div class="user-actions">
+                        <button mat-icon-button class="action-btn logout-btn" matTooltip="Logout" matTooltipPosition="right" (click)="logout()">
+                            <mat-icon>exit_to_app</mat-icon>
+                        </button>
+                    </div>
+                </mat-card-content>
+            </mat-card>
+        </div>
+
+        <!-- Navigation Menu -->
+        <div class="navigation-menu">
+            <!-- Dashboard Link -->
+            <div class="menu-section">
+                <a class="menu-item dashboard-item" routerLink="" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">
+                    <div class="menu-item-content">
+                        <mat-icon class="menu-icon">dashboard</mat-icon>
+                        <span class="menu-label">Dashboard</span>
+                    </div>
+                    <div class="menu-indicator"></div>
+                </a>
+            </div>
+
+            <!-- Accordion Menu Items -->
+            <mat-accordion class="modern-accordion" multi>
+                <mat-expansion-panel *ngFor="let menuItem of dashMenu" class="menu-expansion-panel">
+                    <mat-expansion-panel-header class="modern-expansion-header">
+                        <mat-panel-title class="expansion-title">
+                            <mat-icon class="menu-icon">{{ menuItem.icon }}</mat-icon>
+                            <span class="menu-label">{{ menuItem.name }}</span>
+                        </mat-panel-title>
+                    </mat-expansion-panel-header>
+                    
+                    <div class="submenu-container">
+                        <a *ngFor="let subItem of menuItem.children; let i = index" 
+                           class="submenu-item" 
+                           routerLinkActive="active" 
+                           [routerLink]="menuItem.route + '/' + subItem.route">
+                            <span class="submenu-dot"></span>
+                            <span class="submenu-label">{{ subItem.name }}</span>
+                        </a>
+                    </div>
+                </mat-expansion-panel>
+            </mat-accordion>
+        </div>
     </mat-sidenav>
     <mat-sidenav-content>
         <div *ngIf="loader" class="loader-container">
-            <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+            <mat-progress-bar mode="indeterminate" class="modern-progress"></mat-progress-bar>
         </div>
-        <mat-toolbar color="primary">
-            <button type="button" aria-label="Toggle sidenav" mat-icon-button (click)="drawer.toggle()">
-                <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
-            </button>
-            <span>Naswenda Business Consultants</span>
+        
+        <!-- Modern Toolbar -->
+        <mat-toolbar class="modern-toolbar">
+            <!-- Left Section -->
+            <div class="toolbar-left">
+                <button type="button" 
+                        mat-icon-button 
+                        class="menu-toggle-btn" 
+                        (click)="drawer.toggle()"
+                        matTooltip="Toggle Menu"
+                        matTooltipPosition="below">
+                    <mat-icon>menu</mat-icon>
+                </button>
+                <div class="company-branding">
+                    <mat-icon class="company-icon">business_center</mat-icon>
+                    <span class="company-name">Naswenda Business Consultants</span>
+                </div>
+            </div>
+
             <span class="flex-fill"></span>
-            <button mat-icon-button aria-label="Example icon button with a home icon" (click)="storeThemeSelection()">
-                <mat-icon>{{ (isDarkTheme) ? 'light_mode' : 'dark_mode' }}</mat-icon>
-            </button>
-            <button mat-icon-button aria-label="Example icon button with a home icon">
-                <mat-icon>search</mat-icon>
-            </button>
-            <button mat-icon-button aria-label="Example icon button with a home icon">
-                <mat-icon (click)="toggleFullScreen()">fullscreen</mat-icon>
-            </button>
-            <button mat-icon-button matBadge="15" matBadgeColor="warn" aria-label="Example icon button with a home icon"
-                (click)="printScreen()">
-                <mat-icon>notifications</mat-icon>
-            </button>
-            <button mat-icon-button [matMenuTriggerFor]="menu"
-                aria-label="Example icon button with a vertical three dot icon">
-                <mat-icon>more_vert</mat-icon>
-            </button>
-            <mat-menu #menu="matMenu">
-                <button mat-menu-item>Profile</button>
-                <button mat-menu-item>Edit Profile</button>
-                <button mat-menu-item>Restore Defaults</button>
-                <button mat-menu-item (click)="logout()">Logout</button>
-            </mat-menu>
+
+            <!-- Right Section -->
+            <div class="toolbar-right">
+                <!-- Theme Toggle -->
+                <button mat-icon-button 
+                        class="toolbar-action-btn theme-btn" 
+                        (click)="storeThemeSelection()"
+                        [matTooltip]="(isDarkTheme) ? 'Light Mode' : 'Dark Mode'"
+                        matTooltipPosition="below">
+                    <mat-icon>{{ (isDarkTheme) ? 'light_mode' : 'dark_mode' }}</mat-icon>
+                </button>
+
+                <!-- Search -->
+                <button mat-icon-button 
+                        class="toolbar-action-btn search-btn"
+                        matTooltip="Search"
+                        matTooltipPosition="below">
+                    <mat-icon>search</mat-icon>
+                </button>
+
+                <!-- Fullscreen -->
+                <button mat-icon-button 
+                        class="toolbar-action-btn fullscreen-btn"
+                        (click)="toggleFullScreen()"
+                        matTooltip="Toggle Fullscreen"
+                        matTooltipPosition="below">
+                    <mat-icon>fullscreen</mat-icon>
+                </button>
+
+                <!-- Notifications -->
+                <button mat-icon-button 
+                        class="toolbar-action-btn notification-btn"
+                        (click)="printScreen()"
+                        matBadge="15" 
+                        matBadgeColor="warn"
+                        matTooltip="Notifications"
+                        matTooltipPosition="below">
+                    <mat-icon>notifications</mat-icon>
+                </button>
+
+                <!-- Profile Menu -->
+                <button mat-icon-button 
+                        class="toolbar-action-btn profile-menu-btn"
+                        [matMenuTriggerFor]="menu"
+                        matTooltip="Account"
+                        matTooltipPosition="below">
+                    <mat-icon>account_circle</mat-icon>
+                </button>
+
+                <!-- User Menu Dropdown -->
+                <mat-menu #menu="matMenu" class="modern-menu" xPosition="before">
+                    <div class="menu-header">
+                        <mat-icon>account_circle</mat-icon>
+                        <span>Account</span>
+                    </div>
+                    <mat-divider></mat-divider>
+                    <button mat-menu-item class="menu-item-with-icon" routerLink="/user/profile">
+                        <mat-icon>person</mat-icon>
+                        <span>Profile Overview</span>
+                    </button>
+                    <button mat-menu-item class="menu-item-with-icon" routerLink="/user/profile/settings">
+                        <mat-icon>settings</mat-icon>
+                        <span>Settings</span>
+                    </button>
+                    <mat-divider></mat-divider>
+                    <button mat-menu-item class="menu-item-with-icon logout-item" (click)="logout()">
+                        <mat-icon>exit_to_app</mat-icon>
+                        <span>Logout</span>
+                    </button>
+                </mat-menu>
+            </div>
         </mat-toolbar>
         <!-- Add Content Here -->
         <div class="page-content">

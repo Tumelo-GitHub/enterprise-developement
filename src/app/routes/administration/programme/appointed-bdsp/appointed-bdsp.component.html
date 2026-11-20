@@ -1,97 +1,178 @@
-<div class="tab-content">
-    <div class="table-controls">
-        <mat-form-field>
-            <mat-label for="">Table columns</mat-label>
-            <mat-select [(ngModel)]="columnsToDisplay" multiple>
-                <mat-option *ngFor="let column of columnsList" [value]="column[0]">{{column[1]}}</mat-option>
-            </mat-select>
-        </mat-form-field>
-        
-        <mat-form-field style="float: right;" id="searchInput">
-            <input matInput (keyup)="applyFilter($event)" placeholder="Search" #input>
-        </mat-form-field>
-        <!-- <button mat-icon-button matTooltip="Export Table To Excel" (click)="exportTable()">
-          <i class="fa-regular fa-file-excel fa-xl"></i>
-        </button>
-        <button mat-icon-button matTooltip="Export Table To PDF" (click)="exportTableToPDF()">
-          <i class="fa-regular fa-file-pdf fa-xl"></i>
-        </button> -->
-    </div>
-    <!-- <mat-form-field>
-        <mat-label>Filter</mat-label>
-        <input matInput (keyup)="applyFilter($event)" placeholder="Ex. Mia" #input>
-    </mat-form-field> -->
-
-    <div class="mat-elevation-z8">
-        <table mat-table [dataSource]="dataSource" matSort class="full-width-table">
-            <ng-container matColumnDef="bdsp_name">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header> BDSP </th>
-                <td mat-cell *matCellDef="let row"> {{row.bdsp_name}} </td>
-            </ng-container>
-          
-            <ng-container matColumnDef="appointment_date">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header> Appointment Date </th>
-                <td mat-cell *matCellDef="let row"> {{row.appointment_date}} </td>
-            </ng-container>
-
-            <ng-container matColumnDef="contract_start_date">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header> Contract Start Date </th>
-                <td mat-cell *matCellDef="let row"> {{row.contract_start_date}} </td>
-            </ng-container>
-
-            <ng-container matColumnDef="contract_end_date">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header> Contract End Date </th>
-                <td mat-cell *matCellDef="let row"> {{row.contract_end_date}} </td>
-            </ng-container>
-          
+<!-- Action Bar -->
+<div class="action-bar">
+  <div class="search-section">
+    <mat-form-field appearance="outline" class="search-field">
+      <mat-label>Search BDSPs</mat-label>
+      <input matInput (keyup)="applyFilter($event)" placeholder="Search by BDSP name, dates, or description" #input [disabled]="isLoading">
+      <mat-icon matSuffix>search</mat-icon>
+    </mat-form-field>
+  </div>
+  
+  <div class="control-section">
+    <mat-form-field appearance="outline" class="column-select">
+      <mat-label>Show columns</mat-label>
+      <mat-select [(ngModel)]="columnsToDisplay" multiple [disabled]="isLoading">
+        <mat-option *ngFor="let column of columnsList" [value]="column[0]">{{column[1]}}</mat-option>
+      </mat-select>
+      <mat-icon matSuffix>view_column</mat-icon>
+    </mat-form-field>
     
-            <ng-container matColumnDef="service_request_start_date">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header> Service Request Start Date </th>
-                <td mat-cell *matCellDef="let row"> {{row.service_request_start_date}} </td>
-            </ng-container>
+    <button mat-raised-button (click)="openAddBdspForm()" class="add-button" [disabled]="isLoading">
+      <mat-icon>add</mat-icon>
+      Appoint BDSP
+    </button>
+  </div>
+</div>
 
-            <ng-container matColumnDef="service_request_end_date">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header> Service Request End Date </th>
-                <td mat-cell *matCellDef="let row"> {{row.service_request_end_date}} </td>
-            </ng-container>
-            
-            <ng-container matColumnDef="description">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header> Description </th>
-                <td mat-cell *matCellDef="let row"> {{row.description}} </td>
-            </ng-container>
-    
-            <ng-container matColumnDef="documents">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header> Documents </th>
-                <td mat-cell *matCellDef="let row">  </td>
-            </ng-container>
-        
-              <!-- Action Column -->
-            <ng-container matColumnDef="action">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header> Action </th>
-                <td mat-cell *matCellDef="let row">
-                    <button mat-icon-button matTooltip="Edit" color="accern" (click)="openDialog(row)">
-                        <mat-icon>edit</mat-icon>
-                    </button>
-                    <button mat-icon-button matTooltip="Delete" color="warn" (click)="deleteAppointment(row)">
-                        <mat-icon>delete</mat-icon>
-                    </button>
-                </td>
-            </ng-container>
-          
-            <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
-            <tr mat-row *matRowDef="let row; columns: columnsToDisplay;"></tr>
-          
-              <!-- Row shown when there is no matching data. -->
-            <tr class="mat-row" *matNoDataRow>
-                <td class="mat-cell" colspan="8">No data matching the filter "{{input.value}}"</td>
-            </tr>
+<!-- Data Table Section -->
+<div class="table-section">
+  <!-- Loading Section -->
+  <div class="loading-section" *ngIf="isLoading">
+    <mat-spinner></mat-spinner>
+    <p>Loading BDSPs...</p>
+  </div>
 
-        </table>
-        <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" aria-label="Select page of users"></mat-paginator>
+  <!-- Table Card -->
+  <mat-card class="table-card" *ngIf="!isLoading">
+    <div class="table-wrapper">
+      <table mat-table [dataSource]="dataSource" matSort class="data-table">
+
+        <ng-container matColumnDef="bdsp_name">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header class="header-cell">
+            <mat-icon>business</mat-icon>
+            BDSP Name
+          </th>
+          <td mat-cell *matCellDef="let row" class="data-cell">
+            <div class="bdsp-info">
+              <span class="bdsp-name">{{row.bdsp_name}}</span>
+            </div>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="appointment_date">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header class="header-cell">
+            <mat-icon>event</mat-icon>
+            Appointment Date
+          </th>
+          <td mat-cell *matCellDef="let row" class="data-cell">
+            <span class="date-info">{{formatDate(row.appointment_date)}}</span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="contract_start_date">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header class="header-cell">
+            <mat-icon>start</mat-icon>
+            Contract Start
+          </th>
+          <td mat-cell *matCellDef="let row" class="data-cell">
+            <span class="date-info">{{formatDate(row.contract_start_date)}}</span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="contract_end_date">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header class="header-cell">
+            <mat-icon>stop</mat-icon>
+            Contract End
+          </th>
+          <td mat-cell *matCellDef="let row" class="data-cell">
+            <span class="date-info" [class.expired]="isContractExpired(row.contract_end_date)">
+              {{formatDate(row.contract_end_date)}}
+            </span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="service_request_start_date">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header class="header-cell">
+            <mat-icon>play_arrow</mat-icon>
+            Service Start
+          </th>
+          <td mat-cell *matCellDef="let row" class="data-cell">
+            <span class="date-info">{{formatDate(row.service_request_start_date)}}</span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="service_request_end_date">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header class="header-cell">
+            <mat-icon>stop</mat-icon>
+            Service End
+          </th>
+          <td mat-cell *matCellDef="let row" class="data-cell">
+            <span class="date-info">{{formatDate(row.service_request_end_date)}}</span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="description">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header class="header-cell">
+            <mat-icon>description</mat-icon>
+            Description
+          </th>
+          <td mat-cell *matCellDef="let row" class="data-cell">
+            <span class="description-text">{{row.description || 'N/A'}}</span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="documents">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header class="header-cell">
+            <mat-icon>attach_file</mat-icon>
+            Documents
+          </th>
+          <td mat-cell *matCellDef="let row" class="data-cell">
+            <span class="document-count">View Documents</span>
+          </td>
+        </ng-container>
+
+        <!-- Action Column -->
+        <ng-container matColumnDef="action">
+          <th mat-header-cell *matHeaderCellDef class="header-cell actions-header">
+            <mat-icon>settings</mat-icon>
+            Actions
+          </th>
+          <td mat-cell *matCellDef="let row" class="data-cell actions-cell">
+            <div class="action-buttons">
+              <button mat-icon-button 
+                      matTooltip="Edit Appointment" 
+                      matTooltipPosition="above"
+                      (click)="editBdsp(row)" 
+                      class="edit-btn">
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button mat-icon-button 
+                      matTooltip="Delete Appointment" 
+                      matTooltipPosition="above"
+                      (click)="deleteAppointment(row)" 
+                      class="delete-btn">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </div>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
+        <tr mat-row *matRowDef="let row; columns: columnsToDisplay;" class="table-row"></tr>
+
+        <!-- No Data Row -->
+        <tr class="mat-row" *matNoDataRow>
+          <td class="mat-cell" [attr.colspan]="columnsToDisplay.length">
+            <div class="no-data">
+              <div class="no-data-content">
+                <mat-icon class="no-data-icon">business_center</mat-icon>
+                <h3>No BDSPs found</h3>
+                <p *ngIf="!input.value">No business development service providers appointed to this programme</p>
+                <p *ngIf="input.value">No data matching the filter "{{input.value}}"</p>
+              </div>
+            </div>
+          </td>
+        </tr>
+      </table>
+
+      <!-- Paginator -->
+      <mat-paginator 
+        [pageSizeOptions]="[5, 10, 25, 100]"
+        [pageSize]="10"
+        [showFirstLastButtons]="true"
+        class="table-paginator"
+        aria-label="Select page of appointed BDSPs">
+      </mat-paginator>
     </div>
-    <div class="add-btn-wrapper" color="primary">
-        <button mat-fab matTooltip="Add BDSP Appointment" aria-label="Add BDSP Appointment Button with icon" class="add-btn" (click)="openDialog()">
-          <mat-icon>add</mat-icon>
-        </button>
-    </div>
+  </mat-card>
 </div>

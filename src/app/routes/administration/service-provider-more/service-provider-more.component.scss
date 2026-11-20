@@ -1,0 +1,19 @@
+@import '../../../shared/styles/shared-components';
+
+.rating-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+
+  mat-icon {
+    color: #f5a623;
+    font-size: 18px;
+    height: 18px;
+    width: 18px;
+  }
+}
+
+.no-rating {
+  color: rgba(0, 0, 0, 0.4);
+  font-style: italic;
+}

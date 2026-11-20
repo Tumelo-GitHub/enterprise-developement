@@ -1,0 +1,142 @@
+<div class="page-container">
+  <div class="header-section">
+    <h1 class="page-title">
+      <mat-icon>groups</mat-icon>
+      More Service Providers
+    </h1>
+    <p class="page-description">Capture and manage service providers with additional business details.</p>
+  </div>
+
+  <div class="form-section" *ngIf="showForm">
+    <app-service-provider-more-form
+      [provider]="editingProvider"
+      [isEditMode]="isEditMode"
+      (save)="onSave($event)"
+      (cancel)="hideForm()">
+    </app-service-provider-more-form>
+  </div>
+
+  <div class="content-section" *ngIf="!showForm">
+    <app-table-action-bar
+      [isLoading]="loading"
+      [filterLabel]="'Filter providers'"
+      [filterPlaceholder]="'Search by name, company, city, province, or email'"
+      [addButtonText]="'Add Provider'"
+      [addButtonIcon]="'add'"
+      [addButtonTooltip]="'Add a new provider'"
+      (openDialog)="showAddForm()"
+      (applyFilter)="applyFilterFromEvent($event)">
+    </app-table-action-bar>
+
+    <div *ngIf="loading" class="loading-section">
+      <mat-spinner diameter="50"></mat-spinner>
+    </div>
+
+    <div *ngIf="!loading" class="table-section">
+      <mat-card class="table-card">
+        <div class="table-wrapper">
+      <table mat-table [dataSource]="dataSource" matSort class="data-table">
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef>Name</th>
+          <td mat-cell *matCellDef="let row">{{ row.name }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="surname">
+          <th mat-header-cell *matHeaderCellDef>Surname</th>
+          <td mat-cell *matCellDef="let row">{{ row.surname }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="email">
+          <th mat-header-cell *matHeaderCellDef>Email</th>
+          <td mat-cell *matCellDef="let row">{{ row.email }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="company_name">
+          <th mat-header-cell *matHeaderCellDef>Company</th>
+          <td mat-cell *matCellDef="let row">{{ row.company_name }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="city">
+          <th mat-header-cell *matHeaderCellDef>City</th>
+          <td mat-cell *matCellDef="let row">{{ row.city }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="province">
+          <th mat-header-cell *matHeaderCellDef>Province</th>
+          <td mat-cell *matCellDef="let row">{{ row.province }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="tel_no">
+          <th mat-header-cell *matHeaderCellDef>Tel Number</th>
+          <td mat-cell *matCellDef="let row">{{ row.tel_no }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="cell_no">
+          <th mat-header-cell *matHeaderCellDef>Cell Number</th>
+          <td mat-cell *matCellDef="let row">{{ row.cell_no }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="service_type">
+          <th mat-header-cell *matHeaderCellDef>Service Type</th>
+          <td mat-cell *matCellDef="let row">{{ row.service_type }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="comment">
+          <th mat-header-cell *matHeaderCellDef>Comment</th>
+          <td mat-cell *matCellDef="let row">{{ row.comment }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="rating">
+          <th mat-header-cell *matHeaderCellDef>Rating</th>
+          <td mat-cell *matCellDef="let row">
+            <span *ngIf="row.rating_count; else noRating" class="rating-badge">
+              <mat-icon>star</mat-icon>
+              {{ row.average_rating }} ({{ row.rating_count }})
+            </span>
+            <ng-template #noRating>
+              <span class="no-rating">No feedback</span>
+            </ng-template>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef>Actions</th>
+          <td mat-cell *matCellDef="let row">
+            <button mat-icon-button (click)="showFeedback(row)" matTooltip="View / add feedback">
+              <mat-icon>rate_review</mat-icon>
+            </button>
+            <button mat-icon-button (click)="showEditForm(row)">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-icon-button color="warn" (click)="onDelete(row)">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns" class="table-row"></tr>
+
+        <tr class="mat-row" *matNoDataRow>
+          <td class="mat-cell" [attr.colspan]="displayedColumns.length">
+            <div class="no-data">
+              <div class="no-data-content">
+                <mat-icon class="no-data-icon">search_off</mat-icon>
+                <h3>No providers found</h3>
+                <p>No data matching the current filter</p>
+              </div>
+            </div>
+          </td>
+        </tr>
+      </table>
+
+      <mat-paginator
+        [pageSizeOptions]="[5, 10, 25, 100]"
+        class="table-paginator"
+        aria-label="Select page of providers">
+      </mat-paginator>
+        </div>
+      </mat-card>
+    </div>
+  </div>
+</div>

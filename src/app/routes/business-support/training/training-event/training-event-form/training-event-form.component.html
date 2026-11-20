@@ -1,100 +1,159 @@
-<form [formGroup]="eventForm" novalidate (ngSubmit)="onSubmit()">
-    <h2 mat-dialog-title>Training Event</h2>
-    <mat-dialog-content class="mat-typography">
+<div class="form-container">
+  <mat-card class="form-card">
+    <div class="form-header">
+      <h2 class="form-title">{{ isEditMode ? 'Edit Training Event' : 'Add Training Event' }}</h2>
+      <p class="form-subtitle">{{ isEditMode ? 'Update training event details' : 'Schedule a new training event for beneficiaries' }}</p>
+    </div>
+
+    <form [formGroup]="eventForm" novalidate (ngSubmit)="onSubmit()">
+      <div class="form-content">
         <div class="row">
-            <div class="col">
-                <mat-form-field class="full-width">
-                    <mat-select cdkFocusInitial placeholder="Programme" formControlName="programme_id" (selectionChange)="onProgrammeChange($event)">
-                        <mat-option *ngFor="let programme of programmeList" [value]="programme.id">{{programme.programme_name}}</mat-option>
-                    </mat-select>
-                    <mat-error *ngIf="eventForm.controls['programme_id'].hasError('required')">
-                        Programme is <strong>required</strong>
-                    </mat-error>
-                </mat-form-field>
-            </div>
+          <div class="col">
+            <mat-form-field class="full-width" appearance="outline">
+              <mat-label>Programme</mat-label>
+              <mat-select cdkFocusInitial formControlName="programme_id" (selectionChange)="onProgrammeChange($event)">
+                <mat-option *ngFor="let programme of programmeList" [value]="programme.id">{{programme.programme_name}}</mat-option>
+              </mat-select>
+              <mat-icon matPrefix>school</mat-icon>
+              <mat-error *ngIf="eventForm.controls['programme_id'].hasError('required')">
+                Programme is <strong>required</strong>
+              </mat-error>
+            </mat-form-field>
+          </div>
         </div>
+        
         <div class="row">
-            <div class="col">
-                <mat-form-field class="full-width">
-                    <mat-select placeholder="Trainer" formControlName="service_provider_id">
-                        <mat-option *ngFor="let trainer of trainerList" [value]="trainer.id">{{ trainer.name + ' ' + trainer.surname }}</mat-option>
-                    </mat-select>
-                    <mat-error *ngIf="eventForm.controls['service_provider_id'].hasError('required')">
-                        Name is <strong>required</strong>
-                    </mat-error>
-                </mat-form-field>
-            </div>
-            <div class="col">
-                <mat-form-field class="full-width">
-                    <mat-select cdkFocusInitial placeholder="Course" formControlName="course_id">
-                        <mat-option *ngFor="let course of courseList" [value]="course.course_id" [disabled]="course.status_name === 'Declined'">{{ course.course_name }}</mat-option>
-                    </mat-select>
-                </mat-form-field>
-            </div>
+          <div class="col">
+            <mat-form-field class="full-width" appearance="outline">
+              <mat-label>Trainer</mat-label>
+              <mat-select formControlName="service_provider_id">
+                <mat-option *ngFor="let trainer of trainerList" [value]="trainer.id">{{ trainer.name + ' ' + trainer.surname }}</mat-option>
+              </mat-select>
+              <mat-icon matPrefix>person</mat-icon>
+              <mat-error *ngIf="eventForm.controls['service_provider_id'].hasError('required')">
+                Trainer is <strong>required</strong>
+              </mat-error>
+            </mat-form-field>
+          </div>
+          <div class="col">
+            <mat-form-field class="full-width" appearance="outline">
+              <mat-label>Course</mat-label>
+              <mat-select formControlName="course_id">
+                <mat-option *ngFor="let course of courseList" [value]="course.course_id" [disabled]="course.status_name === 'Declined'">{{ course.course_name }}</mat-option>
+              </mat-select>
+              <mat-icon matPrefix>book</mat-icon>
+              <mat-error *ngIf="eventForm.controls['course_id'].hasError('required')">
+                Course is <strong>required</strong>
+              </mat-error>
+            </mat-form-field>
+          </div>
         </div>
+        
         <div class="row">
-            <div class="col">
-                <mat-form-field class="full-width">
-                    <mat-select cdkFocusInitial placeholder="Venue" formControlName="venue_id">
-                        <mat-option *ngFor="let venue of venues" [value]="venue.id">{{venue.venue_name}}</mat-option>
-                    </mat-select>
-                </mat-form-field>
-            </div>
-            <div class="col">
-                <mat-form-field class="full-width">
-                    <mat-label>Date</mat-label>
-                    <input matInput [matDatepicker]="picker" formControlName="event_date">
-                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-                    <mat-datepicker #picker></mat-datepicker>
-                </mat-form-field>
-            </div>
+          <div class="col">
+            <mat-form-field class="full-width" appearance="outline">
+              <mat-label>Venue</mat-label>
+              <mat-select formControlName="venue_id">
+                <mat-option *ngFor="let venue of venues" [value]="venue.id">{{venue.venue_name}}</mat-option>
+              </mat-select>
+              <mat-icon matPrefix>location_on</mat-icon>
+              <mat-error *ngIf="eventForm.controls['venue_id'].hasError('required')">
+                Venue is <strong>required</strong>
+              </mat-error>
+            </mat-form-field>
+          </div>
+          <div class="col">
+            <mat-form-field class="full-width" appearance="outline">
+              <mat-label>Date</mat-label>
+              <input matInput [matDatepicker]="picker" formControlName="event_date">
+              <mat-icon matPrefix>calendar_today</mat-icon>
+              <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+              <mat-datepicker #picker></mat-datepicker>
+              <mat-error *ngIf="eventForm.controls['event_date'].hasError('required')">
+                Date is <strong>required</strong>
+              </mat-error>
+            </mat-form-field>
+          </div>
         </div>
+        
         <div class="row">
-            <div class="col">
-                <mat-form-field class="full-width">
-                    <input matInput type="time" placeholder="Start Time" formControlName="start_time">
-                </mat-form-field>
-            </div>
-            <div class="col">
-                <mat-form-field class="full-width">
-                    <input matInput type="time" placeholder="End Time" formControlName="end_time">
-                </mat-form-field>
-            </div>
+          <div class="col">
+            <mat-form-field class="full-width" appearance="outline">
+              <mat-label>Start Time</mat-label>
+              <input matInput type="time" formControlName="start_time">
+              <mat-icon matPrefix>access_time</mat-icon>
+              <mat-error *ngIf="eventForm.controls['start_time'].hasError('required')">
+                Start time is <strong>required</strong>
+              </mat-error>
+            </mat-form-field>
+          </div>
+          <div class="col">
+            <mat-form-field class="full-width" appearance="outline">
+              <mat-label>End Time</mat-label>
+              <input matInput type="time" formControlName="end_time">
+              <mat-icon matPrefix>access_time</mat-icon>
+              <mat-error *ngIf="eventForm.controls['end_time'].hasError('required')">
+                End time is <strong>required</strong>
+              </mat-error>
+            </mat-form-field>
+          </div>
         </div>
+        
         <div class="row">
-            <div class="col">
-                <mat-form-field class="full-width">
-                    <mat-select placeholder="Status" formControlName="status_id">
-                        <!-- <mat-option *ngFor="let type of types" value="{{type.id}}">{{type.type_name}}</mat-option> -->
-                        <mat-option value="4">Cancelled</mat-option>
-                        <mat-option value="2">Completed</mat-option>
-                        <mat-option value="1">Postponed</mat-option>
-                        <mat-option value="5">Requested</mat-option>
-                        <mat-option value="3">Scheduled</mat-option>
-                    </mat-select>
-                </mat-form-field>
-            </div>
-            <div class="col">
-                <mat-form-field class="full-width">
-                    <mat-select placeholder="Notification" formControlName="notification" [multiple]="true">
-                        <mat-option value="email">Email</mat-option>
-                        <mat-option value="sms">SMS</mat-option>
-                    </mat-select>
-                </mat-form-field>
-            </div>
+          <div class="col">
+            <mat-form-field class="full-width" appearance="outline">
+              <mat-label>Status</mat-label>
+              <mat-select formControlName="status_id">
+                <mat-option value="4">Cancelled</mat-option>
+                <mat-option value="2">Completed</mat-option>
+                <mat-option value="1">Postponed</mat-option>
+                <mat-option value="5">Requested</mat-option>
+                <mat-option value="3">Scheduled</mat-option>
+              </mat-select>
+              <mat-icon matPrefix>flag</mat-icon>
+              <mat-error *ngIf="eventForm.controls['status_id'].hasError('required')">
+                Status is <strong>required</strong>
+              </mat-error>
+            </mat-form-field>
+          </div>
+          <div class="col" *ngIf="!isEditMode">
+            <mat-form-field class="full-width" appearance="outline">
+              <mat-label>Notification</mat-label>
+              <mat-select formControlName="notification" [multiple]="true">
+                <mat-option value="email">Email</mat-option>
+                <mat-option value="sms">SMS</mat-option>
+              </mat-select>
+              <mat-icon matPrefix>notifications</mat-icon>
+            </mat-form-field>
+          </div>
         </div>
-        <div class="row">
-            <div class="col">
-                <mat-form-field class="full-width">
-                    <mat-select placeholder="Beneficiaries" formControlName="smme_id" multiple>
-                        <mat-option *ngFor="let company of companyList" [value]="company.smme_id" [disabled]="company.status_name === 'Dismissed'">{{ company.smme_name }}</mat-option>
-                    </mat-select>
-                </mat-form-field>
-            </div>
+        
+        <div class="row" *ngIf="!isEditMode">
+          <div class="col">
+            <mat-form-field class="full-width" appearance="outline">
+              <mat-label>Beneficiaries</mat-label>
+              <mat-select formControlName="smme_id" multiple>
+                <mat-option *ngFor="let company of companyList" [value]="company.smme_id" [disabled]="company.status_name === 'Dismissed'">{{ company.smme_name }}</mat-option>
+              </mat-select>
+              <mat-icon matPrefix>business</mat-icon>
+              <mat-error *ngIf="eventForm.controls['smme_id'].hasError('required')">
+                At least one beneficiary is <strong>required</strong>
+              </mat-error>
+            </mat-form-field>
+          </div>
         </div>
-    </mat-dialog-content>
-    <mat-dialog-actions align="end">
-        <button mat-button mat-dialog-close>Cancel</button>
-        <button type="submit" mat-button [disabled]="!eventForm.valid">Submit</button>
-    </mat-dialog-actions>
-</form>
+      </div>
+
+      <div class="form-actions">
+        <button type="button" mat-stroked-button (click)="onCancel()" class="cancel-btn">
+          <mat-icon>close</mat-icon>
+          Cancel
+        </button>
+        <button type="submit" mat-raised-button color="primary" [disabled]="!eventForm.valid" class="submit-btn">
+          <mat-icon>{{ isEditMode ? 'save' : 'add' }}</mat-icon>
+          {{ isEditMode ? 'Update Event' : 'Create Event' }}
+        </button>
+      </div>
+    </form>
+  </mat-card>
+</div>
