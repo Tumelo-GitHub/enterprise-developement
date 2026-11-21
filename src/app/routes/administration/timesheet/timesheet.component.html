@@ -196,93 +196,10 @@
     <!-- COMPANY REPORT (admin)                                            -->
     <!-- ================================================================ -->
     <mat-tab label="Company Report" *ngIf="isAdmin">
-      <div class="tab-body">
-        <form class="filter-card report-filters" [formGroup]="reportForm" (ngSubmit)="loadCompanyTimeReport()">
-          <mat-form-field appearance="outline">
-            <mat-label>Date range</mat-label>
-            <mat-date-range-input [rangePicker]="reportPicker">
-              <input matStartDate placeholder="Start date" formControlName="start_date">
-              <input matEndDate placeholder="End date" formControlName="end_date">
-            </mat-date-range-input>
-            <mat-datepicker-toggle matSuffix [for]="reportPicker"></mat-datepicker-toggle>
-            <mat-date-range-picker #reportPicker></mat-date-range-picker>
-          </mat-form-field>
-          <mat-form-field appearance="outline">
-            <mat-label>Company</mat-label>
-            <mat-select formControlName="company_id">
-              <mat-option value="">All companies</mat-option>
-              <mat-option *ngFor="let option of companies" value="{{option.id}}">{{option.company_name}}</mat-option>
-            </mat-select>
-          </mat-form-field>
-          <mat-form-field appearance="outline">
-            <mat-label>Employee</mat-label>
-            <mat-select formControlName="user_id">
-              <mat-option value="">All employees</mat-option>
-              <mat-option *ngFor="let u of users" value="{{u.id}}">{{u.first_name + ' ' + u.last_name}}</mat-option>
-            </mat-select>
-          </mat-form-field>
-          <button type="submit" mat-raised-button class="log-btn" [disabled]="companyReportLoading">
-            Generate report
-          </button>
-        </form>
-
-        <div class="scope-banner">
-          <mat-icon>groups</mat-icon>
-          <span>Time logged by <strong>{{getReportEmployeeName()}}</strong> on
-            <strong>{{getReportCompanyName()}}</strong>.</span>
-        </div>
-
-        <div class="report-card">
-          <div class="report-toolbar">
-            <div>
-              <strong>Total worked: {{companyTimeReportTotal}}</strong>
-              <span class="report-context">{{companyTimeReport.length}} project rows</span>
-            </div>
-            <div class="report-export-actions">
-              <button type="button" mat-stroked-button [disabled]="!companyTimeReport.length" (click)="exportCompanyReportToCSV()">
-                <mat-icon>description</mat-icon> CSV
-              </button>
-              <button type="button" mat-stroked-button [disabled]="!companyTimeReport.length" (click)="exportCompanyReportToExcel()">
-                <mat-icon>table_view</mat-icon> Excel
-              </button>
-              <button type="button" mat-stroked-button [disabled]="!companyTimeReport.length" (click)="exportCompanyReportToPDF()">
-                <mat-icon>picture_as_pdf</mat-icon> PDF
-              </button>
-            </div>
-          </div>
-          <mat-progress-bar *ngIf="companyReportLoading" mode="indeterminate"></mat-progress-bar>
-          <div class="table-container">
-            <table id="company-time-report" class="report-table">
-              <thead>
-                <tr>
-                  <th>Project</th>
-                  <th>Company</th>
-                  <th>Total time</th>
-                  <th>Comments</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr *ngFor="let row of companyTimeReport">
-                  <td>{{row.project_name}}</td>
-                  <td>{{row.company_name}}</td>
-                  <td>{{row.total_time}}</td>
-                  <td>{{row.comments}}</td>
-                </tr>
-                <tr *ngIf="!companyTimeReport.length">
-                  <td colspan="4" class="report-empty">Select filters and generate the report to see totals.</td>
-                </tr>
-              </tbody>
-              <tfoot *ngIf="companyTimeReport.length">
-                <tr>
-                  <th colspan="2">Total</th>
-                  <th>{{companyTimeReportTotal}}</th>
-                  <th></th>
-                </tr>
-              </tfoot>
-            </table>
-          </div>
-        </div>
-      </div>
+      <!-- Lazy: only created (and loaded) when the tab is opened -->
+      <ng-template matTabContent>
+        <app-company-report [companies]="companies" [users]="users"></app-company-report>
+      </ng-template>
     </mat-tab>
   </mat-tab-group>
 </div>

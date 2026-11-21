@@ -84,7 +84,11 @@ class Timesheet extends BaseController
     }
 
     /**
-     * Get project totals for a company within a date range. Admin access only.
+     * Collective time per project/company within a date range. Admin access only.
+     *
+     * Returns one row per project x company x employee so the frontend can show
+     * company totals and who contributed. Optional filters: project_id, company_id, user_id.
+     * comments is an array of the distinct, non-empty comments for that row.
      */
     public function companyReport()
     {
@@ -96,68 +100,82 @@ class Timesheet extends BaseController
             );
         }
 
-        $companyIdInput = $this->request->getGet('company_id');
-        $companyId = ($companyIdInput === null || $companyIdInput === '')
-            ? null
-            : filter_var($companyIdInput, FILTER_VALIDATE_INT);
-        $userIdInput = $this->request->getGet('user_id');
-        $reportUserId = ($userIdInput === null || $userIdInput === '') ? null : filter_var($userIdInput, FILTER_VALIDATE_INT);
         $startDate = $this->request->getGet('start_date');
         $endDate = $this->request->getGet('end_date');
         $start = is_string($startDate) ? \DateTimeImmutable::createFromFormat('!Y-m-d', $startDate) : false;
         $end = is_string($endDate) ? \DateTimeImmutable::createFromFormat('!Y-m-d', $endDate) : false;
 
+        $filters = [];
+        $invalidFilter = false;
+        foreach (['project_id', 'company_id', 'user_id'] as $param) {
+            $raw = $this->request->getGet($param);
+            if ($raw === null || $raw === '') continue;
+            $value = filter_var($raw, FILTER_VALIDATE_INT);
+            if (!$value || $value < 1) {
+                $invalidFilter = true;
+                break;
+            }
+            $filters[$param] = $value;
+        }
+
         if (
-            ($companyIdInput !== null && $companyIdInput !== '' && (!$companyId || $companyId < 1)) ||
-            ($userIdInput !== null && $userIdInput !== '' && (!$reportUserId || $reportUserId < 1)) ||
+            $invalidFilter ||
             !$start || $start->format('Y-m-d') !== $startDate ||
             !$end || $end->format('Y-m-d') !== $endDate ||
             $start > $end
         ) {
             return $this->getResponse(
-                ['message' => 'A valid date range and optional company are required.', 'data' => null],
+                ['message' => 'A valid date range is required; project, company and employee filters must be valid ids.', 'data' => null],
                 ResponseInterface::HTTP_BAD_REQUEST
             );
         }
 
         $extraWhere = '';
         $bindings = [$startDate, $endDate];
-
-        if ($companyId !== null) {
-            $extraWhere .= ' AND timesheet.company_id = ?';
-            $bindings[] = $companyId;
+        foreach ($filters as $column => $value) {
+            $extraWhere .= " AND timesheet.$column = ?"; // $column is from the whitelist above
+            $bindings[] = $value;
         }
 
-        if ($reportUserId !== null) {
-            $extraWhere .= ' AND timesheet.user_id = ?';
-            $bindings[] = $reportUserId;
-        }
+        $db = \Config\Database::connect();
+        // Default is 1024 bytes, which silently truncated long comment lists
+        $db->query('SET SESSION group_concat_max_len = 65535');
 
-        $rows = \Config\Database::connect()->query(
-            "SELECT timesheet.project_id, timesheet_project.project_name, timesheet.company_id,
-                    timesheet_companies.company_name,
+        // Comments are joined with the ASCII record separator so they can be split reliably
+        $rows = $db->query(
+            "SELECT timesheet.project_id, timesheet_project.project_name,
+                    timesheet.company_id, timesheet_companies.company_name,
+                    timesheet.user_id, user.first_name, user.last_name,
                     SUM(TIME_TO_SEC(timesheet.duration)) AS total_seconds,
-                    GROUP_CONCAT(NULLIF(NULLIF(TRIM(timesheet.comment), ''), '0') SEPARATOR ', ') AS comments
+                    COUNT(*) AS entry_count,
+                    MIN(timesheet.date) AS first_date,
+                    MAX(timesheet.date) AS last_date,
+                    GROUP_CONCAT(DISTINCT NULLIF(NULLIF(TRIM(timesheet.comment), ''), '0') SEPARATOR '\x1E') AS comments
              FROM timesheet
              INNER JOIN timesheet_project ON timesheet_project.id = timesheet.project_id
              INNER JOIN timesheet_companies ON timesheet_companies.id = timesheet.company_id
+             INNER JOIN user ON user.id = timesheet.user_id
              WHERE timesheet.date >= ?
                AND timesheet.date <= ?
                $extraWhere
                AND timesheet.duration != '00:00:00'
              GROUP BY timesheet.project_id, timesheet_project.project_name,
-                      timesheet.company_id, timesheet_companies.company_name
-             ORDER BY timesheet_companies.company_name, timesheet_project.project_name",
+                      timesheet.company_id, timesheet_companies.company_name,
+                      timesheet.user_id, user.first_name, user.last_name
+             ORDER BY timesheet_project.project_name, timesheet_companies.company_name, total_seconds DESC",
             $bindings
         )->getResultArray();
 
         foreach ($rows as &$row) {
+            foreach (['project_id', 'company_id', 'user_id', 'entry_count'] as $int) {
+                $row[$int] = (int) $row[$int];
+            }
             $totalSeconds = max(0, (int) $row['total_seconds']);
-            $hours = intdiv($totalSeconds, 3600);
-            $minutes = intdiv($totalSeconds % 3600, 60);
-            $seconds = $totalSeconds % 60;
             $row['total_seconds'] = $totalSeconds;
-            $row['total_time'] = sprintf('%02d:%02d:%02d', $hours, $minutes, $seconds);
+            $row['total_time'] = sprintf('%02d:%02d:%02d', intdiv($totalSeconds, 3600), intdiv($totalSeconds % 3600, 60), $totalSeconds % 60);
+            $row['comments'] = $row['comments'] === null || $row['comments'] === ''
+                ? []
+                : explode("\x1E", $row['comments']);
         }
         unset($row);
 

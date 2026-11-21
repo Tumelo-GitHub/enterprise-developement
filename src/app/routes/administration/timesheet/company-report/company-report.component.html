@@ -1,0 +1,180 @@
+<div class="tab-body">
+  <!-- Filter bar -->
+  <section class="filter-card" aria-label="Report filters">
+    <div class="filter-row">
+      <div class="segmented" role="group" aria-label="Period">
+        <button *ngFor="let p of periods" type="button"
+                [class.active]="period === p.key"
+                [attr.aria-pressed]="period === p.key"
+                (click)="setPeriod(p.key)">{{ p.label }}</button>
+      </div>
+
+      <mat-form-field *ngIf="period === 'custom'" appearance="outline" class="range-field" [formGroup]="customRange">
+        <mat-label>Date range</mat-label>
+        <mat-date-range-input [rangePicker]="rangePicker">
+          <input matStartDate formControlName="start" placeholder="Start">
+          <input matEndDate formControlName="end" placeholder="End" (dateChange)="onCustomRangeChange()">
+        </mat-date-range-input>
+        <mat-datepicker-toggle matSuffix [for]="rangePicker"></mat-datepicker-toggle>
+        <mat-date-range-picker #rangePicker></mat-date-range-picker>
+      </mat-form-field>
+
+      <span class="period-label" *ngIf="periodLabel">
+        <mat-icon>event</mat-icon>{{ periodLabel }}
+      </span>
+    </div>
+
+    <div class="filter-row secondary" [formGroup]="form">
+      <mat-form-field appearance="outline" class="select-field">
+        <mat-label>Project</mat-label>
+        <mat-select formControlName="project_id" (selectionChange)="onProjectChange($event.value)">
+          <mat-option [value]="null">All projects</mat-option>
+          <mat-option *ngFor="let p of projects" [value]="p.id">{{ p.project_name }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="select-field">
+        <mat-label>Company</mat-label>
+        <mat-select formControlName="company_id" (selectionChange)="load()">
+          <mat-option [value]="null">{{ projectCompanies ? 'All companies in project' : 'All companies' }}</mat-option>
+          <mat-option *ngFor="let c of companyOptions" [value]="c.id">{{ c.company_name }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="select-field">
+        <mat-label>Employee</mat-label>
+        <mat-select formControlName="user_id" (selectionChange)="load()">
+          <mat-option [value]="null">Everyone</mat-option>
+          <mat-option *ngFor="let u of users" [value]="u.id">{{ u.first_name }} {{ u.last_name }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="search-field">
+        <mat-label>Search</mat-label>
+        <input matInput [value]="search" (input)="onSearch($any($event.target).value)"
+               placeholder="Company, person or comment" autocomplete="off">
+        <button *ngIf="search" matSuffix mat-icon-button aria-label="Clear search" (click)="onSearch('')">
+          <mat-icon>close</mat-icon>
+        </button>
+        <mat-icon *ngIf="!search" matSuffix>search</mat-icon>
+      </mat-form-field>
+
+      <button mat-stroked-button class="export-btn" [matMenuTriggerFor]="exportMenu">
+        <mat-icon>file_download</mat-icon>
+        Export
+        <mat-icon class="caret">arrow_drop_down</mat-icon>
+      </button>
+      <mat-menu #exportMenu="matMenu" xPosition="before">
+        <button mat-menu-item (click)="exportExcel()">
+          <mat-icon>table_view</mat-icon><span>Excel: by company</span>
+        </button>
+        <button mat-menu-item (click)="exportDetailedExcel()">
+          <mat-icon>groups</mat-icon><span>Excel: by person</span>
+        </button>
+        <button mat-menu-item (click)="exportCSV()">
+          <mat-icon>description</mat-icon><span>CSV</span>
+        </button>
+        <button mat-menu-item (click)="exportPDF()">
+          <mat-icon>picture_as_pdf</mat-icon><span>PDF</span>
+        </button>
+      </mat-menu>
+    </div>
+  </section>
+
+  <!-- Summary -->
+  <section class="summary" aria-label="Summary">
+    <div class="tile">
+      <span class="tile-label">Total time</span>
+      <span class="tile-value">{{ label(totalSeconds) }}</span>
+      <span class="tile-sub">{{ totalEntries }} {{ totalEntries === 1 ? 'entry' : 'entries' }}</span>
+    </div>
+    <div class="tile">
+      <span class="tile-label">Companies</span>
+      <span class="tile-value">{{ companyCount }}</span>
+      <span class="tile-sub">across {{ projectCount }} {{ projectCount === 1 ? 'project' : 'projects' }}</span>
+    </div>
+    <div class="tile">
+      <span class="tile-label">People</span>
+      <span class="tile-value">{{ peopleCount }}</span>
+      <span class="tile-sub">{{ averagePerPerson }} each on average</span>
+    </div>
+    <div class="tile">
+      <span class="tile-label">Most time on</span>
+      <span class="tile-value tile-value-text" [title]="topCompany?.name || ''">{{ topCompany?.name || '—' }}</span>
+      <span class="tile-sub" *ngIf="topCompany">{{ label(topCompany.seconds) }} · {{ share(topCompany.seconds) }}% of total</span>
+    </div>
+  </section>
+
+  <mat-progress-bar *ngIf="loading" mode="indeterminate" class="loading-bar"></mat-progress-bar>
+
+  <div class="list-toolbar" *ngIf="groups.length">
+    <span>{{ projectCount }} {{ projectCount === 1 ? 'project' : 'projects' }}, sorted by time spent</span>
+    <button mat-button color="primary" (click)="expandAll(!allExpanded)">
+      <mat-icon>{{ allExpanded ? 'unfold_less' : 'unfold_more' }}</mat-icon>
+      {{ allExpanded ? 'Collapse all' : 'Show who worked on each' }}
+    </button>
+  </div>
+
+  <!-- Projects › companies -->
+  <section class="projects" [class.is-loading]="loading" aria-label="Time by project and company">
+    <article *ngFor="let project of groups; trackBy: trackProject" class="project-card">
+      <header class="project-head">
+        <div class="project-title">
+          <h3>{{ project.project_name }}</h3>
+          <span class="project-meta">
+            {{ project.companies.length }} {{ project.companies.length === 1 ? 'company' : 'companies' }}
+            · {{ share(project.seconds) }}% of total
+          </span>
+        </div>
+        <span class="project-total">{{ label(project.seconds) }}</span>
+      </header>
+
+      <ul class="company-list">
+        <li *ngFor="let company of project.companies; trackBy: trackCompany" class="company"
+            [class.open]="expanded.has(company.key)">
+          <button type="button" class="company-row" (click)="toggle(company.key)"
+                  [attr.aria-expanded]="expanded.has(company.key)"
+                  [attr.aria-controls]="'detail-' + company.key">
+            <mat-icon class="chevron" aria-hidden="true">chevron_right</mat-icon>
+            <span class="company-name">{{ company.company_name }}</span>
+            <span class="company-people" [attr.aria-label]="company.people.length + ' people'">
+              <span *ngFor="let person of company.people.slice(0, 4)" class="avatar" [title]="person.name">{{ person.initials }}</span>
+              <span *ngIf="company.people.length > 4" class="avatar more">+{{ company.people.length - 4 }}</span>
+            </span>
+            <span class="share" aria-hidden="true">
+              <span class="share-bar" [style.width.%]="share(company.seconds)"></span>
+            </span>
+            <span class="share-pct">{{ share(company.seconds) }}%</span>
+            <span class="company-total">{{ label(company.seconds) }}</span>
+          </button>
+
+          <div *ngIf="expanded.has(company.key)" class="company-detail" [id]="'detail-' + company.key">
+            <div *ngFor="let person of company.people; trackBy: trackPerson" class="person">
+              <div class="person-row">
+                <span class="avatar">{{ person.initials }}</span>
+                <span class="person-name">{{ person.name }}</span>
+                <span class="person-meta">
+                  {{ person.entries }} {{ person.entries === 1 ? 'entry' : 'entries' }} · last {{ person.lastDate | date:'d MMM' }}
+                </span>
+                <span class="share small" aria-hidden="true">
+                  <span class="share-bar" [style.width.%]="share(person.seconds, company.seconds)"></span>
+                </span>
+                <span class="person-total">{{ label(person.seconds) }}</span>
+              </div>
+              <ul *ngIf="person.comments.length" class="comments">
+                <li *ngFor="let comment of person.comments">{{ comment }}</li>
+              </ul>
+            </div>
+          </div>
+        </li>
+      </ul>
+    </article>
+
+    <div *ngIf="!loading && !groups.length" class="empty-state">
+      <mat-icon>{{ hasFilters ? 'filter_alt_off' : 'insights' }}</mat-icon>
+      <h3>No time logged{{ hasFilters ? ' for these filters' : '' }} in {{ periodLabel || 'this period' }}</h3>
+      <p *ngIf="!hasFilters">Try a different period.</p>
+      <button *ngIf="hasFilters" mat-button color="primary" (click)="clearFilters()">Clear filters</button>
+    </div>
+  </section>
+</div>

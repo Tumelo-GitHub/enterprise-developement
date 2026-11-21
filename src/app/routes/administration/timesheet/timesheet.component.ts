@@ -12,8 +12,7 @@ import { DurationUtil } from 'src/app/shared/utils/duration.util';
 import { AuthService } from 'src/app/core';
 import { TimesheetInvoiceComponent } from './timesheet-invoice/timesheet-invoice.component';
 import { Subject, takeUntil } from 'rxjs';
-
-type Period = 'this_week' | 'last_week' | 'this_month' | 'last_month' | 'custom';
+import { formatRange, Period, periodRange, PERIODS, toIsoDate } from './timesheet-period';
 
 interface DayGroup {
   date: string;
@@ -34,13 +33,7 @@ export class TimesheetComponent implements OnInit, OnDestroy {
   disbursmentItems: any[] = [];
   loading = false;
 
-  readonly periods: { key: Period, label: string }[] = [
-    { key: 'this_week', label: 'This week' },
-    { key: 'last_week', label: 'Last week' },
-    { key: 'this_month', label: 'This month' },
-    { key: 'last_month', label: 'Last month' },
-    { key: 'custom', label: 'Custom' },
-  ];
+  readonly periods = PERIODS;
   period: Period = 'this_month';
 
   /** API filters. Dates are always 'YYYY-MM-DD' strings. */
@@ -59,12 +52,6 @@ export class TimesheetComponent implements OnInit, OnDestroy {
   companies: any[] = [];
   user!: IUser;
   users: IUser[] = [];
-
-  // ----- Company Report (admin) -----
-  reportForm: FormGroup;
-  companyTimeReport: any[] = [];
-  companyTimeReportTotal = '00:00:00';
-  companyReportLoading = false;
 
   private destroy$ = new Subject<void>();
 
@@ -85,13 +72,6 @@ export class TimesheetComponent implements OnInit, OnDestroy {
     this.customRange = this.fb.group({
       start: [null],
       end: [null]
-    });
-
-    this.reportForm = this.fb.group({
-      start_date: [null],
-      end_date: [null],
-      company_id: [''],
-      user_id: ['']
     });
   }
 
@@ -133,40 +113,20 @@ export class TimesheetComponent implements OnInit, OnDestroy {
       return;
     }
 
-    const now = moment();
-    const ranges: Record<Exclude<Period, 'custom'>, [moment.Moment, moment.Moment]> = {
-      this_week: [now.clone().startOf('isoWeek'), now.clone().endOf('isoWeek')],
-      last_week: [now.clone().subtract(1, 'week').startOf('isoWeek'), now.clone().subtract(1, 'week').endOf('isoWeek')],
-      this_month: [now.clone().startOf('month'), now.clone().endOf('month')],
-      last_month: [now.clone().subtract(1, 'month').startOf('month'), now.clone().subtract(1, 'month').endOf('month')],
-    };
-    const [start, end] = ranges[period];
-    this.form.patchValue({ start_date: start.format('YYYY-MM-DD'), end_date: end.format('YYYY-MM-DD') });
+    const { start, end } = periodRange(period);
+    this.form.patchValue({ start_date: start, end_date: end });
     this.loadTimesheet();
   }
 
   onCustomRangeChange(): void {
     const { start, end } = this.customRange.value;
     if (!start || !end) return;
-    this.form.patchValue({
-      start_date: moment(start).format('YYYY-MM-DD'),
-      end_date: moment(end).format('YYYY-MM-DD')
-    });
+    this.form.patchValue({ start_date: toIsoDate(start), end_date: toIsoDate(end) });
     this.loadTimesheet();
   }
 
   get periodLabel(): string {
-    const { start_date, end_date } = this.form.value;
-    if (!start_date || !end_date) return '';
-    const start = moment(start_date);
-    const end = moment(end_date);
-    if (start.isSame(end, 'day')) return end.format('D MMM YYYY');
-    if (start.isSame(end, 'year')) {
-      return start.isSame(end, 'month')
-        ? `${start.format('D')} – ${end.format('D MMM YYYY')}`
-        : `${start.format('D MMM')} – ${end.format('D MMM YYYY')}`;
-    }
-    return `${start.format('D MMM YYYY')} – ${end.format('D MMM YYYY')}`;
+    return formatRange(this.form.value.start_date, this.form.value.end_date);
   }
 
   onSearch(value: string): void {
@@ -426,122 +386,5 @@ export class TimesheetComponent implements OnInit, OnDestroy {
   get viewingSomeoneElse(): boolean {
     const selectedId = this.form.value['user_id'];
     return !!selectedId && String(selectedId) !== String(this.user?.id);
-  }
-
-  // ---------------------------------------------------------------------
-  // Company Report (admin)
-  // ---------------------------------------------------------------------
-
-  loadCompanyTimeReport(): void {
-    const selectedCompany = this.reportForm.value['company_id'];
-    const companyId = selectedCompany === null || selectedCompany === '' ? null : Number(selectedCompany);
-    const selectedUser = this.reportForm.value['user_id'];
-    const userId = selectedUser === null || selectedUser === '' ? null : Number(selectedUser);
-    const startDate = this.reportForm.value['start_date'];
-    const endDate = this.reportForm.value['end_date'];
-
-    if ((companyId !== null && (!Number.isInteger(companyId) || companyId < 1)) || !startDate || !endDate) {
-      this.toast.toastNotification('danger', 'Missing filters', 'Select a date range to view company totals.');
-      return;
-    }
-
-    this.companyReportLoading = true;
-    this._timesheetService.getCompanyTimeReport(
-      companyId,
-      this.toDateInputValue(startDate),
-      this.toDateInputValue(endDate),
-      userId
-    ).subscribe({
-      next: resp => {
-        this.companyTimeReport = resp.data || [];
-        const totalSeconds = this.companyTimeReport.reduce((sum, row) => sum + Number(row.total_seconds || 0), 0);
-        this.companyTimeReportTotal = this.formatElapsedDuration(totalSeconds);
-        this.companyReportLoading = false;
-      },
-      error: err => {
-        console.error('Error fetching company timesheet report:', err);
-        this.companyReportLoading = false;
-        this.toast.toastNotification('danger', 'Error', 'Failed to fetch company timesheet totals.');
-      }
-    });
-  }
-
-  exportCompanyReportToExcel(): void {
-    if (!this.companyTimeReport.length) {
-      this.notifyEmptyCompanyReport();
-      return;
-    }
-
-    TableUtil.exportArrayToExcel(this.companyTimeReport.map(row => ({
-      Project: row.project_name,
-      Company: row.company_name,
-      'Total time': row.total_time,
-      Comments: row.comments || ''
-    })), 'Company-Timesheet-Report');
-  }
-
-  exportCompanyReportToCSV(): void {
-    if (!this.companyTimeReport.length) {
-      this.notifyEmptyCompanyReport();
-      return;
-    }
-
-    TableUtil.exportArrayToCSV(this.companyTimeReport.map(row => ({
-      Project: row.project_name,
-      Company: row.company_name,
-      'Total time': row.total_time,
-      Comments: row.comments || ''
-    })), 'Company-Timesheet-Report');
-  }
-
-  exportCompanyReportToPDF(): void {
-    if (!this.companyTimeReport.length) {
-      this.notifyEmptyCompanyReport();
-      return;
-    }
-
-    TableUtil.exportArrayToPDF(
-      ['Project', 'Company', 'Total time', 'Comments'],
-      this.companyTimeReport.map(row => [row.project_name, row.company_name, row.total_time, row.comments || '']),
-      'Company-Timesheet-Report',
-      `Company timesheet report (${this.getReportDateRange()})`
-    );
-  }
-
-  private getReportDateRange(): string {
-    const startDate = this.reportForm.value['start_date'];
-    const endDate = this.reportForm.value['end_date'];
-    if (!startDate || !endDate) {
-      return 'All dates';
-    }
-    return `${this.toDateInputValue(startDate)} to ${this.toDateInputValue(endDate)}`;
-  }
-
-  getReportEmployeeName(): string {
-    const selectedId = this.reportForm.value['user_id'];
-    const employee = selectedId ? this.users.find(u => String(u.id) === String(selectedId)) : null;
-    return employee ? `${employee.first_name} ${employee.last_name}` : 'all employees';
-  }
-
-  getReportCompanyName(): string {
-    const selectedId = this.reportForm.value['company_id'];
-    const company = selectedId ? this.companies.find(c => String(c.id) === String(selectedId)) : null;
-    return company ? company.company_name : 'all companies';
-  }
-
-  private notifyEmptyCompanyReport(): void {
-    this.toast.toastNotification('danger', 'Nothing to export', 'Run the company time report first.');
-  }
-
-  private formatElapsedDuration(totalSeconds: number): string {
-    return DurationUtil.toHms(totalSeconds);
-  }
-
-  private toDateInputValue(value: Date | string): string {
-    const date = value instanceof Date ? value : new Date(`${value}T00:00:00`);
-    const year = date.getFullYear();
-    const month = (date.getMonth() + 1).toString().padStart(2, '0');
-    const day = date.getDate().toString().padStart(2, '0');
-    return `${year}-${month}-${day}`;
   }
 }

@@ -257,6 +257,31 @@ export interface ITimesheet {
   work_type_id?: number | null
 }
 
+export interface ICompanyReportFilters {
+  start_date: string,
+  end_date: string,
+  project_id?: number | string | null,
+  company_id?: number | string | null,
+  user_id?: number | string | null
+}
+
+/** Company report row: one per project x company x employee. */
+export interface ICompanyReportRow {
+  project_id: number,
+  project_name: string,
+  company_id: number,
+  company_name: string,
+  user_id: number,
+  first_name: string,
+  last_name: string,
+  total_seconds: number,
+  total_time: string,
+  entry_count: number,
+  first_date: string,
+  last_date: string,
+  comments: string[]
+}
+
 /** A timesheet activity or work type. Archived (is_active false) values are hidden from capture. */
 export interface ITimesheetLookup {
   id: number,

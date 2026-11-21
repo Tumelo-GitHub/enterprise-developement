@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { HttpParams } from '@angular/common/http';
-import { IResponseModelBase, ITimesheet, ITimesheetLookup } from 'src/app/shared';
+import { ICompanyReportFilters, ICompanyReportRow, IResponseModelBase, ITimesheet, ITimesheetLookup } from 'src/app/shared';
 
 @Injectable({
   providedIn: 'root'
@@ -35,20 +35,20 @@ export class TimesheetService {
     return this.http.get<IResponseModelBase<any>>(url);
   }
 
-  getCompanyTimeReport(companyId: number | null, startDate: string, endDate: string, userId: number | null = null): Observable<IResponseModelBase<any[]>> {
+  /** Collective time, one row per project x company x employee. Admin only. */
+  getCompanyTimeReport(filters: ICompanyReportFilters): Observable<IResponseModelBase<ICompanyReportRow[]>> {
     let params = new HttpParams()
-      .set('start_date', startDate)
-      .set('end_date', endDate);
+      .set('start_date', filters.start_date)
+      .set('end_date', filters.end_date);
 
-    if (userId !== null) {
-      params = params.set('user_id', userId.toString());
+    for (const key of ['project_id', 'company_id', 'user_id'] as const) {
+      const value = filters[key];
+      if (value !== null && value !== undefined && value !== '') {
+        params = params.set(key, String(value));
+      }
     }
 
-    if (companyId !== null) {
-      params = params.set('company_id', companyId.toString());
-    }
-
-    return this.http.get<IResponseModelBase<any[]>>('api/timesheet/company-report', { params });
+    return this.http.get<IResponseModelBase<ICompanyReportRow[]>>('api/timesheet/company-report', { params });
   }
 
   create(data: ITimesheet[]) : Observable<IResponseModelBase<ITimesheet[]>> {
