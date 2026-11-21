@@ -8,14 +8,14 @@
   font-size: 12px;
   font-weight: 500;
   border-radius: 12px;
-  background-color: #e3f2fd;
-  color: #1976d2;
+  background-color: var(--info-bg, #e3f2fd);
+  color: var(--info-fg, #1976d2);
   border: 1px solid #bbdefb;
 }
 
 .programme-badge {
-  background-color: #f3e5f5;
-  color: #7b1fa2;
+  background-color: var(--accent-bg, #f3e5f5);
+  color: var(--accent-fg, #7b1fa2);
   border: 1px solid #e1bee7;
 }
 
@@ -26,14 +26,14 @@
   font-weight: 500;
   
   &.yes {
-    background-color: #e8f5e8;
-    color: #2e7d32;
+    background-color: var(--success-bg, #e8f5e8);
+    color: var(--success-fg, #2e7d32);
     border: 1px solid #c8e6c9;
   }
   
   &.no {
-    background-color: #ffebee;
-    color: #c62828;
+    background-color: var(--danger-bg, #ffebee);
+    color: var(--danger-fg, #c62828);
     border: 1px solid #ffcdd2;
   }
 }
@@ -45,14 +45,14 @@
   font-weight: 500;
   
   &.registered {
-    background-color: #e8f5e8;
-    color: #2e7d32;
+    background-color: var(--success-bg, #e8f5e8);
+    color: var(--success-fg, #2e7d32);
     border: 1px solid #c8e6c9;
   }
   
   &.not-registered {
-    background-color: #fff3e0;
-    color: #f57c00;
+    background-color: var(--warning-bg, #fff3e0);
+    color: var(--warning-fg, #f57c00);
     border: 1px solid #ffcc02;
   }
 }
@@ -63,12 +63,12 @@
   
   .entity-name {
     font-weight: 500;
-    color: #1f2937;
+    color: var(--text, #1f2937);
   }
   
   .entity-subtitle {
     font-size: 12px;
-    color: #6b7280;
+    color: var(--text-muted, #6b7280);
     margin-top: 2px;
   }
 }
@@ -79,18 +79,18 @@
   
   .contact-name {
     font-weight: 500;
-    color: #1f2937;
+    color: var(--text, #1f2937);
   }
   
   .contact-position {
     font-size: 12px;
-    color: #6b7280;
+    color: var(--text-muted, #6b7280);
     margin-top: 2px;
   }
 }
 
 .address {
-  color: #4b5563;
+  color: var(--text-muted, #4b5563);
   font-size: 13px;
   line-height: 1.4;
 }

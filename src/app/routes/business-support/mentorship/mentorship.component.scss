@@ -5,7 +5,7 @@
 .mentor-info, .programme-info {
   .mentor-name, .programme-name {
     font-weight: 500;
-    color: #333;
+    color: var(--text, #333);
   }
 }
 
@@ -28,7 +28,7 @@
 // Any mentorship-specific status colors (if different from defaults)
 .status-badge {
   &.status-mentorship-specific {
-    background-color: #e8f5e8;
-    color: #2e7d2e;
+    background-color: var(--success-bg, #e8f5e8);
+    color: var(--success-fg, #2e7d2e);
   }
 }

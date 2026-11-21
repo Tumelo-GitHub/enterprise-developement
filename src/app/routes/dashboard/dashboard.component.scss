@@ -1,7 +1,7 @@
 // Dashboard Container
 .dashboard-container {
   padding: 24px;
-  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  background: linear-gradient(135deg, var(--surface-2, #f8fafc) 0%, var(--border, #e2e8f0) 100%);
   min-height: 100vh;
 }
 
@@ -12,7 +12,7 @@
   align-items: center;
   margin-bottom: 32px;
   padding: 24px 0;
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid var(--border, #e2e8f0);
 
   .header-content {
     .dashboard-title {
@@ -22,7 +22,7 @@
       margin: 0 0 8px 0;
       font-size: 32px;
       font-weight: 700;
-      color: #1a202c;
+      color: var(--text, #1a202c);
 
       .title-icon {
         font-size: 36px;
@@ -34,7 +34,7 @@
 
     .dashboard-subtitle {
       margin: 0;
-      color: #718096;
+      color: var(--text-muted, #718096);
       font-size: 16px;
       font-weight: 400;
     }
@@ -78,7 +78,7 @@
   bottom: 0;
   border-radius: 12px;
   border: none;
-  background: white;
+  background: var(--surface, white);
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
   transition: all 0.3s ease;
   overflow: hidden;
@@ -119,13 +119,13 @@
       .stat-value {
         font-size: 24px;
         font-weight: 700;
-        color: #1a202c;
+        color: var(--text, #1a202c);
         margin-bottom: 4px;
       }
 
       .stat-title {
         font-size: 14px;
-        color: #718096;
+        color: var(--text-muted, #718096);
         margin-bottom: 8px;
         font-weight: 500;
       }
@@ -164,7 +164,7 @@
   bottom: 0;
   border-radius: 12px;
   border: none;
-  background: white;
+  background: var(--surface, white);
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
   transition: all 0.3s ease;
 
@@ -184,7 +184,7 @@
       gap: 12px;
       font-size: 18px;
       font-weight: 600;
-      color: #1a202c;
+      color: var(--text, #1a202c);
       margin: 0;
 
       mat-icon {
@@ -200,7 +200,7 @@
       gap: 8px;
 
       button {
-        color: #718096;
+        color: var(--text-muted, #718096);
 
         &:hover {
           color: #667eea;
@@ -219,7 +219,7 @@
     }
 
     &::-webkit-scrollbar-track {
-      background: #f1f5f9;
+      background: var(--surface-3, #f1f5f9);
       border-radius: 3px;
     }
 
@@ -251,13 +251,13 @@
 
       .progress-name {
         font-weight: 600;
-        color: #1a202c;
+        color: var(--text, #1a202c);
         font-size: 14px;
       }
 
       .progress-numbers {
         font-size: 12px;
-        color: #718096;
+        color: var(--text-muted, #718096);
         font-weight: 500;
       }
     }
@@ -296,7 +296,7 @@
       .progress-percentage {
         font-size: 12px;
         font-weight: 600;
-        color: #1a202c;
+        color: var(--text, #1a202c);
         min-width: 40px;
         text-align: right;
       }
@@ -311,7 +311,7 @@
     align-items: flex-start;
     gap: 12px;
     padding: 12px 0;
-    border-bottom: 1px solid #f1f5f9;
+    border-bottom: 1px solid var(--border, #f1f5f9);
 
     &:last-child {
       border-bottom: none;
@@ -356,7 +356,7 @@
 
       .activity-action {
         font-weight: 600;
-        color: #1a202c;
+        color: var(--text, #1a202c);
         font-size: 14px;
         margin-bottom: 4px;
       }
@@ -369,7 +369,7 @@
       }
 
       .activity-time {
-        color: #718096;
+        color: var(--text-muted, #718096);
         font-size: 12px;
       }
     }

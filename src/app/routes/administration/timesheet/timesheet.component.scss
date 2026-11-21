@@ -4,7 +4,7 @@
 
 .page-container {
   padding: 24px;
-  background-color: #f5f5f5;
+  background-color: var(--page-bg, #f5f5f5);
   min-height: calc(100vh - 120px);
 
   @media (max-width: 768px) {
@@ -58,7 +58,7 @@
 }
 
 .day-card {
-  background: #fff;
+  background: var(--surface, #fff);
   border-radius: 12px;
   box-shadow: $card-shadow;
   overflow: hidden;
@@ -70,7 +70,7 @@
   justify-content: space-between;
   gap: 12px;
   padding: 12px 20px;
-  background: #f9fafb;
+  background: var(--surface-2, #f9fafb);
   border-bottom: 1px solid $border;
 
   h3 {
@@ -112,7 +112,7 @@
   align-items: flex-start;
   gap: 16px;
   padding: 12px 12px 12px 20px;
-  border-bottom: 1px solid #f3f4f6;
+  border-bottom: 1px solid var(--border, #f3f4f6);
   transition: background-color 0.15s;
 
   &:last-child {
@@ -121,7 +121,7 @@
 
   &:hover,
   &:focus-within {
-    background: #fafbff;
+    background: var(--surface-2, #fafbff);
 
     .entry-actions {
       opacity: 1;
@@ -149,7 +149,7 @@
     font-size: 18px;
     width: 18px;
     height: 18px;
-    color: #9ca3af;
+    color: var(--text-subtle, #9ca3af);
   }
 
   .company {
@@ -174,8 +174,8 @@
   line-height: 18px;
   padding: 1px 8px;
   border-radius: 10px;
-  background: #f3f4f6;
-  color: #374151;
+  background: var(--surface-3, #f3f4f6);
+  color: var(--text-2, #374151);
 
   &.tag-outline {
     background: transparent;
@@ -188,7 +188,7 @@
   margin: 6px 0 0;
   font-size: 13px;
   line-height: 1.5;
-  color: #4b5563;
+  color: var(--text-muted, #4b5563);
   white-space: pre-line;
 }
 
@@ -219,7 +219,7 @@
   }
 
   .delete:hover {
-    color: #dc2626;
+    color: var(--danger-fg, #dc2626);
   }
 
   // Touch screens have no hover, so keep actions fully visible

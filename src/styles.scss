@@ -1,5 +1,6 @@
 // Custom Theming for Angular Material
 // For more information: https://material.angular.io/guide/theming
+@use 'sass:map';
 @use '@angular/material' as mat;
 @use 'app-theme';
 // Plus imports for other components in your app.
@@ -39,6 +40,26 @@ $devWizard-theme-dark: mat.define-dark-theme((
   )
 ));
 
+// Match Material's dark surfaces to the app's dark palette (same greys as the sidebar),
+// so cards, dialogs and menus sit on the page instead of Material's default #303030/#424242.
+$devWizard-dark-background: map.merge(map.get($devWizard-theme-dark, color, background), (
+  status-bar: #111827,
+  app-bar: #1f2937,
+  background: #111827,
+  hover: rgba(255, 255, 255, 0.05),
+  card: #1f2937,
+  dialog: #1f2937,
+  raised-button: #1f2937,
+  selected-button: #374151,
+  selected-disabled-button: #4b5563,
+  disabled-button-toggle: #1f2937,
+  unselected-chip: #374151,
+));
+$devWizard-theme-dark: map.deep-merge($devWizard-theme-dark, (
+  color: (background: $devWizard-dark-background),
+  background: $devWizard-dark-background,
+));
+
 
 // Include theme styles for core and each component used in your app.
 // Alternatively, you can import and @include the theme mixins for each component
@@ -46,8 +67,39 @@ $devWizard-theme-dark: mat.define-dark-theme((
 @include mat.all-component-themes($devWizard-light-theme);
 @include app-theme.theme($devWizard-light-theme);
 
+// Dark theme tokens. Component styles write colours as `var(--token, <light colour>)`:
+// light mode uses the fallback (so it looks exactly as designed), dark mode uses these.
+// .dark-theme-mode is set on the main layout and on the overlay container (dialogs, menus).
+//   --page-bg        page background
+//   --surface        cards, panels, inputs        --surface-2  subtle fills (headers)
+//   --surface-3      stronger fills (chips, tracks) --surface-hover
+//   --border / --border-strong
+//   --text / --text-2 / --text-muted / --text-subtle
+//   --{success,danger,warning,info,accent}-{bg,fg}  status badges and their text
 .dark-theme-mode {
   color-scheme: dark;
+  --page-bg: #111827;
+  --surface: #1f2937;
+  --surface-2: #243041;
+  --surface-3: #2d3a4d;
+  --surface-hover: #2a3552;
+  --border: #374151;
+  --border-strong: #4b5563;
+  --text: #f3f4f6;
+  --text-2: #e5e7eb;
+  --text-muted: #9ca3af;
+  --text-subtle: #6b7280;
+  --success-bg: rgba(16, 185, 129, 0.16);
+  --success-fg: #6ee7b7;
+  --danger-bg: rgba(239, 68, 68, 0.16);
+  --danger-fg: #fca5a5;
+  --warning-bg: rgba(245, 158, 11, 0.16);
+  --warning-fg: #fcd34d;
+  --info-bg: rgba(59, 130, 246, 0.16);
+  --info-fg: #93c5fd;
+  --accent-bg: rgba(129, 140, 248, 0.18);
+  --accent-fg: #c7d2fe;
+
   @include mat.all-component-themes($devWizard-theme-dark);
   @include app-theme.theme($devWizard-theme-dark);
 }
@@ -161,10 +213,10 @@ th.mat-header-cell, td.mat-cell, td.mat-footer-cell {
 }
 
 a.active {
-  background-color: whitesmoke;
+  background-color: var(--surface-3, whitesmoke);
 
   &:hover,
   &:focus {
-    background: whitesmoke;
+    background: var(--surface-3, whitesmoke);
   }
 }

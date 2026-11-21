@@ -1,14 +1,14 @@
 @import '../../../shared/styles/shared-components';
 
 $accent: #667eea;
-$border: #e5e7eb;
-$muted: #6b7280;
+$border: var(--border, #e5e7eb);
+$muted: var(--text-muted, #6b7280);
 
 .error-icon {
   font-size: 48px;
   width: 48px;
   height: 48px;
-  color: #dc2626;
+  color: var(--danger-fg, #dc2626);
 }
 
 .loading-section button {
@@ -44,7 +44,7 @@ $muted: #6b7280;
 }
 
 .panel {
-  background: #fff;
+  background: var(--surface, #fff);
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   overflow: hidden;
@@ -61,7 +61,7 @@ $muted: #6b7280;
     margin: 0;
     font-size: 18px;
     font-weight: 600;
-    color: #1f2937;
+    color: var(--text, #1f2937);
     display: flex;
     align-items: center;
     gap: 8px;
@@ -138,7 +138,7 @@ $muted: #6b7280;
 
   .project-name {
     font-weight: 500;
-    color: #1f2937;
+    color: var(--text, #1f2937);
     white-space: normal !important;
   }
 
@@ -165,7 +165,7 @@ $muted: #6b7280;
       font-size: 56px;
       width: 56px;
       height: 56px;
-      color: #d1d5db;
+      color: var(--text-subtle, #d1d5db);
     }
 
     p {
@@ -184,9 +184,9 @@ $muted: #6b7280;
   width: 100%;
 
   .header-cell {
-    background-color: #f8f9fa;
+    background-color: var(--surface-2, #f8f9fa);
     font-weight: 700;
-    color: #333;
+    color: var(--text, #333);
     border-bottom: 2px solid $accent;
   }
 
@@ -196,7 +196,7 @@ $muted: #6b7280;
   }
 
   .table-row:hover {
-    background-color: #f8f9fa;
+    background-color: var(--surface-2, #f8f9fa);
   }
 
   .status-col {
@@ -221,12 +221,12 @@ $muted: #6b7280;
   }
 
   .projects-cell {
-    color: #374151;
+    color: var(--text-2, #374151);
     font-size: 13px;
   }
 
   .muted {
-    color: #9ca3af;
+    color: var(--text-subtle, #9ca3af);
     font-style: italic;
   }
 
@@ -243,19 +243,19 @@ $muted: #6b7280;
   border-radius: 16px;
   font-size: 13px;
   font-weight: 600;
-  background: #dcfce7;
+  background: var(--success-bg, #dcfce7);
   border: 1px solid #bbf7d0;
 
   ::ng-deep .mat-select-value {
-    color: #166534;
+    color: var(--success-fg, #166534);
   }
 
   &.inactive {
-    background: #f3f4f6;
-    border-color: #d1d5db;
+    background: var(--surface-3, #f3f4f6);
+    border-color: var(--border-strong, #d1d5db);
 
     ::ng-deep .mat-select-value {
-      color: #4b5563;
+      color: var(--text-muted, #4b5563);
     }
   }
 }

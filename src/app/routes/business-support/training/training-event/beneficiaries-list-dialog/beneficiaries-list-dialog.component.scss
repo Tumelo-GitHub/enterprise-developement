@@ -54,7 +54,7 @@
 
 // Event Details Section
 .event-details-section {
-  background: #f8f9fa;
+  background: var(--surface-2, #f8f9fa);
   border-radius: 8px;
   padding: 20px;
   margin-bottom: 24px;
@@ -68,7 +68,7 @@
   margin: 0 0 16px 0;
   font-size: 16px;
   font-weight: 600;
-  color: #495057;
+  color: var(--text-2, #495057);
 
   mat-icon {
     color: #667eea;
@@ -92,7 +92,7 @@
 
 .detail-label {
   font-size: 12px;
-  color: #6c757d;
+  color: var(--text-muted, #6c757d);
   font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -100,7 +100,7 @@
 
 .detail-value {
   font-size: 14px;
-  color: #212529;
+  color: var(--text, #212529);
   font-weight: 500;
 }
 
@@ -119,9 +119,9 @@
   align-items: center;
   gap: 8px;
   padding: 12px 16px;
-  background: #f8f9fa;
+  background: var(--surface-2, #f8f9fa);
   border-radius: 8px;
-  color: #495057;
+  color: var(--text-2, #495057);
   font-weight: 500;
 }
 
@@ -160,16 +160,16 @@
 
 .beneficiaries-table {
   width: 100%;
-  background: white;
+  background: var(--surface, white);
 }
 
 .header-cell {
-  background: #f8f9fa;
-  color: #495057;
+  background: var(--surface-2, #f8f9fa);
+  color: var(--text-2, #495057);
   font-weight: 600;
   font-size: 13px;
   padding: 16px;
-  border-bottom: 2px solid #dee2e6;
+  border-bottom: 2px solid var(--border, #dee2e6);
 }
 
 .header-cell mat-icon {
@@ -183,9 +183,9 @@
 
 .data-cell {
   padding: 16px;
-  color: #212529;
+  color: var(--text, #212529);
   font-size: 14px;
-  border-bottom: 1px solid #f0f0f0;
+  border-bottom: 1px solid var(--border, #f0f0f0);
 }
 
 .beneficiary-info {
@@ -215,7 +215,7 @@
 
 .status-active {
   background-color: #d4edda;
-  color: #155724;
+  color: var(--success-fg, #155724);
 }
 
 .status-completed {
@@ -225,12 +225,12 @@
 
 .status-dismissed {
   background-color: #f8d7da;
-  color: #721c24;
+  color: var(--danger-fg, #721c24);
 }
 
 .status-default {
-  background-color: #f8f9fa;
-  color: #6c757d;
+  background-color: var(--surface-2, #f8f9fa);
+  color: var(--text-muted, #6c757d);
 }
 
 // Actions Column
@@ -262,14 +262,14 @@
 }
 
 .table-row:hover {
-  background-color: #f8f9fa;
+  background-color: var(--surface-2, #f8f9fa);
   transition: background-color 0.2s ease;
 }
 
 .no-data {
   text-align: center;
   padding: 60px 24px;
-  color: #6c757d;
+  color: var(--text-muted, #6c757d);
 }
 
 .no-data mat-icon {
@@ -289,8 +289,8 @@
   display: flex;
   justify-content: flex-end;
   padding: 16px 24px;
-  border-top: 1px solid #e9ecef;
-  background: #f8f9fa;
+  border-top: 1px solid var(--border, #e9ecef);
+  background: var(--surface-2, #f8f9fa);
 }
 
 @media (max-width: 768px) {

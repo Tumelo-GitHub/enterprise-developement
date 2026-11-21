@@ -17,20 +17,20 @@
     letter-spacing: 0.5px;
 
     &.coach {
-      background-color: #e3f2fd;
-      color: #1976d2;
+      background-color: var(--info-bg, #e3f2fd);
+      color: var(--info-fg, #1976d2);
       border: 1px solid #bbdefb;
     }
 
     &.mentor {
-      background-color: #f3e5f5;
-      color: #7b1fa2;
+      background-color: var(--accent-bg, #f3e5f5);
+      color: var(--accent-fg, #7b1fa2);
       border: 1px solid #e1bee7;
     }
 
     &.trainer {
-      background-color: #e8f5e8;
-      color: #388e3c;
+      background-color: var(--success-bg, #e8f5e8);
+      color: var(--success-fg, #388e3c);
       border: 1px solid #c8e6c9;
     }
   }

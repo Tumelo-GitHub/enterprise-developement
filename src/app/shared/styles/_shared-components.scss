@@ -4,7 +4,7 @@
 // ===== CONTAINER STYLES =====
 .page-container {
   padding: 24px;
-  background-color: #f5f5f5;
+  background-color: var(--page-bg, #f5f5f5);
   min-height: calc(100vh - 120px);
 
   @media (max-width: 768px) {
@@ -21,7 +21,7 @@
     align-items: center;
     font-size: 32px;
     font-weight: 700;
-    color: #333;
+    color: var(--text, #333);
     margin: 0 0 8px 0;
     
     mat-icon {
@@ -39,7 +39,7 @@
   
   .page-description {
     font-size: 16px;
-    color: #666;
+    color: var(--text-muted, #666);
     margin: 0;
   }
 }
@@ -50,7 +50,7 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  color: #1f2937;
+  color: var(--text, #1f2937);
   font-size: 28px;
   font-weight: 600;
   
@@ -74,7 +74,7 @@
 
 // Page description (standalone)
 .page-description {
-  color: #6b7280;
+  color: var(--text-muted, #6b7280);
   font-size: 14px;
   margin: 0 0 24px;
   line-height: 1.6;
@@ -112,12 +112,12 @@
   }
   
   .breadcrumb-separator {
-    color: #9ca3af;
+    color: var(--text-subtle, #9ca3af);
     font-size: 14px;
     margin: 0 4px;
     
     mat-icon {
-      color: #9ca3af;
+      color: var(--text-subtle, #9ca3af);
       font-size: 16px;
       width: 16px;
       height: 16px;
@@ -125,7 +125,7 @@
   }
   
   .current-location {
-    color: #374151;
+    color: var(--text-2, #374151);
     font-weight: 500;
     font-size: 14px;
   }
@@ -165,7 +165,7 @@
       }
 
       &.active {
-        color: #374151;
+        color: var(--text-2, #374151);
         font-weight: 600;
         font-size: 14px;
         padding: 8px 16px;
@@ -195,8 +195,8 @@
 .form-navigation {
   margin: -24px -24px 24px;
   padding: 16px 24px;
-  background-color: #f8fafc;
-  border-bottom: 1px solid #e5e7eb;
+  background-color: var(--surface-2, #f8fafc);
+  border-bottom: 1px solid var(--border, #e5e7eb);
 
   .breadcrumb-nav {
     margin-bottom: 0;
@@ -229,7 +229,7 @@
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   border-radius: 12px;
   overflow: hidden;
-  background: white;
+  background: var(--surface, white);
   margin: 0;
 }
 
@@ -270,9 +270,9 @@
 }
 
 .form-actions {
-  background-color: #f8f9fa;
+  background-color: var(--surface-2, #f8f9fa);
   padding: 20px 24px;
-  border-top: 1px solid #e0e0e0;
+  border-top: 1px solid var(--border, #e0e0e0);
   margin: 0;
 
   @media (max-width: 768px) {
@@ -287,7 +287,7 @@
   align-items: center;
   margin-bottom: 24px;
   padding: 20px;
-  background: white;
+  background: var(--surface, white);
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   
@@ -307,7 +307,7 @@
     }
     
     .clear-search-btn {
-      color: #666;
+      color: var(--text-muted, #666);
     }
   }
   
@@ -355,13 +355,13 @@
   align-items: center;
   justify-content: center;
   padding: 60px 20px;
-  background: white;
+  background: var(--surface, white);
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   
   p {
     margin-top: 16px;
-    color: #666;
+    color: var(--text-muted, #666);
     font-size: 16px;
   }
 }
@@ -381,9 +381,9 @@
       width: 100%;
       
       .header-cell {
-        background-color: #f8f9fa;
+        background-color: var(--surface-2, #f8f9fa);
         font-weight: 700;
-        color: #333;
+        color: var(--text, #333);
         border-bottom: 2px solid #667eea;
         padding: 16px;
         
@@ -399,7 +399,7 @@
       
       .data-cell {
         padding: 16px;
-        border-bottom: 1px solid #e0e0e0;
+        border-bottom: 1px solid var(--border, #e0e0e0);
         
         &.actions-cell {
           text-align: center;
@@ -413,7 +413,7 @@
       
       .table-row {
         &:hover {
-          background-color: #f8f9fa;
+          background-color: var(--surface-2, #f8f9fa);
           transition: background-color 0.2s ease;
         }
       }
@@ -439,37 +439,37 @@
   text-transform: uppercase;
   
   &.status-scheduled {
-    background-color: #e3f2fd;
-    color: #1976d2;
+    background-color: var(--info-bg, #e3f2fd);
+    color: var(--info-fg, #1976d2);
   }
   
   &.status-completed {
-    background-color: #dcfce7;
-    color: #166534;
+    background-color: var(--success-bg, #dcfce7);
+    color: var(--success-fg, #166534);
     border: 1px solid #bbf7d0;
   }
   
   &.status-cancelled {
-    background-color: #fee2e2;
-    color: #991b1b;
+    background-color: var(--danger-bg, #fee2e2);
+    color: var(--danger-fg, #991b1b);
     border: 1px solid #fecaca;
   }
   
   &.status-postponed {
-    background-color: #fff3e0;
+    background-color: var(--warning-bg, #fff3e0);
     color: #ff9800;
     border: 1px solid #fdba74;
   }
   
   &.status-in-progress {
-    background-color: #f3e5f5;
+    background-color: var(--accent-bg, #f3e5f5);
     color: #9c27b0;
     border: 1px solid #e1bee7;
   }
   
   &.status-unknown {
-    background-color: #f5f5f5;
-    color: #666;
+    background-color: var(--page-bg, #f5f5f5);
+    color: var(--text-muted, #666);
     border: 1px solid #d4d4d4;
   }
 }
@@ -538,11 +538,11 @@
     }
     
     &.download-btn {
-      color: #059669;
+      color: var(--success-fg, #059669);
       background-color: rgba(5, 150, 105, 0.1);
       
       &:hover {
-        color: #047857;
+        color: var(--success-fg, #047857);
         background-color: rgba(5, 150, 105, 0.2);
         transform: scale(1.05);
       }
@@ -618,8 +618,8 @@
 .actions-header {
   text-align: center;
   font-weight: 600;
-  color: #374151;
-  background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+  color: var(--text-2, #374151);
+  background: linear-gradient(135deg, var(--surface-2, #f8fafc), var(--border, #e2e8f0));
 }
 
 .actions-cell {
@@ -661,7 +661,7 @@
   
   &:disabled {
     background: #ccc !important;
-    color: #666 !important;
+    color: var(--text-muted, #666) !important;
   }
 }
 
@@ -682,7 +682,7 @@
 }
 
 .cancel-btn {
-  color: #666;
+  color: var(--text-muted, #666);
   font-weight: 500;
   padding: 0 20px;
   height: 44px;
@@ -707,19 +707,19 @@
       font-size: 64px;
       width: 64px;
       height: 64px;
-      color: #ccc;
+      color: var(--text-subtle, #ccc);
       margin-bottom: 16px;
     }
     
     h3 {
       font-size: 20px;
       font-weight: 500;
-      color: #333;
+      color: var(--text, #333);
       margin: 0 0 8px 0;
     }
     
     p {
-      color: #666;
+      color: var(--text-muted, #666);
       margin: 0 0 24px 0;
     }
     
@@ -737,8 +737,8 @@
 
 // ===== PAGINATOR STYLES =====
 .table-paginator {
-  border-top: 1px solid #e0e0e0;
-  background-color: #f8f9fa;
+  border-top: 1px solid var(--border, #e0e0e0);
+  background-color: var(--surface-2, #f8f9fa);
   
   ::ng-deep .mat-paginator-container {
     padding: 8px 16px;
@@ -749,12 +749,12 @@
 .entity-info {
   .entity-name {
     font-weight: 500;
-    color: #333;
+    color: var(--text, #333);
   }
 }
 
 .address {
-  color: #666;
+  color: var(--text-muted, #666);
   font-size: 14px;
 }
 
@@ -772,7 +772,7 @@
   
   span {
     font-size: 14px;
-    color: #333;
+    color: var(--text, #333);
   }
 }
 
@@ -810,7 +810,7 @@ mat-form-field {
     }
     
     .mat-form-field-label {
-      color: #666;
+      color: var(--text-muted, #666);
       font-weight: 500;
     }
     
@@ -867,7 +867,7 @@ mat-form-field {
   h2 {
     font-size: 36px;
     font-weight: 700;
-    color: #333;
+    color: var(--text, #333);
     margin: 0 0 16px 0;
     text-align: center;
     
@@ -878,7 +878,7 @@ mat-form-field {
   
   .feature-description {
     font-size: 18px;
-    color: #666;
+    color: var(--text-muted, #666);
     text-align: center;
     max-width: 600px;
     line-height: 1.6;
@@ -927,9 +927,9 @@ mat-form-field {
 // ===== FILE UPLOAD AREA STYLES =====
 .file-upload-area {
   .file-upload-card {
-    border: 2px dashed #d1d5db;
+    border: 2px dashed var(--border-strong, #d1d5db);
     border-radius: 16px;
-    background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
+    background: linear-gradient(135deg, var(--surface-2, #f9fafb) 0%, var(--surface-3, #f3f4f6) 100%);
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     cursor: pointer;
     position: relative;
@@ -986,27 +986,27 @@ mat-form-field {
       h4 {
         font-size: 20px;
         font-weight: 700;
-        color: #1f2937;
+        color: var(--text, #1f2937);
         margin: 0 0 12px 0;
         letter-spacing: -0.02em;
       }
 
       p {
         font-size: 14px;
-        color: #6b7280;
+        color: var(--text-muted, #6b7280);
         margin: 0 0 8px 0;
         line-height: 1.5;
 
         &:first-of-type {
           font-size: 15px;
           font-weight: 500;
-          color: #4b5563;
+          color: var(--text-muted, #4b5563);
         }
       }
 
       .file-size-limit {
         font-size: 12px;
-        color: #9ca3af;
+        color: var(--text-subtle, #9ca3af);
         font-style: italic;
         margin-top: 12px;
         padding: 8px 16px;
@@ -1051,9 +1051,9 @@ mat-form-field {
         gap: 16px;
         margin-top: 24px;
         padding: 16px 20px;
-        background: white;
+        background: var(--surface, white);
         border-radius: 12px;
-        border: 2px solid #e5e7eb;
+        border: 2px solid var(--border, #e5e7eb);
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
         transition: all 0.3s ease;
         animation: slideIn 0.4s ease;
@@ -1073,7 +1073,7 @@ mat-form-field {
         span {
           flex: 1;
           text-align: left;
-          color: #1f2937;
+          color: var(--text, #1f2937);
           font-weight: 600;
           font-size: 14px;
           overflow: hidden;
@@ -1084,9 +1084,9 @@ mat-form-field {
         .file-size {
           flex: none;
           font-size: 12px;
-          color: #6b7280;
+          color: var(--text-muted, #6b7280);
           font-weight: 500;
-          background-color: #f3f4f6;
+          background-color: var(--surface-3, #f3f4f6);
           padding: 4px 12px;
           border-radius: 20px;
         }
@@ -1098,7 +1098,7 @@ mat-form-field {
           transition: all 0.2s ease;
 
           &:hover {
-            background-color: #fee2e2;
+            background-color: var(--danger-bg, #fee2e2);
             transform: rotate(90deg);
           }
 
@@ -1114,9 +1114,9 @@ mat-form-field {
       .file-preview {
         margin-top: 24px;
         padding: 16px;
-        background: white;
+        background: var(--surface, white);
         border-radius: 12px;
-        border: 2px solid #e5e7eb;
+        border: 2px solid var(--border, #e5e7eb);
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
         animation: fadeIn 0.4s ease;
 

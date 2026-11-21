@@ -1,7 +1,7 @@
 @import '../../../../../shared/styles/shared-components';
 
 .form-container {
-    background: white;
+    background: var(--surface, white);
     border-radius: 8px;
     overflow: hidden;
 }
@@ -53,7 +53,7 @@
         gap: 12px;
         margin-bottom: 20px;
         padding-bottom: 8px;
-        border-bottom: 2px solid #ecf0f1;
+        border-bottom: 2px solid var(--border, #ecf0f1);
 
         mat-icon {
             color: #3498db;
@@ -64,7 +64,7 @@
             margin: 0;
             font-size: 1.1rem;
             font-weight: 500;
-            color: #2c3e50;
+            color: var(--text, #2c3e50);
         }
     }
 }
@@ -106,15 +106,15 @@
     justify-content: flex-end;
     gap: 12px;
     padding-top: 24px;
-    border-top: 1px solid #ecf0f1;
+    border-top: 1px solid var(--border, #ecf0f1);
     margin-top: 32px;
 
     .cancel-button {
-        color: #95a5a6;
+        color: var(--text-subtle, #95a5a6);
         
         &:hover {
-            background-color: #ecf0f1;
-            color: #7f8c8d;
+            background-color: var(--surface-3, #ecf0f1);
+            color: var(--text-muted, #7f8c8d);
         }
     }
 
@@ -127,7 +127,7 @@
         
         &:disabled {
             background-color: #bdc3c7;
-            color: #7f8c8d;
+            color: var(--text-muted, #7f8c8d);
         }
     }
 }
@@ -139,7 +139,7 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(255, 255, 255, 0.8);
+    background: var(--surface, rgba(255, 255, 255, 0.8));
     display: flex;
     align-items: center;
     justify-content: center;

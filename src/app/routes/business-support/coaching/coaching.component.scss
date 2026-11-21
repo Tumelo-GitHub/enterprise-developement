@@ -5,12 +5,12 @@
 .coach-info, .smme-info {
   .coach-name, .smme-name {
     font-weight: 500;
-    color: #333;
+    color: var(--text, #333);
   }
   
   .coach-details, .smme-details {
     font-size: 12px;
-    color: #666;
+    color: var(--text-muted, #666);
     margin-top: 2px;
   }
 }
@@ -18,8 +18,8 @@
 // Coaching event specific status colors (if different from default)
 .status-badge {
   &.status-coaching-specific {
-    background-color: #e8f5e8;
-    color: #2e7d2e;
+    background-color: var(--success-bg, #e8f5e8);
+    color: var(--success-fg, #2e7d2e);
   }
 }
 

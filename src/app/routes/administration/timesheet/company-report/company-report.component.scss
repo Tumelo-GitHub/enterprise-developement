@@ -26,7 +26,7 @@
 }
 
 .project-card {
-  background: #fff;
+  background: var(--surface, #fff);
   border-radius: 12px;
   box-shadow: $card-shadow;
   overflow: hidden;
@@ -38,7 +38,7 @@
   justify-content: space-between;
   gap: 12px;
   padding: 14px 20px;
-  background: #f9fafb;
+  background: var(--surface-2, #f9fafb);
   border-bottom: 1px solid $border;
 
   h3 {
@@ -69,14 +69,14 @@
 }
 
 .company {
-  border-bottom: 1px solid #f3f4f6;
+  border-bottom: 1px solid var(--border, #f3f4f6);
 
   &:last-child {
     border-bottom: 0;
   }
 
   &.open {
-    background: #fafbff;
+    background: var(--surface-2, #fafbff);
 
     .chevron {
       transform: rotate(90deg);
@@ -99,7 +99,7 @@
   cursor: pointer;
 
   &:hover {
-    background: #f5f7ff;
+    background: var(--surface-hover, #f5f7ff);
   }
 
   &:focus-visible {
@@ -118,7 +118,7 @@
 }
 
 .chevron {
-  color: #9ca3af;
+  color: var(--text-subtle, #9ca3af);
   transition: transform 0.15s;
 }
 
@@ -145,22 +145,22 @@
   width: 26px;
   height: 26px;
   border-radius: 50%;
-  background: #e0e7ff;
-  color: #4338ca;
+  background: var(--accent-bg, #e0e7ff);
+  color: var(--accent-fg, #4338ca);
   font-size: 11px;
   font-weight: 700;
-  border: 2px solid #fff;
+  border: 2px solid var(--surface, #fff);
   flex-shrink: 0;
 
   &.more {
-    background: #f3f4f6;
+    background: var(--surface-3, #f3f4f6);
     color: $muted;
   }
 }
 
 .share {
   height: 8px;
-  background: #f1f5f9;
+  background: var(--surface-3, #f1f5f9);
   border-radius: 4px;
   overflow: hidden;
 
@@ -252,7 +252,7 @@
   li {
     font-size: 13px;
     line-height: 1.5;
-    color: #4b5563;
+    color: var(--text-muted, #4b5563);
     padding: 2px 0;
   }
 }

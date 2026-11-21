@@ -12,7 +12,7 @@
 }
 
 .form-card {
-  background: white;
+  background: var(--surface, white);
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   overflow: hidden;
@@ -79,18 +79,18 @@
   justify-content: flex-end;
   gap: 12px;
   padding: 16px 24px;
-  background: #f8f9fa;
-  border-top: 1px solid #e9ecef;
+  background: var(--surface-2, #f8f9fa);
+  border-top: 1px solid var(--border, #e9ecef);
 
   .cancel-btn {
     height: 44px;
     padding: 0 24px;
-    border-color: #dee2e6;
-    color: #495057;
+    border-color: var(--border, #dee2e6);
+    color: var(--text-2, #495057);
   }
 
   .cancel-btn:hover {
-    background-color: #f8f9fa;
+    background-color: var(--surface-2, #f8f9fa);
     border-color: #adb5bd;
   }
 
@@ -108,7 +108,7 @@
   }
 
   .submit-btn[disabled] {
-    background: #e9ecef;
+    background: var(--surface-3, #e9ecef);
     color: #adb5bd;
     cursor: not-allowed;
   }

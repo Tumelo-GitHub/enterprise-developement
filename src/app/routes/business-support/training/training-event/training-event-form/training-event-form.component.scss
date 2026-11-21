@@ -13,7 +13,7 @@
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   border-radius: 12px;
   overflow: hidden;
-  background: white;
+  background: var(--surface, white);
 }
 
 .form-header {
@@ -61,16 +61,16 @@
 }
 
 .form-actions {
-  background-color: #f8f9fa;
+  background-color: var(--surface-2, #f8f9fa);
   padding: 20px 24px;
-  border-top: 1px solid #e0e0e0;
+  border-top: 1px solid var(--border, #e0e0e0);
   margin: 0;
   display: flex;
   justify-content: flex-end;
   gap: 12px;
   
   .cancel-btn {
-    color: #666;
+    color: var(--text-muted, #666);
     font-weight: 500;
     padding: 0 20px;
     height: 44px;
@@ -98,7 +98,7 @@
     
     &:disabled {
       background: #ccc !important;
-      color: #666 !important;
+      color: var(--text-muted, #666) !important;
       cursor: not-allowed;
     }
   }

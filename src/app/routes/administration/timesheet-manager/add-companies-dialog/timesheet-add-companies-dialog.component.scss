@@ -6,7 +6,7 @@
   display: flex;
   justify-content: space-between;
   font-size: 13px;
-  color: #6b7280;
+  color: var(--text-muted, #6b7280);
   margin: -8px 0 8px;
 
   .selected-count {
@@ -18,14 +18,14 @@
 .company-list {
   max-height: 300px;
   overflow-y: auto;
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--border, #e5e7eb);
   border-radius: 8px;
   margin-bottom: 16px;
 
   .empty {
     padding: 24px 16px;
     margin: 0;
-    color: #6b7280;
+    color: var(--text-muted, #6b7280);
     text-align: center;
   }
 }

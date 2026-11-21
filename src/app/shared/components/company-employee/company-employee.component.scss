@@ -25,14 +25,14 @@
   .employee-details {
     .employee-name {
       font-weight: 600;
-      color: #1f2937;
+      color: var(--text, #1f2937);
       font-size: 14px;
       margin-bottom: 4px;
     }
 
     .employee-email {
       font-size: 13px;
-      color: #6b7280;
+      color: var(--text-muted, #6b7280);
     }
   }
 }
@@ -45,7 +45,7 @@
 
   .position, .role {
     font-size: 13px;
-    color: #374151;
+    color: var(--text-2, #374151);
   }
 
   .position {
@@ -53,13 +53,13 @@
   }
 
   .role {
-    color: #6b7280;
+    color: var(--text-muted, #6b7280);
   }
 
   .no-info {
     .text-muted {
       font-size: 13px;
-      color: #9ca3af;
+      color: var(--text-subtle, #9ca3af);
       font-style: italic;
     }
   }

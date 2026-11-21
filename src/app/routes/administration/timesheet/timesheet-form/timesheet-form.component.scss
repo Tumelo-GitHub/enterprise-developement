@@ -1,6 +1,6 @@
 $accent: #667eea;
-$border: #e5e7eb;
-$muted: #6b7280;
+$border: var(--border, #e5e7eb);
+$muted: var(--text-muted, #6b7280);
 
 :host {
   display: block;
@@ -11,7 +11,7 @@ $muted: #6b7280;
   display: flex;
   flex-direction: column;
   height: 100%;
-  background: #f8fafc;
+  background: var(--surface-2, #f8fafc);
 }
 
 .panel-header {
@@ -20,14 +20,14 @@ $muted: #6b7280;
   justify-content: space-between;
   gap: 12px;
   padding: 20px 16px 16px 24px;
-  background: #fff;
+  background: var(--surface, #fff);
   border-bottom: 1px solid $border;
 
   h2 {
     margin: 0;
     font-size: 20px;
     font-weight: 600;
-    color: #1f2937;
+    color: var(--text, #1f2937);
   }
 
   p {
@@ -71,8 +71,8 @@ $muted: #6b7280;
 
 .chip {
   border: 1px solid $border;
-  background: #fff;
-  color: #374151;
+  background: var(--surface, #fff);
+  color: var(--text-2, #374151);
   border-radius: 16px;
   padding: 6px 12px;
   font: inherit;
@@ -105,7 +105,7 @@ $muted: #6b7280;
 }
 
 .entry-card {
-  background: #fff;
+  background: var(--surface, #fff);
   border: 1px solid $border;
   border-radius: 12px;
   padding: 12px 16px 4px;
@@ -122,7 +122,7 @@ $muted: #6b7280;
   .entry-index {
     font-size: 13px;
     font-weight: 600;
-    color: #374151;
+    color: var(--text-2, #374151);
     text-transform: uppercase;
     letter-spacing: 0.04em;
   }
@@ -141,7 +141,7 @@ $muted: #6b7280;
     color: $muted;
 
     &:hover {
-      color: #dc2626;
+      color: var(--danger-fg, #dc2626);
     }
   }
 }
@@ -186,7 +186,7 @@ $muted: #6b7280;
 }
 
 .panel-footer {
-  background: #fff;
+  background: var(--surface, #fff);
   border-top: 1px solid $border;
   padding: 12px 24px 16px;
 }
@@ -209,7 +209,7 @@ $muted: #6b7280;
 
     strong {
       font-size: 18px;
-      color: #1f2937;
+      color: var(--text, #1f2937);
     }
   }
 }
@@ -226,8 +226,8 @@ $muted: #6b7280;
 }
 
 .error-banner {
-  background: #fee2e2;
-  color: #991b1b;
+  background: var(--danger-bg, #fee2e2);
+  color: var(--danger-fg, #991b1b);
 
   mat-icon {
     font-size: 20px;
@@ -237,8 +237,8 @@ $muted: #6b7280;
 }
 
 .discard-banner {
-  background: #fff7ed;
-  color: #9a3412;
+  background: var(--warning-bg, #fff7ed);
+  color: var(--warning-fg, #9a3412);
 
   span {
     margin-right: auto;

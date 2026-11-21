@@ -14,7 +14,7 @@
     display: flex;
     align-items: center;
     gap: 12px;
-    color: #1f2937;
+    color: var(--text, #1f2937);
     font-size: 28px;
     font-weight: 600;
     
@@ -58,9 +58,9 @@
   justify-content: center;
   text-align: center;
   padding: 80px 40px;
-  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  background: linear-gradient(135deg, var(--surface-2, #f8fafc) 0%, var(--border, #e2e8f0) 100%);
   border-radius: 12px;
-  border: 2px dashed #cbd5e1;
+  border: 2px dashed var(--border-strong, #cbd5e1);
   margin: 40px 0;
   
   .coming-soon-icon {
@@ -75,19 +75,19 @@
   h3 {
     font-size: 24px;
     font-weight: 600;
-    color: #1f2937;
+    color: var(--text, #1f2937);
     margin: 0 0 16px;
   }
   
   p {
     font-size: 16px;
-    color: #6b7280;
+    color: var(--text-muted, #6b7280);
     margin-bottom: 12px;
     line-height: 1.6;
     
     &.feature-description {
       font-size: 14px;
-      color: #9ca3af;
+      color: var(--text-subtle, #9ca3af);
       max-width: 500px;
       margin-top: 16px;
     }
