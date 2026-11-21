@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { AdminLayoutComponent } from '../theme/admin-layout/admin-layout.component';
-import { AuthGuard } from '../core';
+import { AuthGuard, StaffGuard } from '../core';
 import { AuthLayoutComponent } from '../theme/auth-layout/auth-layout.component';
 import { LoginComponent } from './sessions/login/login.component';
 import { RegisterComponent } from './sessions/register/register.component';
@@ -18,7 +18,7 @@ const routes: Routes = [
     canActivateChild: [AuthGuard],
     children: [
       {path: '', redirectTo: 'dashboard', pathMatch: 'full'},
-      {path: 'dashboard', component: DashboardComponent},
+      {path: 'dashboard', component: DashboardComponent, canActivate: [StaffGuard]},
       {path: 'user/profile', component: ProfileComponent},
       {
         path: 'administration',
@@ -26,6 +26,7 @@ const routes: Routes = [
       },
       {
         path: 'support',
+        canActivate: [StaffGuard],
         loadChildren: () => import('./business-support/business-support.module').then(m => m.BusinessSupportModule)
       }
     ]

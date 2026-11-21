@@ -25,51 +25,58 @@ import { ServiceProviderComponent } from './service-provider/service-provider.co
 import { ServiceProviderMoreComponent } from './service-provider-more/service-provider-more.component';
 import { TimesheetComponent } from './timesheet/timesheet.component';
 import { TimesheetManagerComponent } from './timesheet-manager/timesheet-manager.component';
-import { AdminGuard } from 'src/app/core';
+import { AdminGuard, StaffGuard } from 'src/app/core';
 
 const routes: Routes = [
-  { path: 'course', component: CourseComponent },
-  { 
-    path: 'beneficiaries', 
-    component: BeneficiariesComponent,
+  { path: 'timesheet', component: TimesheetComponent },
+  { path: 'timesheet-manager', component: TimesheetManagerComponent, canActivate: [AdminGuard] },
+  {
+    // Everything else in Administration is off-limits to consultants
+    path: '',
+    canActivateChild: [StaffGuard],
     children: [
-      { path: '', component: BeneficiariesListComponent },
-      { path: 'persons', component: BeneficiariesPersonsComponent },
-      { path: 'new', component: BeneficiariesDetailComponent },
-      { path: ':companyId/employees/new', component: BeneficiariesEmployeeFormComponent },
-      { path: ':companyId/employees/:employeeId', component: BeneficiariesEmployeeFormComponent },
-      { path: ':companyId/employees', component: BeneficiariesEmployeesComponent },
-      { path: ':companyId/compliance/new', component: BeneficiariesComplianceFormComponent },
-      { path: ':companyId/compliance/:complianceId', component: BeneficiariesComplianceFormComponent },
-      { path: ':companyId/compliance', component: BeneficiariesComplianceComponent },
-      { path: ':id', component: BeneficiariesDetailComponent }
+      { path: 'course', component: CourseComponent },
+      {
+        path: 'beneficiaries',
+        component: BeneficiariesComponent,
+        children: [
+          { path: '', component: BeneficiariesListComponent },
+          { path: 'persons', component: BeneficiariesPersonsComponent },
+          { path: 'new', component: BeneficiariesDetailComponent },
+          { path: ':companyId/employees/new', component: BeneficiariesEmployeeFormComponent },
+          { path: ':companyId/employees/:employeeId', component: BeneficiariesEmployeeFormComponent },
+          { path: ':companyId/employees', component: BeneficiariesEmployeesComponent },
+          { path: ':companyId/compliance/new', component: BeneficiariesComplianceFormComponent },
+          { path: ':companyId/compliance/:complianceId', component: BeneficiariesComplianceFormComponent },
+          { path: ':companyId/compliance', component: BeneficiariesComplianceComponent },
+          { path: ':id', component: BeneficiariesDetailComponent }
+        ]
+      },
+      {
+        path: 'programme',
+        component: ProgrammeComponent,
+        children: [
+          { path: '', component: ProgrammeListComponent },
+          { path: 'new', component: ProgrammeFormWrapperComponent },
+          { path: ':id', component: ProgrammeFormWrapperComponent },
+          { path: ':programmeId/courses', component: ProgrammeCoursesComponent },
+          { path: ':programmeId/courses/new', component: ProgrammeCourseFormWrapperComponent },
+          { path: ':programmeId/courses/:courseId', component: ProgrammeCourseFormWrapperComponent },
+          { path: ':programmeId/beneficiaries', component: ProgrammeBeneficiariesComponent },
+          { path: ':programmeId/beneficiaries/new', component: ProgrammeBeneficiaryFormWrapperComponent },
+          { path: ':programmeId/beneficiaries/:beneficiaryId', component: ProgrammeBeneficiaryFormWrapperComponent },
+          { path: ':programmeId/bdsp', component: ProgrammeBdspComponent },
+          { path: ':programmeId/bdsp/new', component: ProgrammeBdspFormWrapperComponent },
+          { path: ':programmeId/bdsp/:bdspId', component: ProgrammeBdspFormWrapperComponent },
+          { path: ':programmeId/documents', component: ProgrammeDocumentsComponent }
+        ]
+      },
+      { path: 'generic-company', component: GenericCompanyComponent},
+      { path: 'business-development', component: BusinessDevelopmemtComponent},
+      { path: 'service-provider', component: ServiceProviderComponent},
+      { path: 'service-provider-more', component: ServiceProviderMoreComponent}
     ]
-  },
-  { 
-    path: 'programme', 
-    component: ProgrammeComponent,
-    children: [
-      { path: '', component: ProgrammeListComponent },
-      { path: 'new', component: ProgrammeFormWrapperComponent },
-      { path: ':id', component: ProgrammeFormWrapperComponent },
-      { path: ':programmeId/courses', component: ProgrammeCoursesComponent },
-      { path: ':programmeId/courses/new', component: ProgrammeCourseFormWrapperComponent },
-      { path: ':programmeId/courses/:courseId', component: ProgrammeCourseFormWrapperComponent },
-      { path: ':programmeId/beneficiaries', component: ProgrammeBeneficiariesComponent },
-      { path: ':programmeId/beneficiaries/new', component: ProgrammeBeneficiaryFormWrapperComponent },
-      { path: ':programmeId/beneficiaries/:beneficiaryId', component: ProgrammeBeneficiaryFormWrapperComponent },
-      { path: ':programmeId/bdsp', component: ProgrammeBdspComponent },
-      { path: ':programmeId/bdsp/new', component: ProgrammeBdspFormWrapperComponent },
-      { path: ':programmeId/bdsp/:bdspId', component: ProgrammeBdspFormWrapperComponent },
-      { path: ':programmeId/documents', component: ProgrammeDocumentsComponent }
-    ]
-  },
-  { path: 'generic-company', component: GenericCompanyComponent},
-  { path: 'business-development', component: BusinessDevelopmemtComponent},
-  { path: 'service-provider', component: ServiceProviderComponent},
-  { path: 'service-provider-more', component: ServiceProviderMoreComponent},
-  { path: 'timesheet', component: TimesheetComponent},
-  { path: 'timesheet-manager', component: TimesheetManagerComponent, canActivate: [AdminGuard] }
+  }
 ];
 
 @NgModule({

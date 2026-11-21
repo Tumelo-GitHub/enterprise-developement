@@ -98,14 +98,19 @@ export class TokenService {
     return token.exp < currentTime;
   }
 
-  isAdmin(): boolean {
+  /** Role of the signed-in user, from the token ('' when signed out). */
+  role(): string {
     const token = this.getToken();
-    if (token) {
-      const decodedToken = this.decode(token);
-      if (decodedToken) {
-        return decodedToken.data.user.role === 'admin';
-      }
-    }
-    return false;
+    const decodedToken = token ? this.decode(token) : null;
+    return (decodedToken?.data?.user?.role ?? '').toLowerCase();
+  }
+
+  isAdmin(): boolean {
+    return this.role() === 'admin';
+  }
+
+  /** Consultants only get their own timesheet. */
+  isConsultant(): boolean {
+    return this.role() === 'consultant';
   }
 }

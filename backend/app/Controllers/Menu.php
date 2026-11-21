@@ -34,27 +34,47 @@ class Menu extends BaseController
                     [
                         "route" => "programme",
                         "name" => "Programme",
-                        "type" => "link"
+                        "type" => "link",
+                        "permissions" => [
+                            "only" => [],
+                            "except" => ["consultant"]
+                        ]
                     ],
                     [
                         "route" => "business-development",
                         "name" => "Business Development",
-                        "type" => "link"
+                        "type" => "link",
+                        "permissions" => [
+                            "only" => [],
+                            "except" => ["consultant"]
+                        ]
                     ],
                     [
                         "route" => "beneficiaries",
                         "name" => "Beneficiaries",
-                        "type" => "link"
+                        "type" => "link",
+                        "permissions" => [
+                            "only" => [],
+                            "except" => ["consultant"]
+                        ]
                     ],
                     [
                         "route" => "service-provider",
                         "name" => "Service Provider",
-                        "type" => "link"
+                        "type" => "link",
+                        "permissions" => [
+                            "only" => [],
+                            "except" => ["consultant"]
+                        ]
                     ],
                     [
                         "route" => "course",
                         "name" => "Course",
-                        "type" => "link"
+                        "type" => "link",
+                        "permissions" => [
+                            "only" => [],
+                            "except" => ["consultant"]
+                        ]
                     ],
                     [
                         "route" => "timesheet",
@@ -71,10 +91,9 @@ class Menu extends BaseController
                         ]
                     ]
                 ],
+                // Open to all roles: consultants need Timesheet. Each child carries its own rule.
                 "permissions" => [
-                    "only" => [
-                        "admin"
-                    ],
+                    "only" => [],
                     "except" => []
                 ]
             ],
@@ -156,7 +175,7 @@ class Menu extends BaseController
                 ],
                 "permissions" => [
                     "only" => [],
-                    "except" => []
+                    "except" => ["consultant"]
                 ]
             ],
             // [
@@ -192,10 +211,14 @@ class Menu extends BaseController
 
         ];
 
+        // Role comes from the user record (not the token) so a role change applies on the next load
+        $user = getLoggedInUser(getJWTFromRequest($this->request->getServer('HTTP_AUTHORIZATION')));
+        $roles = array_filter([strtolower((string) ($user['role'] ?? ''))]);
+
         return $this->getResponse(
             [
                 'message' => 'User menu retrieved',
-                'data' => $this->filterMenuByPermissions($menu, ["admin"])
+                'data' => $this->filterMenuByPermissions($menu, $roles)
             ]
         );
     }
@@ -210,6 +233,9 @@ class Menu extends BaseController
                 // Recursively filter children if they exist
                 if (!empty($item['children'])) {
                     $item['children'] = $this->filterMenuByPermissions($item['children'], $userRoles);
+                    if (empty($item['children'])) {
+                        continue; // hide a section whose children are all hidden
+                    }
                 }
                 $filteredMenu[] = $item;
             }

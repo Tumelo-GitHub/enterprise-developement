@@ -238,9 +238,13 @@ class Timesheet extends BaseController
     {
         try {
             $model = new TimesheetModel();
-            $model->findItemById($id);
+            $item = $model->findItemById($id);
+            if (!$this->canModify($item)) {
+                return $this->forbidden('You can only edit your own timesheet entries.');
+            }
 
             $input = $this->getRequestInput($this->request);
+            unset($input['user_id'], $input['id']); // entries can't be moved to another user
 
             try {
                 $input = $this->applyLookups($input ?? []);
@@ -275,7 +279,10 @@ class Timesheet extends BaseController
         try {
             $model = new TimesheetModel();
             $item = $model->findItemById($id);
-            $model->delete($item);
+            if (!$this->canModify($item)) {
+                return $this->forbidden('You can only delete your own timesheet entries.');
+            }
+            $model->delete($id);
 
             return $this->getResponse(
                 [
@@ -290,6 +297,18 @@ class Timesheet extends BaseController
                 ResponseInterface::HTTP_NOT_FOUND
             );
         }
+    }
+
+    /** Owners can change their own entries; admins can change anyone's. */
+    private function canModify(array $item): bool
+    {
+        $user = getLoggedInUser(getJWTFromRequest($this->request->getServer('HTTP_AUTHORIZATION')));
+        return ($user['role'] ?? null) === 'admin' || (int) $item['user_id'] === (int) $user['id'];
+    }
+
+    private function forbidden(string $message)
+    {
+        return $this->getResponse(['message' => $message, 'data' => null], ResponseInterface::HTTP_FORBIDDEN);
     }
 
     /**
