@@ -130,7 +130,7 @@ class BdspAppointment extends BaseController
         try {
             $model = new BdspAppointmentModel();
             $appointment = $model->findAppointedBdspById($id);
-            $model->delete($appointment);
+            $model->delete($id);
 
             return $this->getResponse(
                     [

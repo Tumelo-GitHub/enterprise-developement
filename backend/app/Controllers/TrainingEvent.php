@@ -332,7 +332,7 @@ class TrainingEvent extends BaseController
         try {
             $model = new TrainingEventModel();
             $course = $model->findTrainingEventById($id);
-            $model->delete($course);
+            $model->delete($id);
 
             return $this->getResponse(
                 [

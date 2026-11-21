@@ -113,7 +113,7 @@ class SmmeEmp extends BaseController
         try {
             $model = new SmmeEmpModel();
             $employee = $model->findEmpById($id);
-            $model->delete($employee);
+            $model->delete($id);
 
             return $this->getResponse(
                     [

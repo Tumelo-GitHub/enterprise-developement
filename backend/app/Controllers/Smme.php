@@ -268,7 +268,7 @@ class Smme extends BaseController
         try {
             $model = new SmmeModel();
             $smme = $model->findSmmeById($id);
-            $model->delete($smme);
+            $model->delete($id);
 
             return $this->getResponse(
                 [

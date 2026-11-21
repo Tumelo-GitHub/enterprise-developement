@@ -161,7 +161,7 @@ class ServiceProvider extends BaseController
         try {
             $model = new ServiceProviderModel();
             $service_provider = $model->findServiceProviderById($id);
-            $model->delete($service_provider);
+            $model->delete($id);
 
             return $this->getResponse(
                     [

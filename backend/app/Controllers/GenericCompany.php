@@ -121,7 +121,7 @@ class GenericCompany extends BaseController
         try {
             $model = new GenericCompanyModel();
             $company = $model->findCompanyById($id);
-            $model->delete($company);
+            $model->delete($id);
 
             return $this->getResponse(
                     [

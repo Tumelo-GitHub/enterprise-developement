@@ -122,7 +122,7 @@ class ProgrammeCourse extends BaseController
         try {
             $model = new ProgrammeCourseModel();
             $course = $model->findProgrammeCourseRawDataById($id);
-            $model->delete($course);
+            $model->delete($id);
 
             return $this->getResponse(
                     [

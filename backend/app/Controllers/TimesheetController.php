@@ -127,7 +127,7 @@ class Timesheet extends BaseController
         try {
             $model = new TimesheetModel();
             $course = $model->findItemById($id);
-            $model->delete($course);
+            $model->delete($id);
 
             return $this->getResponse(
                     [

@@ -123,7 +123,7 @@ class TrainingEventRegister extends BaseController
         try {
             $model = new TrainingEventRegisterModel();
             $record = $model->findEntryById($id);
-            $model->delete($record);
+            $model->delete($id);
 
             return $this->getResponse(
                 [

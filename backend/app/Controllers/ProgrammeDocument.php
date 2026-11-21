@@ -124,7 +124,7 @@ class ProgrammeDocument extends BaseController
         try {
             $model = new ProgrammeDocumentModel();
             $course = $model->findProgrammeCourseRawDataById($id);
-            $model->delete($course);
+            $model->delete($id);
 
             return $this->getResponse(
                     [

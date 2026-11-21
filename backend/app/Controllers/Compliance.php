@@ -179,7 +179,7 @@ class Compliance extends BaseController
         try {
             $model = new ComplianceModel();
             $compliance = $model->findComplianceById($id);
-            $model->delete($compliance);
+            $model->delete($id);
 
             return $this->getResponse(
                     [

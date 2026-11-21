@@ -36,6 +36,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked, OnDestroy
   // Session timeout configuration (in milliseconds)
   private readonly INACTIVITY_TIMEOUT = 30 * 60 * 1000; // 30 minutes
   private readonly TOKEN_WARNING_TIME = 5 * 60 * 1000; // 5 minutes before logout
+  private readonly SILENT_REFRESH_LEAD = 60 * 1000; // renew 1 minute before the access token expires
 
   isHandset$: Observable<boolean> = this.breakpointObserver.observe(Breakpoints.Handset).pipe(
     map(result => result.matches),
@@ -193,6 +194,11 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked, OnDestroy
   // ============================================================================
 
   private setLogoutTimerFromToken(): void {
+    // Called on every user emission (including after a refresh), so never stack timers
+    if (this.tokenExpirationTimeout) {
+      clearTimeout(this.tokenExpirationTimeout);
+      this.tokenExpirationTimeout = null;
+    }
     const token = this.tokenService.getToken();
     if (!token) return;
 
@@ -200,12 +206,37 @@ export class AdminLayoutComponent implements OnInit, AfterViewChecked, OnDestroy
     if (!decodedToken?.exp) return;
 
     const timeUntilExpiration = this.calculateTimeUntilExpiration(decodedToken.exp);
+
+    // With a refresh token, renew quietly shortly before expiry. Idle users are still
+    // logged out by the inactivity timer.
+    if (this.tokenService.getRefreshToken()) {
+      this.tokenExpirationTimeout = setTimeout(
+        () => this.silentRefresh(),
+        Math.max(timeUntilExpiration - this.SILENT_REFRESH_LEAD, 0)
+      );
+      return;
+    }
+
     if (timeUntilExpiration <= 0) {
       this.performLogout();
       return;
     }
 
     this.scheduleTokenWarning(timeUntilExpiration);
+  }
+
+  private silentRefresh(): void {
+    this.tokenExpirationTimeout = null;
+    this.auth.refreshToken()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: () => this.setLogoutTimerFromToken(),
+        error: () => {
+          // Refresh token expired or revoked (e.g. password changed elsewhere)
+          this.toast.toastNotification('warning', 'Session Expired', 'Your session has expired. Please login again.');
+          this.performLogout();
+        }
+      });
   }
 
   private calculateTimeUntilExpiration(exp: number): number {

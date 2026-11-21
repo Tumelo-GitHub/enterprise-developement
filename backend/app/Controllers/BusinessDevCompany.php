@@ -120,7 +120,7 @@ class BusinessDevCompany extends BaseController
         try {
             $model = new BusinessDevCompanyModel();
             $company = $model->findBDSPById($id);
-            $model->delete($company);
+            $model->delete($id);
 
             return $this->getResponse(
                     [

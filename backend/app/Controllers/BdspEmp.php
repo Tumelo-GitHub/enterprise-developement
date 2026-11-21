@@ -98,7 +98,7 @@ class BdspEmp extends BaseController
         try {
             $model = new BdspEmpModel();
             $employee = $model->findEmpById($id);
-            $model->delete($employee);
+            $model->delete($id);
 
             return $this->getResponse(
                     [

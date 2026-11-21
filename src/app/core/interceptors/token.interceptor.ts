@@ -15,7 +15,11 @@ import { Router } from '@angular/router';
 @Injectable()
 export class TokenInterceptor implements HttpInterceptor {
   private isRefreshing = false;
-  private refreshTokenSubject: BehaviorSubject<any> = new BehaviorSubject<any>(null);
+  /** null while a refresh is in flight, the new token on success, false on failure. */
+  private refreshTokenSubject = new BehaviorSubject<string | null | false>(null);
+
+  /** Auth endpoints answer 401 for bad credentials/tokens; never try to refresh for those. */
+  private static readonly NO_REFRESH = ['/login', '/register', '/refresh-token', '/forgot-password', '/reset-password'];
 
   constructor(
     private tokenService: TokenService, 
@@ -32,8 +36,7 @@ export class TokenInterceptor implements HttpInterceptor {
     return next.handle(request).pipe(
       catchError(error => {
         if (error instanceof HttpErrorResponse && error.status === 401) {
-          // Don't attempt token refresh for login/register requests
-          if (request.url.includes('/login') || request.url.includes('/register')) {
+          if (TokenInterceptor.NO_REFRESH.some(path => request.url.includes(path))) {
             return throwError(() => error);
           }
           return this.handle401Error(request, next);
@@ -64,6 +67,7 @@ export class TokenInterceptor implements HttpInterceptor {
         }),
         catchError((err) => {
           this.isRefreshing = false;
+          this.refreshTokenSubject.next(false); // release requests waiting on this refresh
           this.tokenService.remove();
           this.authService.isAuthenticated.next(false);
           this.router.navigateByUrl('/auth/login');
@@ -73,11 +77,11 @@ export class TokenInterceptor implements HttpInterceptor {
     } else {
       // Wait for token refresh to complete
       return this.refreshTokenSubject.pipe(
-        filter(token => token != null),
+        filter(token => token !== null),
         take(1),
-        switchMap(token => {
-          return next.handle(this.addToken(request, token));
-        })
+        switchMap(token => token
+          ? next.handle(this.addToken(request, token))
+          : throwError(() => new HttpErrorResponse({ status: 401, statusText: 'Session expired' })))
       );
     }
   }

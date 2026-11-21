@@ -11,6 +11,7 @@ use CodeIgniter\Filters\SecureHeaders;
 use App\Filters\JWTAuth;
 use App\Filters\Cors;
 use App\Filters\AdminAuth;
+use App\Filters\StaffAuth;
 
 class Filters extends BaseConfig
 {
@@ -31,6 +32,7 @@ class Filters extends BaseConfig
         'cors'          => Cors::class, 
         'auth'          => JWTAuth::class,
         'admin'         => AdminAuth::class,
+        'staff'         => StaffAuth::class,
     ];
 
     /**

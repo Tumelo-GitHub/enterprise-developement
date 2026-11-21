@@ -131,7 +131,7 @@ class SmmeAppointment extends BaseController
         try {
             $model = new SmmeAppointmentModel();
             $appointment = $model->findAppointedSmmeById($id);
-            $model->delete($appointment);
+            $model->delete($id);
 
             return $this->getResponse(
                     [

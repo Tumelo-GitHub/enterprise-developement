@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, throwError } from 'rxjs';
+import { HttpErrorResponse } from '@angular/common/http';
 import { catchError, tap } from 'rxjs/operators';
 import { TokenService } from './token.service';
 import { Router } from '@angular/router';
@@ -32,9 +33,10 @@ export class AuthService {
   }
 
   login(data: ILoginRequest): Observable<IResponseModelBase<string>> { 
-    return this.http.post<IResponseModelBase<string>>('api/login', data).pipe(
+    return this.http.post<IResponseModelBase<string> & { refresh_token?: string }>('api/login', data).pipe(
       tap(val => { 
         this.tokenService.save(val.data);
+        this.tokenService.saveRefreshToken(val.refresh_token);
         const decodedToken = this.tokenService.decode(val.data);
         if (decodedToken && decodedToken.data?.user) {
           const user = decodedToken.data.user as IUser;
@@ -66,7 +68,9 @@ export class AuthService {
   }
 
   changePassword(current_password: string, new_password: string): Observable<IResponseModelBase<any>> {
-    return this.http.post<IResponseModelBase<any>>('api/change-password', { current_password, new_password }).pipe(
+    return this.http.post<IResponseModelBase<any> & { refresh_token?: string }>('api/change-password', { current_password, new_password }).pipe(
+      // The password change revokes the old refresh token; keep this session going with the new one
+      tap(val => this.tokenService.saveRefreshToken(val.refresh_token)),
       catchError(this.handleError)
     );
   }
@@ -84,11 +88,17 @@ export class AuthService {
     this.router.navigateByUrl('auth/login');
   }
 
+  /** Exchanges the stored refresh token for a new access token (and a new refresh token). */
   refreshToken(): Observable<IResponseModelBase<string>> {
-    return this.http.post<IResponseModelBase<string>>('api/refresh-token', {}).pipe(
+    const refresh_token = this.tokenService.getRefreshToken();
+    if (!refresh_token) {
+      return throwError(() => new HttpErrorResponse({ status: 401, statusText: 'No refresh token' }));
+    }
+    return this.http.post<IResponseModelBase<string> & { refresh_token?: string }>('api/refresh-token', { refresh_token }).pipe(
       tap(val => {
         if (val.data) {
           this.tokenService.save(val.data);
+          this.tokenService.saveRefreshToken(val.refresh_token);
           const decodedToken = this.tokenService.decode(val.data);
           if (decodedToken && decodedToken.data?.user) {
             const user = decodedToken.data.user as IUser;

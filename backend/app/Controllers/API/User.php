@@ -28,7 +28,7 @@ class User extends BaseController
             'phone_number' => 'required|min_length[10]|max_length[15]'
         ];
 
-        $input = $this->getRequestInput($this->request);
+        $input = $this->getRequestInput($this->request) ?? [];
         if (!$this->validateRequest($input, $rules)) {
             return $this->getResponse(
                 $this->validator->getErrors(),
@@ -36,8 +36,13 @@ class User extends BaseController
             );
         }
 
+        // Only these fields come from the request. Role and status are never client-controlled:
+        // self-registered users are always consultants.
+        $data = array_intersect_key($input, array_flip(['first_name', 'last_name', 'email', 'password', 'phone_number']));
+        $data['role'] = 'consultant';
+
         $userModel = new UserModel();
-        $userModel->save($input);
+        $userModel->insert($data);
 
         return $this->getResponse(
             [
@@ -128,39 +133,28 @@ class User extends BaseController
             return $this->getResponse(['errors' => $this->validator->getErrors()], ResponseInterface::HTTP_BAD_REQUEST);
         }
 
-        $email = $this->request->getVar('email');
-        $userModel = new UserModel();
+        // Same answer whether or not the address exists, so this can't be used to find accounts
+        $generic = $this->getResponse(
+            ['message' => 'If that email address has an account, a password reset link has been sent.'],
+            ResponseInterface::HTTP_OK
+        );
 
-        try {
-            $user = $userModel->where('email', $email)->first();
+        $user = (new UserModel())->asArray()
+            ->where(['email' => $this->request->getVar('email'), 'active' => 1])
+            ->first();
+        if (!$user) {
+            return $generic;
+        }
 
-            if (!$user) {
-                return $this->getResponse(
-                    ['message' => 'Email address not found'],
-                    ResponseInterface::HTTP_NOT_FOUND
-                );
-            }
-
-            // Generate JWT reset token
-            helper('jwt');
-            $resetToken = encodeJWT([
-                'email' => $user['email'],
-                'exp' => time() + 3600, // Token expires in 1 hour
-            ]);
-
-            // Send reset email (with token)
-            $this->sendResetEmail($user, $resetToken);
-
+        helper('jwt');
+        if (!$this->sendResetEmail($user, getSignedResetTokenForUser($user))) {
             return $this->getResponse(
-                ['message' => 'Password reset email sent.'],
-                ResponseInterface::HTTP_OK
-            );
-        } catch (Exception $e) {
-            return $this->getResponse(
-                ['error' => $e->getMessage()],
-                ResponseInterface::HTTP_BAD_REQUEST
+                ['error' => 'We could not send the reset email right now. Please try again later.'],
+                ResponseInterface::HTTP_INTERNAL_SERVER_ERROR
             );
         }
+
+        return $generic;
     }
 
     /**
@@ -177,30 +171,27 @@ class User extends BaseController
             return $this->getResponse(['errors' => $this->validator->getErrors()], ResponseInterface::HTTP_BAD_REQUEST);
         }
 
-        $token = $this->request->getVar('token');
-        $password = $this->request->getVar('password');
-
         helper('jwt');
         try {
-            $decoded = decodeJWT($token);
-
-            $email = $decoded->email;
-            $userModel = new UserModel();
-            $user = $userModel->findUserByEmailAddress($email);
-
-            // Update password
-            $userModel->update($user['id'], ['password' => $password]);
-
-            return $this->getResponse(
-                ['message' => 'Password updated successfully.'],
-                ResponseInterface::HTTP_OK
-            );
+            // Rejects expired, wrong-type and already-used links (the password fingerprint changes on use)
+            $user = getUserFromPurposeToken((string) $this->request->getVar('token'), 'reset');
         } catch (Exception $e) {
             return $this->getResponse(
-                ['error' => 'Invalid or expired reset token.'],
+                ['error' => 'This reset link is invalid, expired or has already been used.'],
                 ResponseInterface::HTTP_BAD_REQUEST
             );
         }
+
+        (new UserModel())->update($user['id'], [
+            'password' => $this->request->getVar('password'),
+            'failed_login_attempts' => 0,
+            'lockout_time' => null,
+        ]);
+
+        return $this->getResponse(
+            ['message' => 'Password updated successfully.'],
+            ResponseInterface::HTTP_OK
+        );
     }
 
     /**
@@ -229,17 +220,22 @@ class User extends BaseController
 
             // Verify current password
             if (!password_verify($input['current_password'], $user['password'])) {
+                // 400, not 401: a 401 makes the frontend try to refresh the session
                 return $this->getResponse(
                     ['error' => 'Current password is incorrect.'],
-                    ResponseInterface::HTTP_UNAUTHORIZED
+                    ResponseInterface::HTTP_BAD_REQUEST
                 );
             }
 
             // update new password
             $userModel->update($user['id'], ['password' => $input['new_password']]);
 
+            // Changing the password revokes existing refresh tokens; give this session a new one
             return $this->getResponse(
-                ['message' => 'Password changed successfully.'],
+                [
+                    'message' => 'Password changed successfully.',
+                    'refresh_token' => getSignedRefreshTokenForUser($userModel->asArray()->find($user['id']))
+                ],
                 ResponseInterface::HTTP_OK
             );
         } catch (Exception $e) {
@@ -257,13 +253,22 @@ class User extends BaseController
      */
     public function updateUser($id)
     {
+        $loggedInUser = getLoggedInUser(getJWTFromRequest($this->request->getServer('HTTP_AUTHORIZATION')));
+        $isAdmin = ($loggedInUser['role'] ?? null) === 'admin';
+        if (!$isAdmin && (int) $loggedInUser['id'] !== (int) $id) {
+            return $this->getResponse(
+                ['message' => 'You can only update your own profile.', 'data' => null],
+                ResponseInterface::HTTP_FORBIDDEN
+            );
+        }
+
         $rules = [
             'first_name' => 'required|min_length[2]|max_length[50]',
             'last_name' => 'required|min_length[2]|max_length[50]',
             'phone_number' => 'required|min_length[10]|max_length[15]',
         ];
 
-        $input = $this->getRequestInput($this->request);
+        $input = $this->getRequestInput($this->request) ?? [];
 
         // Validate the input
         if (!$this->validateRequest($input, $rules)) {
@@ -284,7 +289,10 @@ class User extends BaseController
             );
         }
 
-        $userModel->update($id, $input);
+        // Profile fields only. Role, status, password and email can't be changed here
+        // (email identifies the user in their login token).
+        $data = array_intersect_key($input, array_flip(['first_name', 'last_name', 'phone_number', 'job_title', 'department', 'bio']));
+        $userModel->update($id, $data);
 
         return $this->getResponse(
             ['message' => 'User information updated successfully'],
@@ -331,64 +339,49 @@ class User extends BaseController
      */
     public function refreshToken()
     {
-        helper('jwt'); // Load the JWT helper
+        helper('jwt');
 
-        // Get the token from the Authorization header
-        $encodedToken = $this->request->getHeaderLine('Authorization');
-        $encodedToken = str_replace('Bearer ', '', $encodedToken); // Remove 'Bearer ' prefix
+        $input = $this->getRequestInput($this->request) ?? [];
+        $refreshToken = (string) ($input['refresh_token'] ?? '');
 
         try {
-            // Decode the existing token
-            $decodedToken = decodeJWT($encodedToken);
-
-            // Fetch the user from the database
-            $userModel = new UserModel();
-            $user = $userModel->findUserByEmailAddress($decodedToken->data->user->email);
-
-            if (!$user) {
-                return $this->getResponse(
-                    ['error' => 'User not found.'],
-                    ResponseInterface::HTTP_NOT_FOUND
-                );
-            }
-
-            // Generate a new token
-            return $this->getJWTForUser($user);
+            // Must be a refresh token (not an access token), unexpired, for an active user
+            // whose password hasn't changed since it was issued.
+            $user = getUserFromPurposeToken($refreshToken, 'refresh');
         } catch (Exception $e) {
-            log_message('error', "Error refreshing token: {error}", ['error' => $e->getMessage()]);
             return $this->getResponse(
-                ['error' => 'Invalid or expired token. Please log in again.'],
+                ['error' => 'Your session has expired. Please log in again.'],
                 ResponseInterface::HTTP_UNAUTHORIZED
             );
         }
+
+        return $this->getJWTForUser($user);
     }
 
-    /**
-     * Send Reset Email
-     */
-    private function sendResetEmail($user, $token)
+    /** Sends the reset link. @return bool whether the email was sent */
+    private function sendResetEmail(array $user, string $token): bool
     {
-        $resetLink = site_url("reset-password?token=$token");
-        $firstName = $user['first_name'];
+        // Link to the frontend reset page. app.frontendURL must be set in .env on each server.
+        $frontend = rtrim((string) (env('app.frontendURL') ?: base_url()), '/');
+        $resetLink = esc($frontend . '/auth/password-reset?token=' . urlencode($token), 'attr');
+        $firstName = esc($user['first_name'] ?? '');
 
         $emailService = \Config\Services::email();
         $emailService->setTo($user['email']);
         $emailService->setSubject('Password Reset Request');
         $emailService->setMessage("
-            <pHi $firstName,</p>
-            <p>We received a request to reset your password. Please click the link below to reset your password:</p>
-            <p><a href='$resetLink' style='color: #007bff; text-decoration: none;'>Reset Password</a></p>
+            <p>Hi $firstName,</p>
+            <p>We received a request to reset your password. Please click the link below to reset your password. The link works once and expires in 1 hour.</p>
+            <p><a href=\"$resetLink\" style=\"color: #007bff; text-decoration: none;\">Reset Password</a></p>
             <p>If you did not request this change, you can safely ignore this email.</p>
             <p>Thank you,<br>The Support Team</p>
         ");
 
         if (!$emailService->send()) {
-            log_message('error', 'Failed to send password reset email: ' . $emailService->printDebugger());
-            return $this->getResponse(
-                ['message' => 'Failed to send password reset email'],
-                ResponseInterface::HTTP_INTERNAL_SERVER_ERROR
-            );
+            log_message('error', 'Failed to send password reset email: ' . $emailService->printDebugger(['headers']));
+            return false;
         }
+        return true;
     }
 
     /**
@@ -399,20 +392,22 @@ class User extends BaseController
     private function getJWTForUser(array $user)
     {
         try {
-            unset($user['password']);
             helper('jwt');
+            $refreshToken = getSignedRefreshTokenForUser($user); // needs the password hash
+            unset($user['password']);
 
             return $this->getResponse(
                 [
                     'message' => 'User authenticated successfully',
-                    'data' => getSignedJWTForUser($user)
+                    'data' => getSignedJWTForUser($user),
+                    'refresh_token' => $refreshToken
                 ]
             );
         } catch (Exception $ex) {
+            log_message('error', 'Token generation failed: {error}', ['error' => $ex->getMessage()]);
             return $this->getResponse(
-                [
-                    'error' => $ex->getMessage(),
-                ]
+                ['error' => 'Could not sign you in. Please try again.'],
+                ResponseInterface::HTTP_INTERNAL_SERVER_ERROR
             );
         }
     }

@@ -12,14 +12,35 @@ $routes->add('api/logout', 'API\User::logout');
 $routes->post('api/refresh-token', 'API\User::refreshToken');
 $routes->post('api/forgot-password', 'API\User::forgotPassword');
 $routes->post('api/reset-password', 'API\User::resetPassword');
-$routes->post('api/change-password', 'API\User::changePassword');
-$routes->post('api/user/update/(:num)', 'API\User::updateUser/$1');
 
 $routes->group('api', ['namespace' => 'App\Controllers', 'filter' => 'auth'], static function ($routes) {
+    // Any signed-in user, consultants included. Everything a consultant needs lives here;
+    // controllers check ownership/admin for data that isn't the caller's own.
+    $routes->post('user/update/(:num)', 'API\User::updateUser/$1');
+    $routes->post('change-password', 'API\User::changePassword');
     // users
     $routes->get('users', 'API\User::getAllUsers');
     // menu
     $routes->get('menu', 'Menu::index');
+    // Timesheet
+    $routes->get('timesheet', 'Timesheet::index');
+    $routes->get('timesheet/company-report', 'Timesheet::companyReport');
+    $routes->get('timesheet/companies', 'Timesheet::getCompanies');
+    $routes->get('timesheet/projects', 'Timesheet::getProjects');
+    $routes->get('timesheet/activities', 'Timesheet::getActivities');
+    $routes->get('timesheet/work-types', 'Timesheet::getWorkTypes');
+    $routes->get('timesheet/companies/(:num)', 'Timesheet::getCompaniesByProjectId/$1');
+    $routes->post('timesheet', 'Timesheet::create');
+    $routes->post('timesheet/(:num)', 'Timesheet::update/$1');
+    $routes->delete('timesheet/(:num)', 'Timesheet::delete/$1');
+    // disbursement
+    $routes->post('disbursement', 'TimesheetDisbursement::create');
+    $routes->post('disbursement/(:num)', 'TimesheetDisbursement::update/$1');
+    $routes->delete('disbursement/(:num)', 'TimesheetDisbursement::delete/$1');
+});
+
+// Staff only: every signed-in user except consultants ('staff' also validates the JWT).
+$routes->group('api', ['namespace' => 'App\Controllers', 'filter' => 'staff'], static function ($routes) {
     //Generic company
     $routes->get('generic-company', 'GenericCompany::index');
     $routes->post('generic-company', 'GenericCompany::create');
@@ -127,21 +148,6 @@ $routes->group('api', ['namespace' => 'App\Controllers', 'filter' => 'auth'], st
     $routes->post('training/invitation/(:num)', 'TrainingEvent::UpdateInvitationStatus/$1');
     $routes->post('training/invitation/remove', 'TrainingEvent::deleteInvitation');
     $routes->delete('training/invitation/(:num)', 'TrainingEvent::deleteSingleInvitation/$1');
-    // Timesheet
-    $routes->get('timesheet', 'Timesheet::index');
-    $routes->get('timesheet/company-report', 'Timesheet::companyReport');
-    $routes->get('timesheet/companies', 'Timesheet::getCompanies');
-    $routes->get('timesheet/projects', 'Timesheet::getProjects');
-    $routes->get('timesheet/activities', 'Timesheet::getActivities');
-    $routes->get('timesheet/work-types', 'Timesheet::getWorkTypes');
-    $routes->get('timesheet/companies/(:num)', 'Timesheet::getCompaniesByProjectId/$1');
-    $routes->post('timesheet', 'Timesheet::create');
-    $routes->post('timesheet/(:num)', 'Timesheet::update/$1');
-    $routes->delete('timesheet/(:num)', 'Timesheet::delete/$1');
-    // disbursement
-    $routes->post('disbursement', 'TimesheetDisbursement::create');
-    $routes->post('disbursement/(:num)', 'TimesheetDisbursement::update/$1');
-    $routes->delete('disbursement/(:num)', 'TimesheetDisbursement::delete/$1');
 
     $routes->get('business-industry', 'Home::business_industries');
     $routes->get('banking', 'Home::banking_options');

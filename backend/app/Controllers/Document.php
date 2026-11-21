@@ -151,7 +151,7 @@ class Document extends BaseController
         try {
             $model = new DocumentModel();
             $client = $model->findClientById($id);
-            $model->delete($client);
+            $model->delete($id);
 
             return $this->getResponse(
                     [

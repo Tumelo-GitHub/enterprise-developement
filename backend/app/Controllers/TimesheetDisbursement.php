@@ -15,7 +15,7 @@ class TimesheetDisbursement extends BaseController {
      */
     public function create() {
         $rules = [
-            'item_name ' => 'required',
+            'item_name' => 'required',
             'price_per_unit' => 'required',
             'units' => 'required',
             'date' => 'required'
@@ -48,9 +48,13 @@ class TimesheetDisbursement extends BaseController {
     {
         try {
             $model = new TimesheetDisbursementModel();
-            $model->findItemById($id);
+            $item = $model->findItemById($id);
+            if (!$this->canModify($item)) {
+                return $this->forbidden('You can only edit your own claims.');
+            }
 
-            $input = $this->getRequestInput($this->request);
+            $input = $this->getRequestInput($this->request) ?? [];
+            unset($input['user_id'], $input['id']); // claims can't be moved to another user
 
             $model->update($id, $input);
 
@@ -79,7 +83,10 @@ class TimesheetDisbursement extends BaseController {
         try {
             $model = new TimesheetDisbursementModel();
             $item = $model->findItemById($id);
-            $model->delete($item);
+            if (!$this->canModify($item)) {
+                return $this->forbidden('You can only delete your own claims.');
+            }
+            $model->delete($id);
 
             return $this->getResponse(
                 [
@@ -94,5 +101,17 @@ class TimesheetDisbursement extends BaseController {
                 ResponseInterface::HTTP_NOT_FOUND
             );
         }
+    }
+
+    /** Owners can change their own claims; admins can change anyone's. */
+    private function canModify(array $item): bool
+    {
+        $user = getLoggedInUser(getJWTFromRequest($this->request->getServer('HTTP_AUTHORIZATION')));
+        return ($user['role'] ?? null) === 'admin' || (int) $item['user_id'] === (int) $user['id'];
+    }
+
+    private function forbidden(string $message)
+    {
+        return $this->getResponse(['message' => $message, 'data' => null], ResponseInterface::HTTP_FORBIDDEN);
     }
 }

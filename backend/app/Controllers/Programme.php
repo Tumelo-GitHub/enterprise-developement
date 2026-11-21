@@ -119,7 +119,7 @@ class Programme extends BaseController
         try {
             $model = new ProgrammeModel();
             $smme = $model->findProgrammeRawDataById($id);
-            $model->delete($smme);
+            $model->delete($id);
 
             return $this->getResponse(
                     [

@@ -141,3 +141,16 @@
 #--------------------------------------------------------------------
 
 # curlrequest.shareOptions = true
+
+#JWT_REFRESH_TIME_TO_LIVE is how long a login lasts without activity, in seconds (default 7 days)
+JWT_REFRESH_TIME_TO_LIVE=604800
+
+#--------------------------------------------------------------------
+# FRONTEND / CORS
+#--------------------------------------------------------------------
+
+# Base URL of the Angular app, used for links in emails (password reset)
+# app.frontendURL = https://your-frontend.example.com
+
+# Comma-separated origins allowed to call the API. Empty = any origin.
+# cors.allowedOrigins = https://your-frontend.example.com

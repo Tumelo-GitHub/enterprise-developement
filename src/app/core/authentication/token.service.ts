@@ -36,11 +36,39 @@ export class TokenService {
     }
   }
 
+  /** Signs the user out locally: clears the access and refresh tokens. */
   remove(): void {
+    this.removeAccessToken();
+    try {
+      localStorage.removeItem('refresh_token');
+    } catch (error) {
+      console.error('Failed to remove refresh token:', error);
+    }
+  }
+
+  /** Drops only the (expired) access token, keeping the refresh token so the session can be renewed. */
+  removeAccessToken(): void {
     try {
       localStorage.removeItem('access_token');
     } catch (error) {
       console.error('Failed to remove token:', error);
+    }
+  }
+
+  saveRefreshToken(token: string | null | undefined): void {
+    if (!token) return;
+    try {
+      localStorage.setItem('refresh_token', token);
+    } catch (error) {
+      console.error('Failed to save refresh token:', error);
+    }
+  }
+
+  getRefreshToken(): string | null {
+    try {
+      return localStorage.getItem('refresh_token');
+    } catch (error) {
+      return null;
     }
   }
 
@@ -76,7 +104,7 @@ export class TokenService {
           return false;
         }
         if (this.isTokenExpired(decodedToken)) {
-          this.remove(); // Remove the token if it is expired
+          this.removeAccessToken(); // expired: keep the refresh token so the session can be renewed
           return false;
         }
         return true;
