@@ -426,3 +426,17 @@ export interface IEventFormConfig {
   participantIcon: string;
   eventIcon: string;
 }
+/** A user as seen on the admin Users page. status is derived by the backend. */
+export interface IAdminUser {
+  id: number;
+  first_name: string;
+  last_name: string;
+  email: string;
+  phone_number: string | null;
+  role: string;
+  active: 0 | 1;
+  last_login: string | null;
+  status: 'pending' | 'active' | 'deactivated';
+  /** Only on update responses: whether the approval email went out (null if none was due). */
+  emailed?: boolean | null;
+}

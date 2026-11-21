@@ -2,6 +2,7 @@
 
 namespace App\Controllers\API;
 
+use App\Libraries\AccountMailer;
 use App\Models\UserModel;
 use App\Controllers\BaseController;
 use CodeIgniter\HTTP\Response;
@@ -37,16 +38,19 @@ class User extends BaseController
         }
 
         // Only these fields come from the request. Role and status are never client-controlled:
-        // self-registered users are always consultants.
+        // self-registered users are consultants and can't log in until an admin approves them.
         $data = array_intersect_key($input, array_flip(['first_name', 'last_name', 'email', 'password', 'phone_number']));
         $data['role'] = 'consultant';
+        $data['active'] = 0;
 
         $userModel = new UserModel();
         $userModel->insert($data);
 
+        AccountMailer::newSignup($data); // best-effort: tell the admins someone is waiting
+
         return $this->getResponse(
             [
-                'message' => 'User registered successfully',
+                'message' => 'Account created. An administrator needs to approve it before you can log in. You will get an email once it is approved.',
                 'data' => true
             ]
         );
@@ -80,6 +84,12 @@ class User extends BaseController
 
         // Validate input credentials
         if (!$this->validateRequest($input, $rules)) {
+            // Right password but the account isn't active: say why instead of "invalid credentials"
+            $inactiveMessage = $this->inactiveAccountMessage($input);
+            if ($inactiveMessage) {
+                return $this->getResponse(['error' => $inactiveMessage], ResponseInterface::HTTP_FORBIDDEN);
+            }
+
             log_message('error', "Invalid login attempt for email: {email}", ['email' => $input['email']]);
             return $this->getResponse(
                 ['error' => 'Invalid login credentials provided'],
@@ -105,6 +115,25 @@ class User extends BaseController
         }
     }
 
+
+    /**
+     * For an inactive account whose password is correct, the reason it can't log in.
+     * Only revealed after the password checks out, so it doesn't expose which emails exist.
+     * Never logged in = waiting for approval; logged in before = deactivated.
+     */
+    private function inactiveAccountMessage(?array $input): ?string
+    {
+        if (empty($input['email']) || empty($input['password'])) {
+            return null;
+        }
+        $user = (new UserModel())->asArray()->where('email', $input['email'])->first();
+        if (!$user || (int) $user['active'] === 1 || !password_verify((string) $input['password'], (string) $user['password'])) {
+            return null;
+        }
+        return empty($user['last_login'])
+            ? 'Your account is waiting for an administrator to approve it. You will get an email once it is approved.'
+            : 'Your account has been deactivated. Please contact an administrator.';
+    }
 
     public function logout()
     {
@@ -361,9 +390,7 @@ class User extends BaseController
     /** Sends the reset link. @return bool whether the email was sent */
     private function sendResetEmail(array $user, string $token): bool
     {
-        // Link to the frontend reset page. app.frontendURL must be set in .env on each server.
-        $frontend = rtrim((string) (env('app.frontendURL') ?: base_url()), '/');
-        $resetLink = esc($frontend . '/auth/password-reset?token=' . urlencode($token), 'attr');
+        $resetLink = esc(AccountMailer::frontendUrl('auth/password-reset?token=' . urlencode($token)), 'attr');
         $firstName = esc($user['first_name'] ?? '');
 
         $emailService = \Config\Services::email();

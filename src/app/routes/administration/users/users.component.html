@@ -1,0 +1,104 @@
+<div class="page-container">
+  <div class="page-head">
+    <h1 class="page-title">
+      <mat-icon>manage_accounts</mat-icon>
+      Users
+    </h1>
+    <p class="page-description">Approve new sign-ups, deactivate accounts and change roles.</p>
+  </div>
+
+  <div class="tab-body">
+    <section class="filter-card" aria-label="Filters">
+      <div class="filter-row">
+        <div class="segmented" role="group" aria-label="Status">
+          <button *ngFor="let f of filters" type="button"
+                  [class.active]="filter === f.key"
+                  [attr.aria-pressed]="filter === f.key"
+                  (click)="filter = f.key">
+            {{ f.label }}
+            <span class="count" [class.attention]="f.key === 'pending' && count('pending') > 0">{{ count(f.key) }}</span>
+          </button>
+        </div>
+
+        <mat-form-field appearance="outline" class="search-field">
+          <mat-label>Search</mat-label>
+          <input matInput [value]="search" (input)="search = $any($event.target).value"
+                 placeholder="Name, email or phone" autocomplete="off">
+          <button *ngIf="search" matSuffix mat-icon-button aria-label="Clear search" (click)="search = ''">
+            <mat-icon>close</mat-icon>
+          </button>
+          <mat-icon *ngIf="!search" matSuffix>search</mat-icon>
+        </mat-form-field>
+      </div>
+    </section>
+
+    <mat-progress-bar *ngIf="loading" mode="indeterminate" class="loading-bar"></mat-progress-bar>
+
+    <div *ngIf="loadError" class="empty-state">
+      <mat-icon>error_outline</mat-icon>
+      <h3>Couldn't load users</h3>
+      <button mat-stroked-button color="primary" (click)="load()">Try again</button>
+    </div>
+
+    <section *ngIf="!loadError" class="user-list" [class.is-loading]="loading" aria-label="Users">
+      <article *ngFor="let user of visible; trackBy: trackById" class="user-row" [class.pending]="user.status === 'pending'">
+        <span class="avatar" aria-hidden="true">{{ initials(user) }}</span>
+
+        <div class="identity">
+          <span class="name">
+            {{ name(user) }}
+            <span *ngIf="isMe(user)" class="you">You</span>
+          </span>
+          <span class="email">{{ user.email }}</span>
+          <span class="meta">
+            <ng-container *ngIf="user.phone_number">{{ user.phone_number }} · </ng-container>
+            <ng-container *ngIf="user.last_login; else never">Last login {{ user.last_login | date:'d MMM y, HH:mm' }}</ng-container>
+            <ng-template #never>Never logged in</ng-template>
+          </span>
+        </div>
+
+        <span class="status" [ngClass]="user.status">
+          {{ user.status === 'pending' ? 'Waiting for approval' : (user.status | titlecase) }}
+        </span>
+
+        <mat-form-field appearance="outline" class="role-field">
+          <mat-label>Role</mat-label>
+          <mat-select [value]="user.role" [disabled]="isMe(user) || saving.has(user.id)"
+                      (selectionChange)="changeRole(user, $event.value)">
+            <mat-option *ngFor="let r of roles" [value]="r">{{ r | titlecase }}</mat-option>
+          </mat-select>
+          <mat-hint *ngIf="isMe(user)">Your own role can't be changed</mat-hint>
+        </mat-form-field>
+
+        <div class="actions">
+          <ng-container *ngIf="user.status === 'pending'">
+            <button mat-flat-button class="approve-btn" [disabled]="saving.has(user.id)" (click)="approve(user)">
+              <mat-icon>check</mat-icon> Approve
+            </button>
+            <button mat-stroked-button class="danger-btn" [disabled]="saving.has(user.id)" (click)="decline(user)">
+              Decline
+            </button>
+          </ng-container>
+
+          <button *ngIf="user.status === 'active'" mat-stroked-button class="danger-btn"
+                  [disabled]="isMe(user) || saving.has(user.id)" (click)="deactivate(user)">
+            Deactivate
+          </button>
+
+          <button *ngIf="user.status === 'deactivated'" mat-stroked-button color="primary"
+                  [disabled]="saving.has(user.id)" (click)="reactivate(user)">
+            <mat-icon>restart_alt</mat-icon> Reactivate
+          </button>
+        </div>
+      </article>
+
+      <div *ngIf="!loading && !visible.length" class="empty-state">
+        <mat-icon>{{ search ? 'search_off' : (filter === 'pending' ? 'how_to_reg' : 'group') }}</mat-icon>
+        <h3 *ngIf="search">No users match "{{ search }}"</h3>
+        <h3 *ngIf="!search && filter === 'pending'">No accounts waiting for approval</h3>
+        <h3 *ngIf="!search && filter !== 'pending'">No users here</h3>
+        <button *ngIf="search" mat-button color="primary" (click)="search = ''">Clear search</button>
+      </div>
+    </section>
+  </div>
+</div>

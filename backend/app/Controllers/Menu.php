@@ -89,6 +89,15 @@ class Menu extends BaseController
                             "only" => ["admin"],
                             "except" => []
                         ]
+                    ],
+                    [
+                        "route" => "users",
+                        "name" => "Users",
+                        "type" => "link",
+                        "permissions" => [
+                            "only" => ["admin"],
+                            "except" => []
+                        ]
                     ]
                 ],
                 // Open to all roles: consultants need Timesheet. Each child carries its own rule.

@@ -25,11 +25,13 @@ import { ServiceProviderComponent } from './service-provider/service-provider.co
 import { ServiceProviderMoreComponent } from './service-provider-more/service-provider-more.component';
 import { TimesheetComponent } from './timesheet/timesheet.component';
 import { TimesheetManagerComponent } from './timesheet-manager/timesheet-manager.component';
+import { UsersComponent } from './users/users.component';
 import { AdminGuard, StaffGuard } from 'src/app/core';
 
 const routes: Routes = [
   { path: 'timesheet', component: TimesheetComponent },
   { path: 'timesheet-manager', component: TimesheetManagerComponent, canActivate: [AdminGuard] },
+  { path: 'users', component: UsersComponent, canActivate: [AdminGuard] },
   {
     // Everything else in Administration is off-limits to consultants
     path: '',

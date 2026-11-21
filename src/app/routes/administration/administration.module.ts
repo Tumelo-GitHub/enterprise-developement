@@ -54,6 +54,7 @@ import { TimesheetNameDialogComponent } from './timesheet-manager/name-dialog/ti
 import { TimesheetAddCompaniesDialogComponent } from './timesheet-manager/add-companies-dialog/timesheet-add-companies-dialog.component';
 import { TimesheetLookupPanelComponent } from './timesheet-manager/lookup-panel/timesheet-lookup-panel.component';
 import { CompanyReportComponent } from './timesheet/company-report/company-report.component';
+import { UsersComponent } from './users/users.component';
 import { ServiceProviderFormComponent } from './service-provider/service-provider-form/service-provider-form.component';
 import { ServiceProviderMoreComponent } from './service-provider-more/service-provider-more.component';
 import { ServiceProviderMoreFormComponent } from './service-provider-more/service-provider-more-form/service-provider-more-form.component';
@@ -114,6 +115,7 @@ import { ServiceProviderRatingDialogComponent } from './service-provider-more/se
     TimesheetAddCompaniesDialogComponent,
     TimesheetLookupPanelComponent,
     CompanyReportComponent,
+    UsersComponent,
     ServiceProviderFormComponent,
     ServiceProviderMoreComponent,
     ServiceProviderMoreFormComponent,

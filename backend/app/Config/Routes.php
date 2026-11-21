@@ -188,3 +188,10 @@ $routes->group('api/timesheet-admin', ['namespace' => 'App\Controllers', 'filter
     $routes->post('work-types/(:num)', 'TimesheetAdmin::updateWorkType/$1');
     $routes->delete('work-types/(:num)', 'TimesheetAdmin::deleteWorkType/$1');
 });
+
+// User management: approve sign-ups, activate/deactivate, roles. Admin only.
+$routes->group('api/admin', ['namespace' => 'App\Controllers', 'filter' => 'admin'], static function ($routes) {
+    $routes->get('users', 'UserAdmin::index');
+    $routes->post('users/(:num)', 'UserAdmin::update/$1');
+    $routes->delete('users/(:num)', 'UserAdmin::delete/$1');
+});
