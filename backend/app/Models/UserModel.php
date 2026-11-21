@@ -7,6 +7,10 @@ use Exception;
 
 class UserModel extends Model
 {
+    /** Wrong passwords in a row before the account is locked. */
+    public const MAX_FAILED_ATTEMPTS = 3;
+    public const LOCKOUT_MINUTES = 15;
+
     protected $table = 'user';
     protected $allowedFields = [
         'first_name',
@@ -66,12 +70,17 @@ class UserModel extends Model
         return $user;
     }
 
+    /** Records a wrong password; the MAX_FAILED_ATTEMPTS-th in a row locks the account for LOCKOUT_MINUTES. */
     public function incrementFailedLoginAttempts(array $user)
     {
-        $this->where('email', $user['email'])->set([
-            'failed_login_attempts' => $user['failed_login_attempts'] + 1,
-            'lockout_time' => ($user['failed_login_attempts'] >= 2) ? date('Y-m-d H:i:s', strtotime('+15 minutes')) : null, // 3rd attempt locks out
-        ], false)->update();
+        $attempts = (int) ($user['failed_login_attempts'] ?? 0) + 1;
+
+        $this->update($user['id'], [
+            'failed_login_attempts' => $attempts,
+            'lockout_time' => $attempts >= self::MAX_FAILED_ATTEMPTS
+                ? date('Y-m-d H:i:s', strtotime('+' . self::LOCKOUT_MINUTES . ' minutes'))
+                : null,
+        ]);
     }
 
     public function resetFailedLoginAttempts(string $email)
@@ -82,18 +91,31 @@ class UserModel extends Model
         ])->update();
     }
 
+    /**
+     * Whether the account is currently locked. Once the lockout time has passed the lock is
+     * cleared and the user gets a fresh set of attempts.
+     */
     public function isAccountLocked(string $email): bool
     {
-        $user = $this->where('email', $email)->first();
+        $user = $this->asArray()->where('email', $email)->first();
 
-        if (!$user) {
+        if (!$user || empty($user['lockout_time'])) {
             return false;
         }
 
-        if ($user['lockout_time'] && $user['failed_login_attempts'] >= 3) {
-            return true; // Account is locked
+        if (strtotime($user['lockout_time']) > time()) {
+            return true;
         }
 
+        $this->resetFailedLoginAttempts($email); // lock expired
         return false;
+    }
+
+    /** Minutes until the lock lifts (at least 1), or 0 if the account isn't locked. */
+    public function lockoutMinutesRemaining(string $email): int
+    {
+        $user = $this->asArray()->select('lockout_time')->where('email', $email)->first();
+        $until = $user && !empty($user['lockout_time']) ? strtotime($user['lockout_time']) : 0;
+        return $until > time() ? (int) ceil(($until - time()) / 60) : 0;
     }
 }

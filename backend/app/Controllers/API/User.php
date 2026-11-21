@@ -68,18 +68,16 @@ class User extends BaseController
         ];
 
         $userModel = new UserModel();
-        $input = $this->getRequestInput($this->request);
+        $input = $this->getRequestInput($this->request) ?? [];
+        $email = (string) ($input['email'] ?? '');
 
         // Log the login attempt with the email
-        log_message('info', "Login attempt for email: {email}", ['email' => $input['email']]);
+        log_message('info', "Login attempt for email: {email}", ['email' => $email]);
 
         // Check if the account is locked
-        if ($userModel->isAccountLocked($input['email'])) {
-            log_message('warning', "Login attempt for locked account: {email}", ['email' => $input['email']]);
-            return $this->getResponse(
-                ['error' => 'Your account is temporarily locked. Try again later.'],
-                ResponseInterface::HTTP_FORBIDDEN
-            );
+        if ($email !== '' && $userModel->isAccountLocked($email)) {
+            log_message('warning', "Login attempt for locked account: {email}", ['email' => $email]);
+            return $this->lockedResponse($userModel, $email);
         }
 
         // Validate input credentials
@@ -90,7 +88,13 @@ class User extends BaseController
                 return $this->getResponse(['error' => $inactiveMessage], ResponseInterface::HTTP_FORBIDDEN);
             }
 
-            log_message('error', "Invalid login attempt for email: {email}", ['email' => $input['email']]);
+            // This wrong password may have been the one that locked the account
+            if ($email !== '' && $userModel->isAccountLocked($email)) {
+                log_message('warning', "Account locked after failed logins: {email}", ['email' => $email]);
+                return $this->lockedResponse($userModel, $email);
+            }
+
+            log_message('error', "Invalid login attempt for email: {email}", ['email' => $email]);
             return $this->getResponse(
                 ['error' => 'Invalid login credentials provided'],
                 ResponseInterface::HTTP_UNAUTHORIZED
@@ -115,6 +119,19 @@ class User extends BaseController
         }
     }
 
+
+    private function lockedResponse(UserModel $userModel, string $email)
+    {
+        $minutes = max(1, $userModel->lockoutMinutesRemaining($email));
+        return $this->getResponse(
+            ['error' => sprintf(
+                'Too many incorrect passwords. Your account is locked for %d more minute%s. You can also reset your password.',
+                $minutes,
+                $minutes === 1 ? '' : 's'
+            )],
+            ResponseInterface::HTTP_FORBIDDEN
+        );
+    }
 
     /**
      * For an inactive account whose password is correct, the reason it can't log in.
