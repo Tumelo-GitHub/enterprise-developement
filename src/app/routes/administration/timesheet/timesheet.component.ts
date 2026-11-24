@@ -344,7 +344,9 @@ export class TimesheetComponent implements OnInit, OnDestroy {
         startDate: this.form.value['start_date'],
         endDate: this.form.value['end_date']
       },
-      panelClass: 'form-dialog'
+      width: '520px',
+      maxWidth: '95vw',
+      autoFocus: false
     });
   }
 

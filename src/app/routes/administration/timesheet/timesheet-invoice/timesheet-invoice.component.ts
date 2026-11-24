@@ -1,176 +1,123 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { TimesheetService } from '../../services/timesheet.service';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { ITimesheet } from 'src/app/shared';
-import jsPDF from 'jspdf';
-import autoTable from 'jspdf-autotable';
 import * as moment from 'moment';
+import { Subject, takeUntil } from 'rxjs';
+import { ITimesheet } from 'src/app/shared';
 import { ToastService } from 'src/app/shared/services/toast.service';
-import { TimesheetComponent } from '../timesheet.component';
+import {
+  IDisbursementItem, Invoice, buildInvoice, displayDate, invoiceFileName, money, renderInvoicePdf,
+} from './invoice-pdf';
+
+export interface TimesheetInvoiceData {
+  timesheet: ITimesheet[];
+  disbursmentItems: IDisbursementItem[];
+  employee_name: string;
+  startDate: string;
+  endDate: string;
+}
+
+interface InvoiceProjectOption {
+  id: string;
+  name: string;
+  hours: number;
+}
 
 @Component({
   selector: 'app-timesheet-invoice',
   templateUrl: './timesheet-invoice.component.html',
   styleUrls: ['./timesheet-invoice.component.scss']
 })
-export class TimesheetInvoiceComponent implements OnInit {
-  form!: FormGroup;
-  projects: any[] = [];
-  timesheet: ITimesheet[] = [];
+export class TimesheetInvoiceComponent implements OnDestroy {
+  form: FormGroup;
+  /** Only projects with time in the loaded period, so every choice produces an invoice. */
+  projects: InvoiceProjectOption[];
+  preview: Invoice | null = null;
+  generating = false;
+
+  readonly money = money;
+  readonly period: string;
+  readonly disbursementCount: number;
+  readonly disbursementTotal: number;
+
+  private destroy$ = new Subject<void>();
 
   constructor(
-    private _timesheetService: TimesheetService,
     private toast: ToastService,
     private fb: FormBuilder,
-    private dialogRef: MatDialogRef<TimesheetComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { timesheet: ITimesheet[], disbursmentItems: any, employee_name: string, startDate: string, endDate: string }
+    private dialogRef: MatDialogRef<TimesheetInvoiceComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: TimesheetInvoiceData
   ) {
-    console.log(data);
-    this.timesheet = data.timesheet;
+    this.projects = this.projectsWithTime(data.timesheet ?? []);
+    this.period = `${displayDate(data.startDate)} – ${displayDate(data.endDate)}`;
+
+    const disbursements = data.disbursmentItems ?? [];
+    this.disbursementCount = disbursements.length;
+    this.disbursementTotal = disbursements.reduce((s, d) => s + Number(d.units || 0) * Number(d.price_per_unit || 0), 0);
+
     this.form = this.fb.group({
-      project_id: [null, Validators.required],
-      rate: [null, Validators.required],
+      project_id: [this.projects.length === 1 ? this.projects[0].id : null, Validators.required],
+      rate: [null, [Validators.required, Validators.min(0.01)]],
+      include_disbursements: [true],
     });
+
+    this.form.valueChanges.pipe(takeUntil(this.destroy$)).subscribe(() => this.updatePreview());
+    this.updatePreview();
   }
 
-  ngOnInit(): void {
-    this.getProjects();
-  }
-
-  getProjects() {
-    this._timesheetService.getProjects().subscribe({
-      next: resp => {
-        this.projects = resp.data;
-      },
-      error: console.log
-    });
-  }
-
-  getTotalDuration(timesheet: ITimesheet[]) {
-    const totalSeconds = timesheet.reduce((sum, entry) => {
-      const durationSeconds = moment.duration(entry.duration).asSeconds();
-      return Number.isFinite(durationSeconds) ? sum + durationSeconds : sum;
-    }, 0);
-
-    return this.formatElapsedDuration(totalSeconds);
-  }
-
-  private formatElapsedDuration(totalSeconds: number): string {
-    const safeSeconds = Math.max(0, Math.round(totalSeconds));
-    const hours = Math.floor(safeSeconds / 3600);
-    const minutes = Math.floor((safeSeconds % 3600) / 60);
-    const seconds = safeSeconds % 60;
-
-    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   generateInvoice(): void {
-    // check if form is valid
-    if (this.form.valid) {
-      const hourlyRate = this.form.get('rate')?.value as number;
-      const selectedProjectId = this.form.get('project_id')?.value;
+    this.updatePreview();
+    if (this.form.invalid || !this.preview) {
+      this.form.markAllAsTouched();
+      this.toast.toastNotification('danger', 'Error', 'Select a project and enter an hourly rate to generate the invoice.');
+      return;
+    }
 
-      const filteredTimesheet = this.timesheet.filter(entry => entry.project_id === selectedProjectId);
-      const groupedData = this.groupTimesheetData(filteredTimesheet, hourlyRate);
-
-      const doc = new jsPDF();
-      doc.text(`Project: ${filteredTimesheet[0].project_name}`, 14, 15); // Write project name at the top
-      doc.text(`Employee: ${this.data.employee_name}`, 14, 25); // Write employee name
-      doc.text(`Date Range: ${this.data.startDate} - ${this.data.endDate}`, 14, 35); // Write date ranges
-
-      let totalHours = 0;
-      let totalCost = 0;
-
-      groupedData.forEach(group => {
-        const columns = ["Company Name", "Total Hours", "Total Cost"];
-        const rows = group.entries.map(entry => [
-          entry.company_name,
-          entry.totalHours.toFixed(2),
-          `R${entry.totalCost.toFixed(2)}`
-        ]);
-
-        // Calculate total hours and total cost for the group
-        const totalGroupHours = group.entries.reduce((sum, entry) => sum + entry.totalHours, 0);
-        const totalGroupCost = group.entries.reduce((sum, entry) => sum + entry.totalCost, 0);
-
-        // Add total row
-        rows.push([
-          "Total",
-          totalGroupHours.toFixed(2),
-          `R${totalGroupCost.toFixed(2)}`
-        ]);
-
-        // Accumulate total hours and total cost
-        totalHours += totalGroupHours;
-        totalCost += totalGroupCost;
-
-        doc.text(`Work Type: ${group.work_type}`, 14, (doc as any).lastAutoTable ? (doc as any).lastAutoTable.finalY + 15 : 45);
-        autoTable(doc, { head: [columns], body: rows, startY: (doc as any).lastAutoTable ? (doc as any).lastAutoTable.finalY + 20 : 50 });
-        // const finalY = (doc as any).lastAutoTable.finalY;
-      });
-
-      // Claim Disbursement table
-      const columns = ["Item", "units", "Price per Unit", "Total"];
-      const disbursementRows = this.data.disbursmentItems.map((item: { item_name: string; units: number; price_per_unit: number; }) => [
-        item.item_name,
-        item.units,
-        `R${Number(item.price_per_unit ?? 0).toFixed(2)}`,
-        `R${(item.units * Number(item.price_per_unit)).toFixed(2)}`
-      ]);
-
-      // Calculate total cost for disbursement items
-      const totalDisbursementCost = this.data.disbursmentItems.reduce((sum: number, item: { units: number; price_per_unit: number; }) => sum + (item.units * Number(item.price_per_unit)), 0);
-
-      // Add total row for disbursement items
-      disbursementRows.push([
-        "Total",
-        "",
-        "",
-        `R${totalDisbursementCost.toFixed(2)}`
-      ]);
-
-      doc.text(`Disbursements`, 14, (doc as any).lastAutoTable ? (doc as any).lastAutoTable.finalY + 15 : 45);
-      autoTable(doc, { head: [columns], body: disbursementRows, startY: (doc as any).lastAutoTable.finalY + 20 });
-
-      // document footer total hours, hourly rate and total cost
-      const finalY = (doc as any).lastAutoTable.finalY;
-      doc.text(`Total Hours: ${totalHours.toFixed(2)}`, 14, finalY + 20);
-      doc.text(`Hourly Rate: R${hourlyRate.toFixed(2)}`, 14, finalY + 30);
-      doc.text(`Total Cost: R${(totalCost + totalDisbursementCost).toFixed(2)}`, 14, finalY + 40);
-      doc.save("invoice.pdf");
-      this.dialogRef.close();
-    } else {
-      this.toast.toastNotification('danger', 'Error', 'Please select a project and hourly rate to generate the invoice.');
+    this.generating = true;
+    try {
+      renderInvoicePdf(this.preview).save(invoiceFileName(this.preview));
+      this.dialogRef.close(true);
+    } catch (err) {
+      console.error('Invoice generation failed:', err);
+      this.toast.toastNotification('danger', 'Error', 'Could not generate the invoice. Please try again.');
+    } finally {
+      this.generating = false;
     }
   }
 
-  private groupTimesheetData(timesheet: ITimesheet[], hourlyRate: number) {
-    const groupedData: { work_type: string, entries: { company_name: string, totalHours: number, totalCost: number }[] }[] = [];
+  private updatePreview(): void {
+    const { project_id, rate, include_disbursements } = this.form.getRawValue();
+    if (!project_id || !(Number(rate) > 0)) {
+      this.preview = null;
+      return;
+    }
 
-    timesheet.forEach(entry => {
-      let group = groupedData.find(g => g.work_type === entry.work_type);
-      if (!group) {
-        group = { work_type: entry.work_type, entries: [] };
-        groupedData.push(group);
-      }
-
-      const existingEntry = group.entries.find(e => e.company_name === entry.company_name);
-      const duration = moment.duration(entry.duration).asHours();
-      const safeDuration = Number.isFinite(duration) ? duration : 0;
-
-      if (existingEntry) {
-        existingEntry.totalHours += safeDuration;
-        existingEntry.totalCost += safeDuration * hourlyRate;
-      } else {
-        group.entries.push({
-          company_name: entry.company_name,
-          totalHours: safeDuration,
-          totalCost: safeDuration * hourlyRate
-        });
-      }
+    this.preview = buildInvoice({
+      entries: this.data.timesheet ?? [],
+      disbursements: this.data.disbursmentItems ?? [],
+      projectId: project_id,
+      rate: Number(rate),
+      includeDisbursements: this.disbursementCount > 0 && !!include_disbursements,
+      employee: this.data.employee_name,
+      periodStart: this.data.startDate,
+      periodEnd: this.data.endDate,
     });
+  }
 
-    return groupedData;
+  private projectsWithTime(entries: ITimesheet[]): InvoiceProjectOption[] {
+    const byId = new Map<string, InvoiceProjectOption>();
+    for (const e of entries) {
+      const id = String(e.project_id);
+      const option = byId.get(id) ?? { id, name: e.project_name, hours: 0 };
+      const h = moment.duration(e.duration).asHours();
+      option.hours += Number.isFinite(h) ? h : 0;
+      byId.set(id, option);
+    }
+    return [...byId.values()].sort((a, b) => a.name.localeCompare(b.name));
   }
 }

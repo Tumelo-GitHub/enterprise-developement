@@ -1,0 +1,90 @@
+@import '../timesheet-ui';
+
+.invoice-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 2px;
+
+  mat-icon {
+    color: $accent;
+  }
+}
+
+.invoice-context {
+  margin: 0 0 16px;
+  color: $muted;
+  font-size: 13px;
+}
+
+.full-width {
+  width: 100%;
+}
+
+mat-form-field + mat-form-field {
+  margin-top: 8px;
+}
+
+.affix {
+  color: $muted;
+}
+
+.option-meta {
+  color: $muted;
+  font-size: 12px;
+}
+
+.disbursements-option {
+  margin: 4px 0 12px;
+
+  .option-hint {
+    margin: 2px 0 0 32px;
+    color: $muted;
+    font-size: 12px;
+    line-height: 1.4;
+  }
+}
+
+.preview {
+  margin-top: 8px;
+  padding: 12px 16px;
+  border-radius: 10px;
+  background: var(--surface-2, #f5f7ff);
+  border: 1px solid $border;
+}
+
+.preview-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 4px 0;
+  color: $ink;
+  font-size: 14px;
+
+  span:last-child {
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+
+  &.total {
+    margin-top: 6px;
+    padding-top: 10px;
+    border-top: 1px solid $border;
+    font-size: 16px;
+    font-weight: 700;
+
+    span:last-child {
+      color: $accent;
+    }
+  }
+}
+
+.preview-empty {
+  margin: 8px 0 0;
+  color: $muted;
+  font-size: 13px;
+}
+
+.generate-btn mat-icon {
+  margin-right: 6px;
+}

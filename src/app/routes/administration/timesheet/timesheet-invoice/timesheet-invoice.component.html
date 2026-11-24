@@ -1,26 +1,64 @@
 <form [formGroup]="form" novalidate (ngSubmit)="generateInvoice()">
-    <h2 mat-dialog-title>Invoice</h2>
-    <mat-dialog-content class="mat-typography">
-        <div class="row">
-            <div class="col">
-                <mat-form-field class="full-width">
-                    <mat-select placeholder="Project" formControlName="project_id">
-                        <mat-option *ngFor="let option of projects"
-                            value="{{option.id}}">{{option.project_name}}</mat-option>
-                    </mat-select>
-                </mat-form-field>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col">
-                <mat-form-field class="full-width">
-                    <input type="number" matInput placeholder="Hourly Rate" formControlName="rate">
-                </mat-form-field>
-            </div>
-        </div>
-    </mat-dialog-content>
-    <mat-dialog-actions align="end">
-        <button mat-button mat-dialog-close>Cancel</button>
-        <button type="submit" mat-button [disabled]="!form.valid">Generate Invoice</button>
-    </mat-dialog-actions>
+  <h2 mat-dialog-title class="invoice-title">
+    <mat-icon>receipt_long</mat-icon>
+    Generate invoice
+  </h2>
+  <p class="invoice-context">{{ data.employee_name }} · {{ period }}</p>
+
+  <mat-dialog-content>
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Project</mat-label>
+      <mat-select formControlName="project_id">
+        <mat-option *ngFor="let p of projects" [value]="p.id">
+          {{ p.name }}
+          <span class="option-meta">· {{ p.hours | number:'1.2-2' }} h</span>
+        </mat-option>
+      </mat-select>
+      <mat-hint>Projects with time logged in this period</mat-hint>
+      <mat-error>Select a project</mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Hourly rate</mat-label>
+      <span matPrefix class="affix">R&nbsp;</span>
+      <input matInput type="number" min="0" step="0.01" formControlName="rate" autocomplete="off">
+      <span matSuffix class="affix">&nbsp;/ hour</span>
+      <mat-error>Enter an hourly rate above 0</mat-error>
+    </mat-form-field>
+
+    <div *ngIf="disbursementCount" class="disbursements-option">
+      <mat-checkbox formControlName="include_disbursements" color="primary">
+        Include disbursements ({{ disbursementCount }} {{ disbursementCount === 1 ? 'item' : 'items' }}, {{ money(disbursementTotal) }})
+      </mat-checkbox>
+      <p class="option-hint">
+        Disbursements aren't linked to a project. Untick this if you've already claimed them on another invoice.
+      </p>
+    </div>
+
+    <section class="preview" *ngIf="preview; else previewEmpty" aria-label="Invoice preview">
+      <div class="preview-row">
+        <span>Time ({{ preview.totalHours | number:'1.2-2' }} h × {{ money(preview.rate) }})</span>
+        <span>{{ money(preview.timeAmount) }}</span>
+      </div>
+      <div class="preview-row" *ngIf="preview.includeDisbursements">
+        <span>Disbursements</span>
+        <span>{{ money(preview.disbursementAmount) }}</span>
+      </div>
+      <div class="preview-row total">
+        <span>Amount due</span>
+        <span>{{ money(preview.total) }}</span>
+      </div>
+    </section>
+    <ng-template #previewEmpty>
+      <p class="preview-empty">Choose a project and rate to see the total.</p>
+    </ng-template>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button type="button" mat-button mat-dialog-close>Cancel</button>
+    <button type="submit" mat-flat-button color="primary" class="generate-btn" [disabled]="!preview || generating">
+      <mat-icon>picture_as_pdf</mat-icon>
+      Download invoice
+    </button>
+  </mat-dialog-actions>
 </form>
