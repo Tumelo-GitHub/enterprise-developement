@@ -61,15 +61,47 @@ abstract class BaseController extends Controller
     }
 
     /**
-     * This function will be used by your controllers to return JSON responses to the client.
-     * Don’t forget to import the ResponseInterface. [use CodeIgniter\HTTP\ResponseInterface;]
+     * Returns a JSON response. Error responses (4xx/5xx) always carry a readable 'message',
+     * so the frontend can rely on error.error.message; see normalizeErrorBody().
      */
     public function getResponse(array $responseBody, int $code = ResponseInterface::HTTP_OK)
     {
+        if ($code >= 400) {
+            $responseBody = $this->normalizeErrorBody($responseBody);
+        }
+
         return $this
             ->response
             ->setStatusCode($code)
             ->setJSON($responseBody);
+    }
+
+    /**
+     * Controllers report errors in three shapes: ['message' => ...], ['error' => ...] (auth),
+     * and a bare validator map ['field' => 'problem', ...]. This adds 'message' (and 'errors'
+     * for validator maps) without removing the original keys, so existing clients keep working.
+     */
+    private function normalizeErrorBody(array $body): array
+    {
+        if (isset($body['message']) && is_string($body['message']) && $body['message'] !== '') {
+            return $body;
+        }
+
+        if (isset($body['error']) && is_string($body['error'])) {
+            return ['message' => $body['error']] + $body;
+        }
+
+        if (isset($body['errors']) && is_array($body['errors']) && $body['errors']) {
+            return ['message' => (string) reset($body['errors'])] + $body;
+        }
+
+        // Bare validator map: every value is a string keyed by field name
+        $isList = array_keys($body) === range(0, count($body) - 1);
+        if ($body && !$isList && count(array_filter($body, 'is_string')) === count($body)) {
+            return ['message' => (string) reset($body), 'errors' => $body] + $body;
+        }
+
+        return ['message' => 'Something went wrong. Please try again.'] + $body;
     }
 
     /**

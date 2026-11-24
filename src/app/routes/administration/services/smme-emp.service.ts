@@ -23,7 +23,6 @@ export class SmmeEmpService {
   }
 
   update(id: number, data: any) : Observable<IResponseModelBase<IEmployee>> {
-    console.log(data);
     return this.http.post<IResponseModelBase<IEmployee>>(`api/smmeemp/${id}`, data);
   }
 

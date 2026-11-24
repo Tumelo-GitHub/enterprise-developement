@@ -15,7 +15,7 @@ export class BdspEmpService {
   }
 
   delete(id: number) : Observable<any> {
-    return this.http.delete(`api/smmeemp/${id}`);
+    return this.http.delete(`api/bdspemp/${id}`);
   }
 
   update(id: number, data: any) : Observable<IResponseModelBase<IEmployee>> {

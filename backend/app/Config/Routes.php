@@ -53,25 +53,24 @@ $routes->group('api', ['namespace' => 'App\Controllers', 'filter' => 'staff'], s
     $routes->resource('bdsp', ['controller' => 'BusinessDevCompany', 'except' => 'new,edit,update']);
     $routes->post('bdsp/(:num)', 'BusinessDevCompany::update/$1');
     // SMME EMP
-    $routes->get('smmeemp/(:num)', 'SmmeEmp::index/$1');
-    $routes->get('smmeemp/(:num)', 'SmmeEmp::show/$1');
-    $routes->resource('smmeemp', ['controller' => 'SmmeEmp', 'except' => 'index,new,edit,update']);
+    $routes->get('smmeemp/employee/(:num)', 'SmmeEmp::show/$1');
+    $routes->get('smmeemp/(:num)', 'SmmeEmp::index/$1'); // employees of company $1
+    $routes->resource('smmeemp', ['controller' => 'SmmeEmp', 'except' => 'index,show,new,edit,update']);
     $routes->post('smmeemp/(:num)', 'SmmeEmp::update/$1');
     // BDSP EMP
     $routes->get('bdspemp/(:num)', 'BdspEmp::index/$1');
-    $routes->resource('bdspemp', ['controller' => 'BdspEmp', 'except' => 'index,new,edit,update']);
+    $routes->resource('bdspemp', ['controller' => 'BdspEmp', 'except' => 'index,show,new,edit,update']);
     $routes->post('bdspemp/(:num)', 'BdspEmp::update/$1');
     // COMPLIANCE
-    $routes->get('compliance/(:num)', 'Compliance::index/$1');
     $routes->get('compliance/status', 'Compliance::getComplianceStatus');
     $routes->get('compliance/types', 'Compliance::getComplianceTypes');
-    $routes->resource('compliance', ['controller' => 'Compliance', 'except' => 'index,new,edit,update']);
+    $routes->get('compliance/(:num)', 'Compliance::index/$1'); // compliance records of company $1
+    $routes->resource('compliance', ['controller' => 'Compliance', 'except' => 'index,show,new,edit,update']);
     $routes->post('compliance/(:num)', 'Compliance::update/$1');
     // DOCUMENTS
-    $routes->get('api/document/(:num)', 'Document::display/$1');
-    $routes->post('api/document', 'Document::create');
+    $routes->get('document/(:num)', 'Document::display/$1');
+    $routes->post('document', 'Document::create');
     // PROGRAMME
-    // $routes->resource('programme', ['controller' => 'Programme', 'except' => 'new,edit,update']);
     $routes->get('programme', 'Programme::index');
     $routes->get('programme/(:num)', 'Programme::show/$1');
     $routes->post('programme', 'Programme::create');
@@ -82,7 +81,6 @@ $routes->group('api', ['namespace' => 'App\Controllers', 'filter' => 'staff'], s
     $routes->get('appoint/smme/(:num)', 'SmmeAppointment::index/$1');
     $routes->post('appoint/smme/(:num)', 'SmmeAppointment::update/$1');
     $routes->resource('appoint/smme', ['controller' => 'SmmeAppointment', 'except' => 'index,new,edit,update']);
-    // $routes->post('programme/(:num)', 'Programme::update/$1');
     $routes->get('programme/course/(:num)', 'ProgrammeCourse::index/$1');
     $routes->post('programme/course', 'ProgrammeCourse::create');
     $routes->post('programme/course/(:num)', 'ProgrammeCourse::update/$1');
@@ -120,14 +118,14 @@ $routes->group('api', ['namespace' => 'App\Controllers', 'filter' => 'staff'], s
     $routes->post('service-provider-rating', 'ServiceProviderRating::create');
     $routes->post('service-provider-rating/(:num)', 'ServiceProviderRating::update/$1');
     $routes->delete('service-provider-rating/(:num)', 'ServiceProviderRating::delete/$1');
-    // TRAINING EVENT'
+    // TRAINING EVENT
     $routes->get('training/event', 'TrainingEvent::index');
     $routes->get('training/event/(:num)', 'TrainingEvent::show/$1');
     $routes->get('training/venue', 'TrainingEvent::getTrainingVenue');
     $routes->post('training/event', 'TrainingEvent::create');
     $routes->post('training/event/(:num)', 'TrainingEvent::update/$1');
     $routes->delete('training/event/(:num)', 'TrainingEvent::delete/$1');
-    // TRAINING VANUE
+    // TRAINING VENUE
     $routes->get('training-venue', 'TrainingVenue::index');
     $routes->post('training-venue', 'TrainingVenue::create');
     $routes->post('training-venue/(:num)', 'TrainingVenue::update/$1');
