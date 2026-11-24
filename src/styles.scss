@@ -220,3 +220,11 @@ a.active {
     background: var(--surface-3, whitesmoke);
   }
 }
+// Destructive item in a row-actions menu (menus render in an overlay, so this has to be global)
+.mat-menu-item.danger-item:not([disabled]) {
+  color: var(--danger-fg, #dc2626);
+
+  .mat-icon {
+    color: inherit;
+  }
+}

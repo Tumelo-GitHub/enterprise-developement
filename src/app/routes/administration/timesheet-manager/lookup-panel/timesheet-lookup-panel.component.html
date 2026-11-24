@@ -32,22 +32,24 @@
       </div>
       <span *ngIf="!item.is_active" class="badge">Archived</span>
       <div class="item-actions">
-        <button mat-icon-button matTooltip="Rename" [attr.aria-label]="'Rename ' + item.name"
-                [disabled]="busyIds.has(item.id)" (click)="openDialog(item)">
-          <mat-icon>edit</mat-icon>
+        <button mat-icon-button [matMenuTriggerFor]="itemMenu" [attr.aria-label]="'Actions for ' + item.name"
+                [disabled]="busyIds.has(item.id)">
+          <mat-icon>more_vert</mat-icon>
         </button>
-        <button mat-icon-button
-                [matTooltip]="item.is_active ? 'Archive: hide from the capture form' : 'Restore to the capture form'"
-                [attr.aria-label]="(item.is_active ? 'Archive ' : 'Restore ') + item.name"
-                [disabled]="busyIds.has(item.id)" (click)="toggleArchived(item)">
-          <mat-icon>{{ item.is_active ? 'archive' : 'unarchive' }}</mat-icon>
-        </button>
-        <span [matTooltip]="item.usage_count ? 'In use, so it can only be archived' : 'Delete'">
-          <button mat-icon-button color="warn" [attr.aria-label]="'Delete ' + item.name"
-                  [disabled]="!!item.usage_count || busyIds.has(item.id)" (click)="remove(item)">
-            <mat-icon>delete_outline</mat-icon>
+        <mat-menu #itemMenu="matMenu" xPosition="before">
+          <button mat-menu-item (click)="openDialog(item)">
+            <mat-icon>edit</mat-icon>
+            <span>Rename</span>
           </button>
-        </span>
+          <button mat-menu-item (click)="toggleArchived(item)">
+            <mat-icon>{{ item.is_active ? 'archive' : 'unarchive' }}</mat-icon>
+            <span>{{ item.is_active ? 'Archive (hide from the capture form)' : 'Restore to the capture form' }}</span>
+          </button>
+          <button mat-menu-item class="danger-item" [disabled]="!!item.usage_count" (click)="remove(item)">
+            <mat-icon>delete_outline</mat-icon>
+            <span>{{ item.usage_count ? 'Delete (in use, archive instead)' : 'Delete' }}</span>
+          </button>
+        </mat-menu>
       </div>
     </li>
   </ul>

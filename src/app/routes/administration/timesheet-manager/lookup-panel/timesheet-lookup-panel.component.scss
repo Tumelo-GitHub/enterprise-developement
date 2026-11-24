@@ -127,10 +127,6 @@ $ink: var(--text, #1f2937);
   button {
     color: $muted;
   }
-
-  button[color='warn']:not([disabled]):hover {
-    color: var(--danger-fg, #dc2626);
-  }
 }
 
 .lookup-empty {

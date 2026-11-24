@@ -214,7 +214,7 @@ $muted: var(--text-muted, #6b7280);
 
   .actions-header,
   .actions-cell {
-    width: 112px;
+    width: 64px; // one icon button: a single action or the actions menu
     text-align: right;
     white-space: nowrap;
     background: none;

@@ -149,12 +149,19 @@
                 <div class="entry-side">
                   <span class="entry-duration">{{ entryLabel(entry) }}</span>
                   <div class="entry-actions">
-                    <button mat-icon-button matTooltip="Edit" aria-label="Edit entry" (click)="openDialog(entry)">
-                      <mat-icon>edit</mat-icon>
+                    <button mat-icon-button [matMenuTriggerFor]="entryMenu" aria-label="Entry actions">
+                      <mat-icon>more_vert</mat-icon>
                     </button>
-                    <button mat-icon-button matTooltip="Delete" aria-label="Delete entry" class="delete" (click)="deleteItem(entry)">
-                      <mat-icon>delete_outline</mat-icon>
-                    </button>
+                    <mat-menu #entryMenu="matMenu" xPosition="before">
+                      <button mat-menu-item (click)="openDialog(entry)">
+                        <mat-icon>edit</mat-icon>
+                        <span>Edit</span>
+                      </button>
+                      <button mat-menu-item class="danger-item" (click)="deleteItem(entry)">
+                        <mat-icon>delete_outline</mat-icon>
+                        <span>Delete</span>
+                      </button>
+                    </mat-menu>
                   </div>
                 </div>
               </li>
